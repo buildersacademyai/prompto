@@ -73,6 +73,33 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen flex flex-col">
+      {/* Navigation Header */}
+      <nav className="fixed top-0 left-0 right-0 z-50 border-b border-border/50 backdrop-blur-md bg-background/80">
+        <div className="container mx-auto px-4">
+          <div className="flex items-center justify-between h-16">
+            {/* Logo */}
+            <div className="flex items-center">
+              <Link href="/" className="flex items-center">
+                <span className="text-2xl font-display font-bold gradient-text">Prompto</span>
+              </Link>
+            </div>
+            
+            {/* Navigation Links & Button */}
+            <div className="flex items-center space-x-6">
+              <Link href="/whitepaper" className="hidden md:inline-block text-muted-foreground hover:text-foreground transition-colors">
+                Whitepaper
+              </Link>
+              <Link href="/about" className="hidden md:inline-block text-muted-foreground hover:text-foreground transition-colors">
+                About Us
+              </Link>
+              <Button asChild size="sm" className="font-medium">
+                <Link href="/auth">Get Started</Link>
+              </Button>
+            </div>
+          </div>
+        </div>
+      </nav>
+
       {/* Hero Section */}
       <header className="relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-background via-background to-primary/10 z-0" />
