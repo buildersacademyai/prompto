@@ -3,6 +3,7 @@ import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { setupAuth } from "./auth";
 import { generateAdContent, analyzeContentSentiment, generateHashtags, optimizeContent } from "./openai";
+import { randomBytes } from "crypto";
 import Stripe from "stripe";
 
 // Initialize Stripe if the secret key is available

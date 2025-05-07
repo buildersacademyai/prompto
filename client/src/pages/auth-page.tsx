@@ -11,6 +11,8 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { insertUserSchema } from "@shared/schema";
 import { useState, useEffect } from "react";
 import { Loader2 } from "lucide-react";
+import { signInWithGoogle } from "@/lib/firebase";
+import { useToast } from "@/hooks/use-toast";
 
 // SVG icons for social login
 const GoogleIcon = () => (
@@ -50,6 +52,8 @@ export default function AuthPage() {
   const { user, loginMutation, registerMutation, isLoading } = useAuth();
   const [, setLocation] = useLocation();
   const [authMethod, setAuthMethod] = useState<"email" | "social">("email");
+  const [signingIn, setSigningIn] = useState(false);
+  const { toast } = useToast();
 
   // Create form instances
   const loginForm = useForm<LoginFormValues>({
@@ -240,14 +244,73 @@ export default function AuthPage() {
               </Tabs>
             ) : (
               <div className="space-y-4">
-                <Button variant="outline" className="w-full bg-white text-background hover:bg-gray-100 font-medium transition flex items-center justify-center">
-                  <GoogleIcon />
+                <Button 
+                  variant="outline" 
+                  className="w-full bg-white text-background hover:bg-gray-100 font-medium transition flex items-center justify-center" 
+                  onClick={async () => {
+                    try {
+                      setSigningIn(true);
+                      const result = await signInWithGoogle();
+                      if (result.success) {
+                        // Handle successful sign-in
+                        // Now we need to create or get user in our backend
+                        const idToken = await result.user.getIdToken();
+                        const response = await fetch('/api/auth/google', {
+                          method: 'POST',
+                          headers: {
+                            'Content-Type': 'application/json',
+                          },
+                          body: JSON.stringify({ 
+                            idToken,
+                            email: result.user.email,
+                            displayName: result.user.displayName
+                          }),
+                        });
+                        
+                        if (response.ok) {
+                          const data = await response.json();
+                          // After successful backend authentication, update our auth state
+                          loginMutation.mutate({
+                            username: data.username,
+                            password: data.tempPassword // This is just for the flow, not actually used
+                          });
+                        } else {
+                          toast({
+                            title: "Authentication failed",
+                            description: "Could not authenticate with Google. Please try again.",
+                            variant: "destructive",
+                          });
+                        }
+                      } else if (result.error) {
+                        toast({
+                          title: "Authentication failed",
+                          description: result.error,
+                          variant: "destructive",
+                        });
+                      }
+                    } catch (error) {
+                      toast({
+                        title: "Authentication failed",
+                        description: "An unexpected error occurred. Please try again.",
+                        variant: "destructive",
+                      });
+                    } finally {
+                      setSigningIn(false);
+                    }
+                  }}
+                  disabled={signingIn || isPending}
+                >
+                  {signingIn ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <GoogleIcon />}
                   <span className="ml-2">Continue with Google</span>
                 </Button>
                 
-                <Button variant="outline" className="w-full bg-card hover:bg-card/80 font-medium transition flex items-center justify-center">
+                <Button 
+                  variant="outline" 
+                  className="w-full bg-card hover:bg-card/80 font-medium transition flex items-center justify-center"
+                  disabled={true} // Disable until wallet implementation is ready
+                >
                   <WalletIcon />
-                  <span className="ml-2">Connect Wallet</span>
+                  <span className="ml-2">Connect Wallet (Coming Soon)</span>
                 </Button>
               </div>
             )}
