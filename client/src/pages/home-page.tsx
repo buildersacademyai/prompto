@@ -80,7 +80,7 @@ export default function HomePage() {
             {/* Logo */}
             <div className="flex items-center">
               <Link href="/" className="flex items-center">
-                <img src="/src/assets/logo.png" alt="Prompto Logo" className="h-10" />
+                <img src="/src/assets/logo.png" alt="Prompto Logo" className="h-20" />
               </Link>
             </div>
             

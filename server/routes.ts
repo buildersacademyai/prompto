@@ -3,6 +3,8 @@ import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { setupAuth } from "./auth";
 import { generateAdContent, analyzeContentSentiment, generateHashtags, optimizeContent } from "./openai";
+// Import hash function to reuse in Google auth
+import { hashPassword } from "./auth";
 import { randomBytes } from "crypto";
 import Stripe from "stripe";
 
@@ -34,12 +36,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (!user) {
         // Create new user
         const username = email.split('@')[0] + Math.floor(Math.random() * 1000);
-        const tempPassword = randomBytes(8).toString('hex');
+        const tempPassword = randomBytes(16).toString('hex');
+        
+        // Use imported hashPassword from auth.ts
+        const hashedPassword = await hashPassword(tempPassword);
         
         user = await storage.createUser({
           username,
           email,
-          password: tempPassword, // In production, hash this password
+          password: hashedPassword,
           profileImage: null,
           role: "creator", // Default role
         });
