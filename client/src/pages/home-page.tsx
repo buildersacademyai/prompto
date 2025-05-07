@@ -80,7 +80,7 @@ export default function HomePage() {
             {/* Logo */}
             <div className="flex items-center">
               <Link href="/" className="flex items-center">
-                <span className="text-2xl font-display font-bold gradient-text">Prompto</span>
+                <img src="/src/assets/logo.png" alt="Prompto Logo" className="h-10" />
               </Link>
             </div>
             
@@ -247,8 +247,8 @@ export default function HomePage() {
         <div className="container mx-auto px-4">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="mb-6 md:mb-0">
-              <h2 className="text-2xl font-display font-bold gradient-text">Prompto</h2>
-              <p className="text-sm text-muted-foreground mt-2">The decentralized advertising platform</p>
+              <img src="/src/assets/logo.png" alt="Prompto Logo" className="h-8 mb-2" />
+              <p className="text-sm text-muted-foreground">The decentralized advertising platform</p>
             </div>
             <div className="flex gap-8">
               <Link href="/auth" className="text-sm text-muted-foreground hover:text-foreground transition-colors">

@@ -12,7 +12,7 @@ export default function WhitepaperPage() {
             {/* Logo */}
             <div className="flex items-center">
               <Link href="/" className="flex items-center">
-                <span className="text-2xl font-display font-bold gradient-text">Prompto</span>
+                <img src="/src/assets/logo.png" alt="Prompto Logo" className="h-10" />
               </Link>
             </div>
             
