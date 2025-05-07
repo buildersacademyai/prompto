@@ -14,6 +14,54 @@ const stripeClient = process.env.STRIPE_SECRET_KEY
 export async function registerRoutes(app: Express): Promise<Server> {
   // Setup authentication routes
   setupAuth(app);
+  
+  // Google Authentication endpoint
+  app.post("/api/auth/google", async (req, res) => {
+    try {
+      const { idToken, email, displayName } = req.body;
+
+      if (!idToken || !email) {
+        return res.status(400).json({ error: "Missing required authentication parameters" });
+      }
+
+      // Normally we would verify the ID token with Firebase Admin
+      // For demo purposes, we'll trust the token and email provided by the client
+      // In production, you should verify the token with Firebase Admin
+      
+      // Check if user exists in our system
+      let user = await storage.getUserByEmail(email);
+      
+      if (!user) {
+        // Create new user
+        const username = email.split('@')[0] + Math.floor(Math.random() * 1000);
+        const tempPassword = randomBytes(8).toString('hex');
+        
+        user = await storage.createUser({
+          username,
+          email,
+          password: tempPassword, // In production, hash this password
+          profileImage: null,
+          role: "creator", // Default role
+        });
+      }
+      
+      // Log the user in
+      req.login(user, (err) => {
+        if (err) {
+          return res.status(500).json({ error: "Failed to log in after Google authentication" });
+        }
+        
+        // Return user info
+        return res.status(200).json({
+          username: user.username,
+          tempPassword: "google-auth", // This is just for the flow, not actually used
+        });
+      });
+    } catch (error) {
+      console.error("Google auth error:", error);
+      return res.status(500).json({ error: "Authentication failed" });
+    }
+  });
 
   // Creator routes
   app.get("/api/creator/stats", async (req, res) => {

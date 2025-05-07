@@ -251,10 +251,13 @@ export default function AuthPage() {
                     try {
                       setSigningIn(true);
                       const result = await signInWithGoogle();
-                      if (result.success) {
+                      if (result.success && result.user) {
                         // Handle successful sign-in
                         // Now we need to create or get user in our backend
                         const idToken = await result.user.getIdToken();
+                        const userEmail = result.user.email || '';
+                        const userDisplayName = result.user.displayName || '';
+                        
                         const response = await fetch('/api/auth/google', {
                           method: 'POST',
                           headers: {
@@ -262,8 +265,8 @@ export default function AuthPage() {
                           },
                           body: JSON.stringify({ 
                             idToken,
-                            email: result.user.email,
-                            displayName: result.user.displayName
+                            email: userEmail,
+                            displayName: userDisplayName
                           }),
                         });
                         
