@@ -212,23 +212,23 @@ export default function HomePage() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 1.2 }}
-              className="hidden lg:block relative"
+              className="block relative h-[40vh] sm:h-[50vh] lg:h-[70vh]"
             >
               {/* 3D scene using pure Three.js */}
-              <div className="relative">
+              <div className="relative w-full h-full">
                 {/* Main 3D scene */}
                 <HomeScene />
                 
                 {/* Overlay text with glowing effect */}
                 <div className="absolute inset-0 flex items-center justify-center flex-col pointer-events-none">
                   <motion.div
-                    className="relative text-center px-6 py-8 rounded-xl bg-black/30 backdrop-blur-sm border border-primary/20 shadow-glow"
+                    className="relative text-center px-4 sm:px-6 py-4 sm:py-8 rounded-xl bg-black/30 backdrop-blur-sm border border-primary/20 shadow-glow max-w-[85%] sm:max-w-[80%] md:max-w-[70%]"
                     initial={{ opacity: 0, y: 30, scale: 0.9 }}
                     animate={{ opacity: 1, y: 0, scale: 1 }}
                     transition={{ delay: 0.5, duration: 1 }}
                   >
                     <motion.div 
-                      className="absolute -top-10 -left-10 w-20 h-20 bg-primary/10 rounded-full blur-2xl"
+                      className="absolute -top-6 sm:-top-10 -left-6 sm:-left-10 w-12 sm:w-20 h-12 sm:h-20 bg-primary/10 rounded-full blur-2xl"
                       animate={{ 
                         scale: [1, 1.2, 1],
                         opacity: [0.3, 0.6, 0.3]
@@ -241,7 +241,7 @@ export default function HomePage() {
                     />
                     
                     <motion.div 
-                      className="absolute -bottom-10 -right-10 w-20 h-20 bg-accent/10 rounded-full blur-2xl"
+                      className="absolute -bottom-6 sm:-bottom-10 -right-6 sm:-right-10 w-12 sm:w-20 h-12 sm:h-20 bg-accent/10 rounded-full blur-2xl"
                       animate={{ 
                         scale: [1, 1.2, 1],
                         opacity: [0.3, 0.6, 0.3]
@@ -255,7 +255,7 @@ export default function HomePage() {
                     />
                     
                     <motion.p 
-                      className="text-2xl md:text-3xl font-medium text-gradient mb-4"
+                      className="text-xl sm:text-2xl md:text-3xl font-medium text-gradient mb-2 sm:mb-4"
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       transition={{ delay: 0.8, duration: 1 }}
@@ -269,7 +269,7 @@ export default function HomePage() {
                       animate={{ opacity: 1 }}
                       transition={{ delay: 1.2, duration: 1 }}
                     >
-                      <p className="text-lg text-muted-foreground">
+                      <p className="text-sm sm:text-base md:text-lg text-muted-foreground">
                         Connecting creators with influencers 
                         <span className="text-primary"> seamlessly</span> &
                         <span className="text-accent"> securely</span>

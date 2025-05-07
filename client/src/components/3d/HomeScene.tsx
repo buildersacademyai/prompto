@@ -106,52 +106,21 @@ export default function HomeScene() {
       return sphere;
     };
     
-    // Add objects with flow speed - higher value = faster flow
-    // First group of objects (cubes with primary color)
-    createCube(-8, 0.5, -2, 1, '#9945FF', 1.5);
-    createCube(-6, -0.8, -1, 0.7, '#9945FF', 1.2);
-    createCube(-4, 1.2, -3, 0.5, '#9945FF', 1.8);
+    // No solid objects - they're hidden per user request
+    // We'll only use particle systems for the visual effects
     
-    // Second group of objects (spheres with accent color)
-    createSphere(-7, -0.7, -1, 0.6, '#14F195', 1.3);
-    createSphere(-5, 0.8, -2, 0.4, '#14F195', 1.6);
-    createSphere(-9, -1.2, -0.5, 0.8, '#14F195', 1.1);
+    // Add enhanced particle effects flowing from left to right
+    const particleCount = 800; // Increased count for more density
     
-    // Third group (mixed objects with different colors)
-    createCube(-3, -0.5, -2, 0.6, '#00FFA3', 2.0);
-    createSphere(-2, 1.5, -1, 0.5, '#9945FF', 1.7);
-    createCube(-1, 0.3, -3, 0.4, '#14F195', 1.4);
-    
-    // Add special object - torus
-    const torusGeometry = new THREE.TorusGeometry(1.2, 0.15, 16, 100);
-    const torusMaterial = new THREE.MeshStandardMaterial({ 
-      color: 0x9945FF, 
-      metalness: 0.7,
-      roughness: 0.3,
-      emissive: 0x9945FF,
-      emissiveIntensity: 0.2,
-    });
-    const torus = new THREE.Mesh(torusGeometry, torusMaterial);
-    // Start the torus off-screen to the left
-    torus.position.set(-12, 0, -2);
-    torus.rotation.x = Math.PI / 4;
-    torus.userData = {
-      flowSpeed: 1.3,
-      startX: -12,
-      endX: 12
-    };
-    scene.add(torus);
-    objects.push(torus);
-    
-    // Add particles flowing from left to right
-    const particleCount = 300;
+    // WHITE PARTICLES (Main flow)
     const particles = new THREE.BufferGeometry();
     const particleMaterial = new THREE.PointsMaterial({ 
-      size: 0.03,
+      size: 0.05, // Larger size
       color: 0xFFFFFF,
       transparent: true,
-      opacity: 0.7,
+      opacity: 0.8,
       blending: THREE.AdditiveBlending,
+      sizeAttenuation: true, // Makes particles smaller with distance
     });
     
     // Create arrays to store particle positions and their flow speeds
@@ -161,17 +130,20 @@ export default function HomeScene() {
     for (let i = 0; i < particleCount; i++) {
       const i3 = i * 3;
       
-      // Distribute particles in a tube-like shape extending from left to right
-      const x = -10 + Math.random() * 20; // initial x across the scene
-      const y = -3 + Math.random() * 6;  // height variation
-      const z = -3 + Math.random() * 3;  // depth variation
+      // Distribute particles in a curved stream-like shape extending from left to right
+      const x = -15 + Math.random() * 30; // initial x across the scene
+      const y = -4 + Math.random() * 8;  // height variation
+      const z = -5 + Math.random() * 5;  // depth variation
+      
+      // Curve the stream slightly
+      const distance = Math.sqrt(x*x + y*y);
       
       particlePositions[i3] = x;
-      particlePositions[i3 + 1] = y;
+      particlePositions[i3 + 1] = y + Math.sin(distance * 0.1) * 0.5;
       particlePositions[i3 + 2] = z;
       
-      // Assign random flow speeds
-      flowSpeeds[i] = 0.5 + Math.random() * 1.5;
+      // Assign random flow speeds - faster at the center of stream
+      flowSpeeds[i] = 0.6 + Math.random() * 1.8;
     }
     
     particles.setAttribute('position', new THREE.BufferAttribute(particlePositions, 3));
@@ -180,55 +152,93 @@ export default function HomeScene() {
     const particleSystem = new THREE.Points(particles, particleMaterial);
     particleSystem.userData = { 
       flowSpeeds: flowSpeeds,
-      positions: particlePositions, // store reference to buffer
-      leftBound: -12,
-      rightBound: 12
+      positions: particlePositions,
+      leftBound: -15,
+      rightBound: 15
     };
     
     scene.add(particleSystem);
     objects.push(particleSystem);
     
-    // Add a second particle system with different colors for visual interest
-    const particles2 = new THREE.BufferGeometry();
-    const particleMaterial2 = new THREE.PointsMaterial({ 
-      size: 0.025,
-      color: 0x14F195, // Accent color
+    // PRIMARY COLOR PARTICLES (Purple)
+    const particlesPrimary = new THREE.BufferGeometry();
+    const particleMaterialPrimary = new THREE.PointsMaterial({ 
+      size: 0.04,
+      color: 0x9945FF, // Primary brand color
       transparent: true,
-      opacity: 0.5,
+      opacity: 0.8,
       blending: THREE.AdditiveBlending,
     });
     
-    const particlePositions2 = new Float32Array(particleCount * 3);
-    const flowSpeeds2 = new Float32Array(particleCount);
+    const particlePositionsPrimary = new Float32Array(particleCount * 3);
+    const flowSpeedsPrimary = new Float32Array(particleCount);
     
     for (let i = 0; i < particleCount; i++) {
       const i3 = i * 3;
       
-      // Distribute particles in a tube-like shape extending from left to right
-      const x = -12 + Math.random() * 24; // initial x across the scene
-      const y = -3 + Math.random() * 6;  // height variation
-      const z = -2 + Math.random() * 4;  // depth variation
+      const x = -15 + Math.random() * 30;
+      const y = -4 + Math.random() * 8;
+      const z = -4 + Math.random() * 5;
       
-      particlePositions2[i3] = x;
-      particlePositions2[i3 + 1] = y;
-      particlePositions2[i3 + 2] = z;
+      particlePositionsPrimary[i3] = x;
+      particlePositionsPrimary[i3 + 1] = y;
+      particlePositionsPrimary[i3 + 2] = z;
       
-      // Assign random flow speeds
-      flowSpeeds2[i] = 0.3 + Math.random() * 1.2;
+      flowSpeedsPrimary[i] = 0.4 + Math.random() * 1.5;
     }
     
-    particles2.setAttribute('position', new THREE.BufferAttribute(particlePositions2, 3));
+    particlesPrimary.setAttribute('position', new THREE.BufferAttribute(particlePositionsPrimary, 3));
     
-    const particleSystem2 = new THREE.Points(particles2, particleMaterial2);
-    particleSystem2.userData = { 
-      flowSpeeds: flowSpeeds2,
-      positions: particlePositions2,
-      leftBound: -12,
-      rightBound: 12
+    const particleSystemPrimary = new THREE.Points(particlesPrimary, particleMaterialPrimary);
+    particleSystemPrimary.userData = { 
+      flowSpeeds: flowSpeedsPrimary,
+      positions: particlePositionsPrimary,
+      leftBound: -15,
+      rightBound: 15
     };
     
-    scene.add(particleSystem2);
-    objects.push(particleSystem2);
+    scene.add(particleSystemPrimary);
+    objects.push(particleSystemPrimary);
+    
+    // ACCENT COLOR PARTICLES (Green)
+    const particlesAccent = new THREE.BufferGeometry();
+    const particleMaterialAccent = new THREE.PointsMaterial({ 
+      size: 0.035,
+      color: 0x14F195, // Accent color
+      transparent: true,
+      opacity: 0.7,
+      blending: THREE.AdditiveBlending,
+    });
+    
+    const particlePositionsAccent = new Float32Array(particleCount * 3);
+    const flowSpeedsAccent = new Float32Array(particleCount);
+    
+    for (let i = 0; i < particleCount; i++) {
+      const i3 = i * 3;
+      
+      const x = -15 + Math.random() * 30;
+      const y = -4 + Math.random() * 8;
+      const z = -4 + Math.random() * 5;
+      
+      particlePositionsAccent[i3] = x;
+      particlePositionsAccent[i3 + 1] = y;
+      particlePositionsAccent[i3 + 2] = z;
+      
+      flowSpeedsAccent[i] = 0.5 + Math.random() * 1.2;
+    }
+    
+    particlesAccent.setAttribute('position', new THREE.BufferAttribute(particlePositionsAccent, 3));
+    
+    const particleSystemAccent = new THREE.Points(particlesAccent, particleMaterialAccent);
+    particleSystemAccent.userData = { 
+      flowSpeeds: flowSpeedsAccent,
+      positions: particlePositionsAccent,
+      leftBound: -15,
+      rightBound: 15
+    };
+    
+    scene.add(particleSystemAccent);
+    objects.push(particleSystemAccent);
     
     objectsRef.current = objects;
     
@@ -236,7 +246,7 @@ export default function HomeScene() {
     const animate = () => {
       if (!sceneRef.current || !cameraRef.current || !rendererRef.current) return;
       
-      const time = Date.now() * 0.001;
+      const time = Date.now() * 0.01;
       
       // Animate all objects
       objectsRef.current.forEach(obj => {
@@ -273,14 +283,14 @@ export default function HomeScene() {
           obj.rotation.z = Math.sin(time * 0.2) * 0.3;
         }
         
-        // Particle system animation
+        // Enhanced particle system animation
         if (obj instanceof THREE.Points) {
-          // Animate particles flowing from left to right
+          // Animate particles flowing from left to right with wave effects
           if (obj.userData.flowSpeeds && obj.userData.positions) {
             const positions = obj.userData.positions;
             const flowSpeeds = obj.userData.flowSpeeds;
-            const leftBound = obj.userData.leftBound || -12;
-            const rightBound = obj.userData.rightBound || 12;
+            const leftBound = obj.userData.leftBound || -15;
+            const rightBound = obj.userData.rightBound || 15;
             
             // Update each particle position
             for (let i = 0; i < flowSpeeds.length; i++) {
@@ -289,9 +299,20 @@ export default function HomeScene() {
               // Move particle along x-axis
               positions[i3] += flowSpeeds[i] * 0.02;
               
-              // If particle moves beyond right boundary, reset to left
+              // Add subtle wave motion to y and z based on particle position and time
+              const xPos = positions[i3];
+              
+              // Sinusoidal wave pattern along the y-axis (vertical)
+              positions[i3 + 1] += Math.sin(time * 0.005 + xPos * 0.1) * 0.002 * flowSpeeds[i];
+              
+              // Subtle z-axis movement for depth
+              positions[i3 + 2] += Math.cos(time * 0.003 + xPos * 0.05) * 0.001 * flowSpeeds[i];
+              
+              // If particle moves beyond right boundary, reset to left with slight randomization
               if (positions[i3] > rightBound) {
-                positions[i3] = leftBound;
+                positions[i3] = leftBound + Math.random() * 2; // Slight randomization when resetting
+                positions[i3 + 1] = -4 + Math.random() * 8; // Reset y with randomization
+                positions[i3 + 2] = -4 + Math.random() * 5; // Reset z with randomization
               }
             }
             
