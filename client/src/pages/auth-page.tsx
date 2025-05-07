@@ -93,12 +93,7 @@ export default function AuthPage() {
     registerMutation.mutate(registrationData);
   };
 
-  // If user is already logged in, redirect to home
-  useEffect(() => {
-    if (user) {
-      setLocation("/");
-    }
-  }, [user, setLocation]);
+  // We already have a redirect above, so we can remove this duplicate useEffect
 
   const isPending = loginMutation.isPending || registerMutation.isPending || isLoading;
 
@@ -109,7 +104,7 @@ export default function AuthPage() {
         <div className="w-full lg:w-1/2 px-4 py-12 flex items-center justify-center">
           <div className="auth-gradient-bg rounded-xl w-full max-w-md p-6 shadow-xl">
             <div className="mb-6 text-center">
-              <img src="/src/assets/logo.png" alt="Prompto Logo" className="h-20 mx-auto mb-3" />
+              <img src="/assets/logo.png" alt="Prompto Logo" className="h-20 mx-auto mb-3" />
               <p className="text-muted-foreground">Connect to the decentralized advertising platform</p>
             </div>
 
