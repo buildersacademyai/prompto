@@ -1,0 +1,102 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: 0 0% 12%;
+  --foreground: 0 0% 100%;
+  --muted: 0 0% 20%;
+  --muted-foreground: 0 0% 60%;
+  --popover: 0 0% 12%;
+  --popover-foreground: 0 0% 100%;
+  --card: 0 0% 18%;
+  --card-foreground: 0 0% 100%;
+  --border: 0 0% 20%;
+  --input: 0 0% 20%;
+  --primary: 267 100% 63%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 156 89% 51%;
+  --secondary-foreground: 0 0% 12%;
+  --accent: 160 100% 50%;
+  --accent-foreground: 0 0% 12%;
+  --destructive: 0 84.2% 60.2%;
+  --destructive-foreground: 0 0% 98%;
+  --ring: 267 100% 63%;
+  --radius: 0.5rem;
+  --sidebar-background: 0 0% 12%;
+  --sidebar-foreground: 0 0% 100%;
+  --sidebar-primary: 267 100% 63%;
+  --sidebar-primary-foreground: 0 0% 100%; 
+  --sidebar-accent: 160 100% 50%;
+  --sidebar-accent-foreground: 0 0% 12%;
+  --sidebar-border: 0 0% 20%;
+  --sidebar-ring: 267 100% 63%;
+  --chart-1: 267 100% 63%;
+  --chart-2: 156 89% 51%;
+  --chart-3: 160 100% 50%;
+  --chart-4: 225 73% 57%;
+  --chart-5: 29 100% 50%;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply font-sans antialiased bg-background text-foreground;
+  }
+}
+
+@layer components {
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Space Grotesk', sans-serif;
+  }
+}
+
+/* Gradient borders */
+.gradient-border {
+  position: relative;
+  border-radius: 0.75rem;
+  background: hsl(var(--card));
+  z-index: 1;
+}
+
+.gradient-border::before {
+  content: '';
+  position: absolute;
+  top: -1px; right: -1px; bottom: -1px; left: -1px;
+  background: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--accent)) 100%);
+  border-radius: 0.85rem;
+  z-index: -1;
+}
+
+.auth-gradient-bg {
+  background: linear-gradient(135deg, rgba(153, 69, 255, 0.1) 0%, rgba(0, 255, 163, 0.1) 100%);
+}
+
+/* Gradient text */
+.gradient-text {
+  @apply bg-clip-text text-transparent bg-gradient-to-r from-primary to-accent;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: hsl(var(--background));
+}
+
+::-webkit-scrollbar-thumb {
+  background: hsl(var(--border));
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--primary));
+}
