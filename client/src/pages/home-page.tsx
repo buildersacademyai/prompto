@@ -214,110 +214,13 @@ export default function HomePage() {
               transition={{ duration: 1.2 }}
               className="hidden lg:block relative"
             >
-              {/* Animated visual display with interactive elements */}
-              <div className="w-full h-[70vh] rounded-xl overflow-hidden border border-primary/20 relative shimmer">
-                <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-background to-accent/20 bg-size-200 bg-gradient-pulse"></div>
+              {/* 3D scene using pure Three.js */}
+              <div className="relative">
+                {/* Main 3D scene */}
+                <HomeScene />
                 
-                {/* Interactive platform elements */}
-                <div className="absolute w-64 h-64 rounded-full bg-primary/5 blur-3xl"
-                     style={{ left: '30%', top: '20%' }}></div>
-                <div className="absolute w-56 h-56 rounded-full bg-accent/5 blur-3xl"
-                     style={{ right: '20%', bottom: '10%' }}></div>
-                
-                {/* Animated cube */}
-                <div className="absolute w-20 h-20 perspective-[800px]" 
-                     style={{ left: '25%', top: '25%' }}>
-                  <div className="w-full h-full relative transform-style-3d wobble">
-                    <div className="absolute inset-0 bg-primary/30 rounded-lg transform rotate-y-45 rotate-x-45"></div>
-                  </div>
-                </div>
-                
-                {/* Animated elements */}
-                <motion.div 
-                  className="absolute w-16 h-16 bg-primary/30 rounded-lg"
-                  style={{ left: '20%', top: '30%' }}
-                  animate={{ 
-                    rotate: 360,
-                    scale: [1, 1.2, 1],
-                  }}
-                  transition={{ 
-                    duration: 6, 
-                    repeat: Infinity,
-                    ease: "easeInOut" 
-                  }}
-                />
-                
-                <motion.div 
-                  className="absolute w-20 h-20 bg-accent/30 rounded-full float"
-                  style={{ right: '25%', bottom: '20%' }}
-                  animate={{ 
-                    rotate: -180
-                  }}
-                  transition={{ 
-                    duration: 10, 
-                    repeat: Infinity,
-                    ease: "linear" 
-                  }}
-                />
-                
-                <motion.div 
-                  className="absolute w-12 h-12 bg-primary/40 rounded-lg"
-                  style={{ right: '30%', top: '20%' }}
-                  animate={{ 
-                    rotate: -360,
-                    x: [0, 20, 0],
-                    y: [0, 10, 0]
-                  }}
-                  transition={{ 
-                    duration: 7, 
-                    repeat: Infinity,
-                    ease: "easeInOut" 
-                  }}
-                />
-                
-                <motion.div 
-                  className="absolute w-24 h-24 bg-accent/20 rounded-full pulse"
-                  style={{ left: '25%', bottom: '30%' }}
-                />
-                
-                {/* Connecting lines representing network */}
-                <svg className="absolute inset-0 w-full h-full" style={{ opacity: 0.2 }}>
-                  <motion.line 
-                    x1="25%" y1="30%" x2="70%" y2="20%" 
-                    stroke="hsl(var(--primary))" 
-                    strokeWidth="1"
-                    initial={{ pathLength: 0, opacity: 0 }}
-                    animate={{ pathLength: 1, opacity: 0.6 }}
-                    transition={{ duration: 2, delay: 1 }}
-                  />
-                  <motion.line 
-                    x1="25%" y1="30%" x2="25%" y2="70%" 
-                    stroke="hsl(var(--accent))" 
-                    strokeWidth="1"
-                    initial={{ pathLength: 0, opacity: 0 }}
-                    animate={{ pathLength: 1, opacity: 0.6 }}
-                    transition={{ duration: 2, delay: 1.5 }}
-                  />
-                  <motion.line 
-                    x1="70%" y1="20%" x2="75%" y2="70%" 
-                    stroke="hsl(var(--primary))" 
-                    strokeWidth="1"
-                    initial={{ pathLength: 0, opacity: 0 }}
-                    animate={{ pathLength: 1, opacity: 0.6 }}
-                    transition={{ duration: 2, delay: 2 }}
-                  />
-                  <motion.line 
-                    x1="25%" y1="70%" x2="75%" y2="70%" 
-                    stroke="hsl(var(--accent))" 
-                    strokeWidth="1"
-                    initial={{ pathLength: 0, opacity: 0 }}
-                    animate={{ pathLength: 1, opacity: 0.6 }}
-                    transition={{ duration: 2, delay: 2.5 }}
-                  />
-                </svg>
-                
-                {/* Text overlay with glowing effect */}
-                <div className="absolute inset-0 flex items-center justify-center flex-col">
+                {/* Overlay text with glowing effect */}
+                <div className="absolute inset-0 flex items-center justify-center flex-col pointer-events-none">
                   <motion.div
                     className="relative text-center px-6 py-8 rounded-xl bg-black/30 backdrop-blur-sm border border-primary/20 shadow-glow"
                     initial={{ opacity: 0, y: 30, scale: 0.9 }}
