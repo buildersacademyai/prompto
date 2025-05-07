@@ -91,7 +91,7 @@ export default function HomePage() {
             >
               <Link href="/" className="flex items-center">
                 <motion.img 
-                  src="/assets/logo.png" 
+                  src="/src/assets/logo.png" 
                   alt="Prompto Logo" 
                   className="h-16" 
                   whileHover={{ scale: 1.05 }}
@@ -621,7 +621,7 @@ export default function HomePage() {
               transition={{ type: "spring", stiffness: 400, damping: 10 }}
             >
               <Link href="/">
-                <img src="/assets/logo.png" alt="Prompto Logo" className="h-8 mb-2" />
+                <img src="/src/assets/logo.png" alt="Prompto Logo" className="h-8 mb-2" />
               </Link>
               <p className="text-sm text-muted-foreground">The decentralized advertising platform</p>
             </motion.div>
