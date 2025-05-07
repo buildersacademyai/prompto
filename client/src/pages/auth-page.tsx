@@ -54,6 +54,14 @@ export default function AuthPage() {
   const [authMethod, setAuthMethod] = useState<"email" | "social">("email");
   const [signingIn, setSigningIn] = useState(false);
   const { toast } = useToast();
+  
+  // Redirect if user is already logged in
+  useEffect(() => {
+    if (user && !isLoading) {
+      const redirectPath = user.role === 'creator' ? '/creator' : '/influencer';
+      setLocation(redirectPath);
+    }
+  }, [user, isLoading, setLocation]);
 
   // Create form instances
   const loginForm = useForm<LoginFormValues>({
