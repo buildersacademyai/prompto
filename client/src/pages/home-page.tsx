@@ -280,20 +280,6 @@ export default function HomePage() {
               </div>
             </motion.div>
           </div>
-          
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 1 }}
-            className="flex justify-center pb-8"
-          >
-            <a href="#features" className="animate-bounce flex flex-col items-center text-muted-foreground hover:text-primary transition-colors">
-              <span className="mb-2 text-sm">Discover More</span>
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="h-6 w-6">
-                <path d="M12 5L12 19M12 19L19 12M12 19L5 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-            </a>
-          </motion.div>
         </div>
       </header>
 
@@ -501,7 +487,8 @@ export default function HomePage() {
               <AnimatedButton 
                 text="Create Your Account" 
                 href="/auth" 
-                className="bg-primary hover:bg-primary/90 font-medium text-white px-8"
+                size="lg"
+                className="bg-primary hover:bg-primary/90 font-medium text-white px-8 sm:px-10 py-6 text-base sm:text-lg"
               />
             </motion.div>
           </motion.div>
@@ -524,7 +511,7 @@ export default function HomePage() {
               transition={{ type: "spring", stiffness: 400, damping: 10 }}
             >
               <Link href="/">
-                <img src="/src/assets/logo.png" alt="Prompto Logo" className="h-8 mb-2" />
+                <img src="/src/assets/logo.png" alt="Prompto Logo" className="h-28 mb-2" />
               </Link>
               <p className="text-sm text-muted-foreground">The decentralized advertising platform</p>
             </motion.div>

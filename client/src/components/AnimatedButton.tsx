@@ -8,6 +8,7 @@ interface AnimatedButtonProps {
   variant?: 'default' | 'outline' | 'ghost';
   className?: string;
   onClick?: () => void;
+  size?: 'default' | 'sm' | 'lg';
 }
 
 export default function AnimatedButton({
@@ -15,16 +16,17 @@ export default function AnimatedButton({
   href,
   variant = 'default',
   className = '',
-  onClick
+  onClick,
+  size = 'default'
 }: AnimatedButtonProps) {
   const buttonVariants = {
     idle: {
       scale: 1,
-      boxShadow: '0 0 0 rgba(0, 255, 163, 0)'
+      boxShadow: '0 0 0 rgba(153, 69, 255, 0)'
     },
     hover: {
       scale: 1.05,
-      boxShadow: '0 0 15px rgba(0, 255, 163, 0.6)'
+      boxShadow: '0 0 20px rgba(153, 69, 255, 0.5)'
     },
     tap: { 
       scale: 0.95 
@@ -41,6 +43,7 @@ export default function AnimatedButton({
     >
       <Button 
         variant={variant} 
+        size={size}
         className={`relative group ${className}`}
         onClick={onClick}
       >
@@ -49,8 +52,18 @@ export default function AnimatedButton({
           className="absolute inset-0 rounded-md opacity-0 group-hover:opacity-100 bg-gradient-to-r from-primary via-accent to-primary bg-size-200"
           initial={{ opacity: 0 }}
           whileHover={{ 
-            opacity: 0.2,
+            opacity: 0.3,
             transition: { duration: 0.3 }
+          }}
+          animate={{
+            backgroundPosition: ['0% 50%', '100% 50%', '0% 50%'],
+          }}
+          transition={{
+            backgroundPosition: {
+              duration: 5,
+              repeat: Infinity,
+              ease: "linear"
+            }
           }}
         />
       </Button>
