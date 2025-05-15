@@ -25,24 +25,33 @@ interface OptimizedContentResponse {
 }
 
 /**
- * Generate ad content based on product description, target audience, and ad type
+ * Generate ad content based on product description and optional image uploads
  */
 export async function generateAdContent(
   description: string,
-  audience: string,
-  type: string
+  imageFiles: string[] = []
 ): Promise<GeneratedAdResponse> {
   try {
-    const prompt = `
-      Create engaging ad copy for the following:
+    const fs = require('fs');
+    const path = require('path');
+
+    // Prepare messages array
+    const messages = [
+      {
+        role: "system",
+        content: "You are an expert marketing copywriter specializing in blockchain and cryptocurrency projects. If users upload images, analyze them and incorporate insights into your copy."
+      }
+    ];
+
+    // Text prompt
+    let userContent = `
+      Create engaging ad copy for the following product or service:
       
-      Product/Service: ${description}
+      Description: ${description}
       
-      Target Audience: ${audience}
+      The content should be compelling, include relevant hashtags for crypto/blockchain, and have a professional tone.
+      Consider any uploaded images in your response to make the ad more relevant.
       
-      Ad Type: ${type}
-      
-      The content should be compelling, include relevant hashtags for crypto/blockchain, and match the tone appropriate for the platform.
       Please format the response as JSON with the following structure:
       {
         "text": "The ad copy text with appropriate formatting",
@@ -55,19 +64,59 @@ export async function generateAdContent(
       }
     `;
 
+    // Add uploaded images if available
+    if (imageFiles.length > 0) {
+      // For text-only message
+      messages.push({
+        role: "user",
+        content: "I'm going to share product information and some images for you to analyze and create ad copy."
+      });
+
+      // Add image message(s)
+      for (const imagePath of imageFiles) {
+        try {
+          if (fs.existsSync(imagePath)) {
+            const mimeType = path.extname(imagePath).toLowerCase() === '.png' 
+              ? 'image/png' 
+              : path.extname(imagePath).toLowerCase() === '.webp'
+                ? 'image/webp'
+                : 'image/jpeg';
+            
+            const imageBuffer = fs.readFileSync(imagePath);
+            const base64Image = imageBuffer.toString('base64');
+            
+            messages.push({
+              role: "user",
+              content: [
+                {
+                  type: "text",
+                  text: "Here's a product image to analyze:"
+                },
+                {
+                  type: "image_url",
+                  image_url: {
+                    url: `data:${mimeType};base64,${base64Image}`
+                  }
+                }
+              ] as any
+            });
+          }
+        } catch (err) {
+          console.error(`Error processing image ${imagePath}:`, err);
+        }
+      }
+    }
+    
+    // Add the main text prompt after any images
+    messages.push({
+      role: "user",
+      content: userContent
+    });
+
     // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
     const response = await openai.chat.completions.create({
       model: "gpt-4o",
-      messages: [
-        {
-          role: "system",
-          content: "You are an expert marketing copywriter specializing in blockchain and cryptocurrency projects."
-        },
-        {
-          role: "user",
-          content: prompt
-        }
-      ],
+      messages: messages,
       response_format: { type: "json_object" }
     });
 

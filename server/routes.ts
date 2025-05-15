@@ -1,4 +1,4 @@
-import type { Express } from "express";
+import type { Express, Request } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { setupAuth } from "./auth";
@@ -7,6 +7,18 @@ import { generateAdContent, analyzeContentSentiment, generateHashtags, optimizeC
 import { hashPassword } from "./auth";
 import { randomBytes } from "crypto";
 import Stripe from "stripe";
+import multer from 'multer';
+import path from 'path';
+import fs from 'fs';
+
+// Add multer types to Express Request interface
+declare global {
+  namespace Express {
+    interface Request {
+      files?: Multer.File[]
+    }
+  }
+}
 
 // Initialize Stripe if the secret key is available
 const stripeClient = process.env.STRIPE_SECRET_KEY 
@@ -188,13 +200,62 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // AI routes
-  app.post("/api/ai/generate-ad", async (req, res) => {
+  // AI routes with file upload support
+  
+  // Create uploads directory if it doesn't exist
+  const uploadsDir = path.join(__dirname, '../uploads');
+  if (!fs.existsSync(uploadsDir)) {
+    fs.mkdirSync(uploadsDir, { recursive: true });
+  }
+  
+  const storage = multer.diskStorage({
+    destination: function (req: Request, file: Express.Multer.File, cb: multer.FileFilterCallback) {
+      cb(null, uploadsDir);
+    },
+    filename: function (req: Request, file: Express.Multer.File, cb: multer.FileFilterCallback) {
+      const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+      cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));
+    }
+  });
+  
+  const upload = multer({ 
+    storage: storage,
+    limits: {
+      fileSize: 5 * 1024 * 1024, // 5MB limit
+      files: 5 // Maximum 5 files
+    },
+    fileFilter: function (req: Request, file: Express.Multer.File, cb: multer.FileFilterCallback) {
+      // Accept images only
+      if (!file.originalname.match(/\.(jpg|jpeg|png|gif|webp)$/i)) {
+        return cb(new Error('Only image files are allowed!'), false);
+      }
+      cb(null, true);
+    }
+  });
+  
+  app.post("/api/ai/generate-ad", upload.array('image', 5), async (req, res) => {
     if (!req.isAuthenticated()) return res.sendStatus(401);
     
     try {
-      const { description, audience, type } = req.body;
-      const content = await generateAdContent(description, audience, type);
+      const { description } = req.body;
+      
+      if (!description) {
+        return res.status(400).json({ message: "Product description is required" });
+      }
+      
+      // Get the uploaded file paths if any
+      const uploadedFiles = req.files ? req.files.map(file => file.path) : [];
+      
+      // Call OpenAI with the description and image paths
+      const content = await generateAdContent(description, uploadedFiles);
+      
+      // Clean up the uploaded files after processing
+      uploadedFiles.forEach(filePath => {
+        fs.unlink(filePath, (err: NodeJS.ErrnoException | null) => {
+          if (err) console.error(`Failed to delete file ${filePath}:`, err);
+        });
+      });
+      
       res.json(content);
     } catch (error: any) {
       res.status(500).json({ message: error.message });
