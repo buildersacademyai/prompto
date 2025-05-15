@@ -123,7 +123,7 @@ export default function Header() {
                       </div>
                     </DropdownMenuLabel>
                     <DropdownMenuSeparator />
-                    {/* Role-specific menu items */}
+                    {/* Menu items (same for both roles) */}
                     <DropdownMenuItem 
                       asChild
                       className="cursor-pointer"
@@ -142,7 +142,7 @@ export default function Header() {
                       <Link href={userRole === 'creator' ? '/creator/ai-generator' : '/influencer/content'}>
                         <div className="flex items-center w-full">
                           <SparklesIcon className="mr-2 h-4 w-4" />
-                          <span>{userRole === 'creator' ? 'AI Generator' : 'Content Creation'}</span>
+                          <span>Content Creation</span>
                         </div>
                       </Link>
                     </DropdownMenuItem>
@@ -255,7 +255,7 @@ export default function Header() {
                       onClick={() => setIsOpen(false)}
                     >
                       <SparklesIcon className="inline-block mr-2 h-4 w-4" />
-                      {userRole === 'creator' ? 'AI Generator' : 'Content Creation'}
+                      Content Creation
                     </span>
                   </Link>
                   
