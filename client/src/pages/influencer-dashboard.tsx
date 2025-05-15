@@ -1,10 +1,10 @@
 import Header from "@/components/layout/header";
 import Sidebar from "@/components/layout/sidebar";
 import { Button } from "@/components/ui/button";
-import { PlusIcon, Link2Icon, CheckCircle2, AlertCircle } from "lucide-react";
+import { PlusIcon, Link2Icon, CheckCircle2, AlertCircle, CreditCard, ArrowDownIcon } from "lucide-react";
 import StatsCard from "@/components/stats-card";
 import { useAuth } from "@/hooks/use-auth";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation } from "@tanstack/react-query";
 import { Campaign, SocialAccount } from "@shared/schema";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -12,10 +12,90 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useState } from "react";
 import { formatCurrency } from "@/lib/utils";
 import CampaignCard from "@/components/campaign-card";
+import { Input } from "@/components/ui/input";
+import { useToast } from "@/hooks/use-toast";
+import { apiRequest, queryClient } from "@/lib/queryClient";
+import { z } from "zod";
 
 export default function InfluencerDashboard() {
   const { user } = useAuth();
+  const { toast } = useToast();
   const [campaignFilter, setCampaignFilter] = useState("all");
+  const [withdrawAmount, setWithdrawAmount] = useState("");
+  const [withdrawDestination, setWithdrawDestination] = useState("bank");
+  
+  // Schema for withdraw validation
+  const withdrawSchema = z.object({
+    amount: z.number().positive("Amount must be greater than 0"),
+    destination: z.string().min(1, "Destination is required")
+  });
+  
+  // Withdraw funds mutation
+  const withdrawMutation = useMutation({
+    mutationFn: async (data: {amount: number, destination: string}) => {
+      const res = await apiRequest("POST", "/api/wallet/withdraw", data);
+      return await res.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/user"] });
+      toast({
+        title: "Withdrawal successful",
+        description: `${withdrawAmount} USDC has been withdrawn to your ${withdrawDestination}.`,
+      });
+      setWithdrawAmount("");
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Withdrawal failed",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
+  
+  // Handle withdraw submission
+  const handleWithdraw = () => {
+    try {
+      // Validate input
+      const amount = parseFloat(withdrawAmount);
+      const result = withdrawSchema.parse({
+        amount,
+        destination: withdrawDestination
+      });
+      
+      // Check if user has enough balance
+      const userBalance = user?.wallet?.balance || 0;
+      if (amount > userBalance) {
+        toast({
+          title: "Insufficient balance",
+          description: `You only have ${userBalance.toFixed(2)} USDC available for withdrawal.`,
+          variant: "destructive",
+        });
+        return;
+      }
+      
+      // Process withdraw
+      withdrawMutation.mutate({
+        amount,
+        destination: withdrawDestination
+      });
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        const errorMessage = error.errors[0].message || "Invalid input";
+        toast({
+          title: "Validation error",
+          description: errorMessage,
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Error",
+          description: "An unexpected error occurred",
+          variant: "destructive",
+        });
+      }
+    }
+  };
 
   // Fetch stats
   const { data: stats, isLoading: statsLoading } = useQuery<{
@@ -43,7 +123,6 @@ export default function InfluencerDashboard() {
     <div className="min-h-screen flex flex-col bg-background">
       <Header />
       <div className="flex-1 grid grid-cols-1 lg:grid-cols-sidebar">
-        <Sidebar activeTab="dashboard" userRole="influencer" />
         
         <div className="bg-background overflow-auto">
           <div className="max-w-6xl mx-auto p-6">
@@ -92,6 +171,81 @@ export default function InfluencerDashboard() {
               ) : (
                 <div className="col-span-3 text-center p-6 bg-card rounded-xl">Failed to load stats</div>
               )}
+            </div>
+            
+            {/* Wallet Withdraw Card */}
+            <div className="mb-8">
+              <div className="bg-card rounded-xl p-6 shadow-md border border-primary/20 relative overflow-hidden">
+                <div className="absolute -right-10 -top-10 w-40 h-40 bg-primary/10 rounded-full blur-3xl"></div>
+                <div className="absolute -left-10 -bottom-10 w-40 h-40 bg-accent/10 rounded-full blur-3xl"></div>
+                
+                <div className="flex flex-col md:flex-row justify-between items-start md:items-center relative z-10 mb-6">
+                  <div className="flex items-center mb-4 md:mb-0">
+                    <div className="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center mr-4">
+                      <CreditCard className="h-6 w-6 text-primary" />
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-medium text-foreground">Wallet Balance</h3>
+                      <div className="flex items-baseline">
+                        <p className="text-2xl font-bold font-display">
+                          {user?.wallet?.balance?.toFixed(2) || "0.00"} USDC
+                        </p>
+                        <p className="text-sm ml-2 text-muted-foreground">
+                          ≈ ${user?.wallet?.usdBalance?.toFixed(2) || "0.00"} USD
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="flex flex-col md:flex-row gap-4">
+                  <div className="flex-1">
+                    <label htmlFor="amount" className="block text-sm font-medium mb-1">
+                      Amount (USDC)
+                    </label>
+                    <Input
+                      id="amount"
+                      type="number"
+                      value={withdrawAmount}
+                      onChange={(e) => setWithdrawAmount(e.target.value)}
+                      placeholder="Enter amount"
+                      className="bg-background/50"
+                    />
+                  </div>
+                  <div className="flex-1">
+                    <label htmlFor="destination" className="block text-sm font-medium mb-1">
+                      Destination
+                    </label>
+                    <Select 
+                      value={withdrawDestination} 
+                      onValueChange={setWithdrawDestination}
+                    >
+                      <SelectTrigger id="destination" className="bg-background/50">
+                        <SelectValue placeholder="Select destination" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="bank">Bank Account</SelectItem>
+                        <SelectItem value="paypal">PayPal</SelectItem>
+                        <SelectItem value="crypto">Crypto Wallet</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="flex items-end">
+                    <Button 
+                      className="bg-primary hover:bg-primary/90 text-white h-10"
+                      onClick={handleWithdraw}
+                      disabled={withdrawMutation.isPending || !withdrawAmount}
+                    >
+                      {withdrawMutation.isPending ? (
+                        <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent mr-2" />
+                      ) : (
+                        <ArrowDownIcon className="h-4 w-4 mr-2" />
+                      )}
+                      Withdraw
+                    </Button>
+                  </div>
+                </div>
+              </div>
             </div>
             
             {/* Connected Social Accounts */}
