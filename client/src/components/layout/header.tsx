@@ -85,11 +85,21 @@ export default function Header() {
           </div>
           
           <div className="hidden md:flex items-center space-x-4">
-            <Link href="/influencer">
-              <span className={`text-${location === '/influencer' ? 'white' : 'gray-300'} hover:text-white px-3 py-2 text-sm font-medium cursor-pointer`}>
-                Discover
-              </span>
-            </Link>
+            {user?.role === 'creator' && (
+              <Link href="/influencers">
+                <span className={`text-${location === '/influencers' ? 'white' : 'gray-300'} hover:text-white px-3 py-2 text-sm font-medium cursor-pointer`}>
+                  Discover Influencers
+                </span>
+              </Link>
+            )}
+            
+            {user?.role === 'influencer' && (
+              <Link href="/campaigns">
+                <span className={`text-${location === '/campaigns' ? 'white' : 'gray-300'} hover:text-white px-3 py-2 text-sm font-medium cursor-pointer`}>
+                  Discover Campaigns
+                </span>
+              </Link>
+            )}
             
             <div className="ml-4 flex items-center">
               {user && (
@@ -238,6 +248,28 @@ export default function Header() {
                       Dashboard
                     </span>
                   </Link>
+                  
+                  {userRole === 'creator' && (
+                    <Link href="/influencers">
+                      <span 
+                        className={`px-3 py-2 text-${location === '/influencers' ? 'white' : 'gray-300'} hover:text-white font-medium block cursor-pointer`}
+                        onClick={() => setIsOpen(false)}
+                      >
+                        Discover Influencers
+                      </span>
+                    </Link>
+                  )}
+                  
+                  {userRole === 'influencer' && (
+                    <Link href="/campaigns">
+                      <span 
+                        className={`px-3 py-2 text-${location === '/campaigns' ? 'white' : 'gray-300'} hover:text-white font-medium block cursor-pointer`}
+                        onClick={() => setIsOpen(false)}
+                      >
+                        Discover Campaigns
+                      </span>
+                    </Link>
+                  )}
                   
                   <div className="border-t border-border mt-2 pt-2 space-y-2">
                     {user ? (
