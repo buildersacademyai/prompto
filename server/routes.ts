@@ -15,7 +15,7 @@ import fs from 'fs';
 declare global {
   namespace Express {
     interface Request {
-      files?: Multer.File[]
+      files?: Express.Multer.File[]
     }
   }
 }
@@ -407,10 +407,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   }
   
   const multerStorage = multer.diskStorage({
-    destination: function (req: Request, file: Express.Multer.File, cb: multer.FileFilterCallback) {
+    destination: function (req: Request, file: Express.Multer.File, cb) {
       cb(null, uploadsDir);
     },
-    filename: function (req: Request, file: Express.Multer.File, cb: multer.FileFilterCallback) {
+    filename: function (req: Request, file: Express.Multer.File, cb) {
       const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
       cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));
     }
@@ -422,7 +422,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       fileSize: 5 * 1024 * 1024, // 5MB limit
       files: 5 // Maximum 5 files
     },
-    fileFilter: function (req: Request, file: Express.Multer.File, cb: multer.FileFilterCallback) {
+    fileFilter: function (req: Request, file: Express.Multer.File, cb) {
       // Accept images only
       if (!file.originalname.match(/\.(jpg|jpeg|png|gif|webp)$/i)) {
         return cb(new Error('Only image files are allowed!'), false);
@@ -442,7 +442,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       // Get the uploaded file paths if any
-      const uploadedFiles = req.files ? req.files.map(file => file.path) : [];
+      const files = req.files as Express.Multer.File[];
+      const uploadedFiles = files ? files.map(file => file.path) : [];
       
       // Call OpenAI with the description and image paths
       const content = await generateAdContent(description, uploadedFiles);
@@ -514,7 +515,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     
     try {
       // Use the specific disconnect wallet method 
-      const result = await storage.disconnectWallet(req.user.id);
+      const result = await dbStorage.disconnectWallet(req.user.id);
       res.json(result);
     } catch (error: any) {
       res.status(500).json({ message: error.message });
@@ -526,7 +527,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     
     try {
       const { amount } = req.body;
-      const result = await storage.fundWallet(req.user.id, amount);
+      const result = await dbStorage.fundWallet(req.user.id, amount);
       res.json(result);
     } catch (error: any) {
       res.status(500).json({ message: error.message });
@@ -538,7 +539,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     
     try {
       const { amount, destination } = req.body;
-      const result = await storage.withdrawFunds(req.user.id, amount, destination);
+      const result = await dbStorage.withdrawFunds(req.user.id, amount, destination);
       res.json(result);
     } catch (error: any) {
       res.status(500).json({ message: error.message });
@@ -549,7 +550,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     if (!req.isAuthenticated()) return res.sendStatus(401);
     
     try {
-      const transactions = await storage.getTransactions(req.user.id);
+      const transactions = await dbStorage.getTransactions(req.user.id);
       res.json(transactions);
     } catch (error: any) {
       res.status(500).json({ message: error.message });
