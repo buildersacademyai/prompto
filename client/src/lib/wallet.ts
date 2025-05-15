@@ -18,6 +18,9 @@ export async function connectPhantomWallet() {
     }
 
     const provider = window.phantom?.solana;
+    if (!provider) {
+      throw new Error("Phantom provider not found");
+    }
     const response = await provider.connect();
     const publicKey = response.publicKey.toString();
     

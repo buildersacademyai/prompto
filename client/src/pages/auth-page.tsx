@@ -13,6 +13,7 @@ import { useState, useEffect } from "react";
 import { Loader2 } from "lucide-react";
 import { signInWithGoogle } from "@/lib/firebase";
 import { useToast } from "@/hooks/use-toast";
+import { connectPhantomWallet, isPhantomInstalled } from "@/lib/wallet";
 
 // SVG icons for social login
 const GoogleIcon = () => (
@@ -50,7 +51,7 @@ type RegisterFormValues = z.infer<typeof registerSchema>;
 
 export default function AuthPage() {
   const { user, loginMutation, registerMutation, isLoading } = useAuth();
-  const [, setLocation] = useLocation();
+  const [location, setLocation] = useLocation();
   const [authMethod, setAuthMethod] = useState<"email" | "social">("email");
   const [signingIn, setSigningIn] = useState(false);
   const { toast } = useToast();
@@ -334,10 +335,36 @@ export default function AuthPage() {
                 <Button 
                   variant="outline" 
                   className="w-full bg-card hover:bg-card/80 font-medium transition flex items-center justify-center"
-                  disabled={true} // Disable until wallet implementation is ready
+                  disabled={signingIn || !isPhantomInstalled()}
+                  onClick={async () => {
+                    try {
+                      setSigningIn(true);
+                      const response = await connectPhantomWallet();
+                      
+                      // We successfully connected the wallet, now redirect to dashboard
+                      if (response) {
+                        toast({
+                          title: "Wallet connected",
+                          description: "Your wallet has been successfully connected.",
+                        });
+                        setLocation("/");
+                      }
+                    } catch (error) {
+                      console.error("Failed to connect wallet:", error);
+                      toast({
+                        title: "Wallet connection failed",
+                        description: error instanceof Error ? error.message : "Failed to connect wallet. Please try again.",
+                        variant: "destructive",
+                      });
+                    } finally {
+                      setSigningIn(false);
+                    }
+                  }}
                 >
-                  <WalletIcon />
-                  <span className="ml-2">Connect Wallet (Coming Soon)</span>
+                  {signingIn ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <WalletIcon />}
+                  <span className="ml-2">
+                    {isPhantomInstalled() ? "Connect Wallet" : "Phantom Wallet Not Found"}
+                  </span>
                 </Button>
               </div>
             )}
