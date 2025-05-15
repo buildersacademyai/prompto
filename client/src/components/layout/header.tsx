@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/use-auth";
-import { connectPhantomWallet, disconnectPhantomWallet, isPhantomInstalled } from "@/lib/wallet";
+import WalletConnectButton from "@/components/WalletConnectButton";
 import { 
   WalletIcon, 
   UserIcon, 
