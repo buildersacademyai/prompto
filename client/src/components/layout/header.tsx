@@ -79,8 +79,10 @@ export default function Header() {
             <div className="flex-shrink-0">
               <Link href="/">
                 <div className="flex items-center gap-2 cursor-pointer">
-                  <img src={logoImage} alt="Prompto Logo" className="h-24 w-auto" />
-                  
+                  <img src={logoImage} alt="Prompto Logo" className="h-10 w-auto" />
+                  <div className="font-display font-bold text-2xl gradient-text">
+                    Prompto
+                  </div>
                 </div>
               </Link>
             </div>
