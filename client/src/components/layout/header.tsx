@@ -2,7 +2,19 @@ import { useState } from "react";
 import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/use-auth";
-import { WalletIcon, UserIcon, Menu, User2Icon, ChevronDownIcon, LogOutIcon, PlusIcon } from "lucide-react";
+import { 
+  WalletIcon, 
+  UserIcon, 
+  Menu, 
+  User2Icon, 
+  ChevronDownIcon, 
+  LogOutIcon, 
+  PlusIcon,
+  MegaphoneIcon, 
+  SparklesIcon, 
+  UsersIcon, 
+  BarChart3Icon
+} from "lucide-react";
 import {
   Sheet,
   SheetContent,
@@ -160,6 +172,62 @@ export default function Header() {
                       )}
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
+                    <DropdownMenuItem 
+                      asChild
+                      className="cursor-pointer"
+                    >
+                      <Link href={userRole === 'creator' ? '/creator/campaigns' : '/influencer/campaigns'}>
+                        <div className="flex items-center w-full">
+                          <MegaphoneIcon className="mr-2 h-4 w-4" />
+                          <span>Campaigns</span>
+                        </div>
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem 
+                      asChild
+                      className="cursor-pointer"
+                    >
+                      <Link href={userRole === 'creator' ? '/creator/ai-generator' : '/influencer/content'}>
+                        <div className="flex items-center w-full">
+                          <SparklesIcon className="mr-2 h-4 w-4" />
+                          <span>{userRole === 'creator' ? 'AI Generator' : 'Content Creation'}</span>
+                        </div>
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem 
+                      asChild
+                      className="cursor-pointer"
+                    >
+                      <Link href={userRole === 'creator' ? '/creator/influencers' : '/influencer/creators'}>
+                        <div className="flex items-center w-full">
+                          <UsersIcon className="mr-2 h-4 w-4" />
+                          <span>{userRole === 'creator' ? 'Influencers' : 'Creators'}</span>
+                        </div>
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem 
+                      asChild
+                      className="cursor-pointer"
+                    >
+                      <Link href={userRole === 'creator' ? '/creator/analytics' : '/influencer/analytics'}>
+                        <div className="flex items-center w-full">
+                          <BarChart3Icon className="mr-2 h-4 w-4" />
+                          <span>Analytics</span>
+                        </div>
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem 
+                      asChild
+                      className="cursor-pointer"
+                    >
+                      <Link href={userRole === 'creator' ? '/creator/payments' : '/influencer/payments'}>
+                        <div className="flex items-center w-full">
+                          <WalletIcon className="mr-2 h-4 w-4" />
+                          <span>Payments</span>
+                        </div>
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
                     <DropdownMenuItem className="flex justify-between cursor-pointer">
                       <div className="flex items-center">
                         <WalletIcon className="mr-2 h-4 w-4" />
@@ -207,20 +275,12 @@ export default function Header() {
               </SheetTrigger>
               <SheetContent side="right" className="bg-background p-0">
                 <nav className="flex flex-col p-4">
-                  <Link href="/creator">
+                  <Link href={userRole === 'creator' ? '/creator' : '/influencer'}>
                     <span 
-                      className={`px-3 py-2 text-${location === '/creator' ? 'white' : 'gray-300'} hover:text-white font-medium block cursor-pointer`}
+                      className={`px-3 py-2 text-${(location === '/creator' || location === '/influencer') ? 'white' : 'gray-300'} hover:text-white font-medium block cursor-pointer`}
                       onClick={() => setIsOpen(false)}
                     >
-                      Create Campaign
-                    </span>
-                  </Link>
-                  <Link href="/influencer">
-                    <span 
-                      className={`px-3 py-2 text-${location === '/influencer' ? 'white' : 'gray-300'} hover:text-white font-medium block cursor-pointer`}
-                      onClick={() => setIsOpen(false)}
-                    >
-                      Discover
+                      Dashboard
                     </span>
                   </Link>
                   <a href="#" className="px-3 py-2 text-gray-300 hover:text-white font-medium">

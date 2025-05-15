@@ -23,36 +23,6 @@ export default function Sidebar({ activeTab, userRole }: SidebarProps) {
       icon: <LayoutDashboardIcon className="text-xl mr-3" />,
       path: userRole === 'creator' ? '/creator' : '/influencer',
       active: activeTab === 'dashboard'
-    },
-    {
-      name: "Campaigns",
-      icon: <MegaphoneIcon className="text-xl mr-3" />,
-      path: userRole === 'creator' ? '/creator/campaigns' : '/influencer/campaigns',
-      active: activeTab === 'campaigns'
-    },
-    {
-      name: userRole === 'creator' ? "AI Generator" : "Content Creation",
-      icon: <SparklesIcon className="text-xl mr-3" />,
-      path: userRole === 'creator' ? '/creator/ai-generator' : '/influencer/content',
-      active: activeTab === 'ai-generator' || activeTab === 'content'
-    },
-    {
-      name: userRole === 'creator' ? "Influencers" : "Creators",
-      icon: <UsersIcon className="text-xl mr-3" />,
-      path: userRole === 'creator' ? '/creator/influencers' : '/influencer/creators',
-      active: activeTab === 'influencers' || activeTab === 'creators'
-    },
-    {
-      name: "Analytics",
-      icon: <BarChart3Icon className="text-xl mr-3" />,
-      path: userRole === 'creator' ? '/creator/analytics' : '/influencer/analytics',
-      active: activeTab === 'analytics'
-    },
-    {
-      name: "Payments",
-      icon: <WalletIcon className="text-xl mr-3" />,
-      path: userRole === 'creator' ? '/creator/payments' : '/influencer/payments',
-      active: activeTab === 'payments'
     }
   ];
 
