@@ -254,8 +254,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
     if (!req.isAuthenticated()) return res.sendStatus(401);
     
     try {
-      // Remove wallet address by setting to null
-      const result = await storage.connectWallet(req.user.id, null);
+      // Use the specific disconnect wallet method 
+      const result = await storage.disconnectWallet(req.user.id);
       res.json(result);
     } catch (error: any) {
       res.status(500).json({ message: error.message });
