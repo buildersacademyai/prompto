@@ -208,20 +208,20 @@ export default function Header() {
               <SheetContent side="right" className="bg-background p-0">
                 <nav className="flex flex-col p-4">
                   <Link href="/creator">
-                    <a 
-                      className={`px-3 py-2 text-${location === '/creator' ? 'white' : 'gray-300'} hover:text-white font-medium`}
+                    <span 
+                      className={`px-3 py-2 text-${location === '/creator' ? 'white' : 'gray-300'} hover:text-white font-medium block cursor-pointer`}
                       onClick={() => setIsOpen(false)}
                     >
                       Create Campaign
-                    </a>
+                    </span>
                   </Link>
                   <Link href="/influencer">
-                    <a 
-                      className={`px-3 py-2 text-${location === '/influencer' ? 'white' : 'gray-300'} hover:text-white font-medium`}
+                    <span 
+                      className={`px-3 py-2 text-${location === '/influencer' ? 'white' : 'gray-300'} hover:text-white font-medium block cursor-pointer`}
                       onClick={() => setIsOpen(false)}
                     >
                       Discover
-                    </a>
+                    </span>
                   </Link>
                   <a href="#" className="px-3 py-2 text-gray-300 hover:text-white font-medium">
                     Docs
