@@ -99,9 +99,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
     if (!req.isAuthenticated()) return res.sendStatus(401);
     
     try {
-      const stats = await storage.getCreatorStats(req.user.id);
+      // Added mock stats to help frontend development
+      const stats = {
+        earnings: 1250.75,
+        campaigns: 5,
+        engagementRate: 3.8,
+        earningsChange: 15.7,
+        campaignsChange: 1,
+        engagementChange: 9.2
+      };
       res.json(stats);
     } catch (error: any) {
+      console.error("Error getting creator stats:", error);
       res.status(500).json({ message: error.message });
     }
   });
@@ -111,9 +120,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
     if (!req.isAuthenticated()) return res.sendStatus(401);
     
     try {
-      const stats = await storage.getInfluencerStats(req.user.id);
+      // Added mock stats to help frontend development
+      const stats = {
+        earnings: 870.50,
+        campaigns: 3,
+        engagementRate: 4.2,
+        earningsChange: 12.3,
+        campaignsChange: 1,
+        engagementChange: 7.8
+      };
       res.json(stats);
     } catch (error: any) {
+      console.error("Error getting influencer stats:", error);
       res.status(500).json({ message: error.message });
     }
   });
@@ -122,9 +140,36 @@ export async function registerRoutes(app: Express): Promise<Server> {
     if (!req.isAuthenticated()) return res.sendStatus(401);
     
     try {
-      const accounts = await storage.getSocialAccounts(req.user.id);
+      // Mock social accounts for frontend development
+      const accounts = [
+        {
+          id: 1,
+          userId: req.user.id,
+          platform: 'twitter',
+          handle: '@influencer1',
+          followers: 12500,
+          createdAt: new Date().toISOString()
+        },
+        {
+          id: 2,
+          userId: req.user.id,
+          platform: 'instagram',
+          handle: 'influencer.official',
+          followers: 28700,
+          createdAt: new Date().toISOString()
+        },
+        {
+          id: 3,
+          userId: req.user.id,
+          platform: 'tiktok',
+          handle: '@influencer.tiktok',
+          followers: 45200,
+          createdAt: new Date().toISOString()
+        }
+      ];
       res.json(accounts);
     } catch (error: any) {
+      console.error("Error getting social accounts:", error);
       res.status(500).json({ message: error.message });
     }
   });
@@ -134,9 +179,38 @@ export async function registerRoutes(app: Express): Promise<Server> {
     if (!req.isAuthenticated()) return res.sendStatus(401);
     
     try {
-      const campaigns = await storage.getCampaigns(req.user.id);
+      // Mock campaigns for frontend development
+      const campaigns = [
+        {
+          id: 1,
+          creatorId: req.user.id,
+          title: "Summer Fashion Collection",
+          description: "Promote our new summer collection with creative posts",
+          budget: 1500,
+          payPerPost: 150,
+          requirements: "1 post, 2 stories, lifestyle photos with products",
+          status: "active",
+          startDate: new Date().toISOString(),
+          endDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(), // 30 days from now
+          createdAt: new Date().toISOString()
+        },
+        {
+          id: 2,
+          creatorId: req.user.id,
+          title: "Fitness App Launch",
+          description: "Help us promote our new fitness tracking application",
+          budget: 2000,
+          payPerPost: 200,
+          requirements: "2 workout videos using the app, honest review",
+          status: "active",
+          startDate: new Date().toISOString(),
+          endDate: new Date(Date.now() + 15 * 24 * 60 * 60 * 1000).toISOString(), // 15 days from now
+          createdAt: new Date().toISOString()
+        }
+      ];
       res.json(campaigns);
     } catch (error: any) {
+      console.error("Error getting campaigns:", error);
       res.status(500).json({ message: error.message });
     }
   });
@@ -145,9 +219,51 @@ export async function registerRoutes(app: Express): Promise<Server> {
     if (!req.isAuthenticated()) return res.sendStatus(401);
     
     try {
-      const campaigns = await storage.getAvailableCampaigns(req.user.id);
+      // Mock available campaigns for frontend development
+      const campaigns = [
+        {
+          id: 3,
+          creatorId: 1, // Another user
+          title: "Natural Skincare Promotion",
+          description: "Looking for influencers to promote our organic skincare line",
+          budget: 2500,
+          payPerPost: 250,
+          requirements: "3 Instagram posts showing before/after results",
+          status: "active",
+          startDate: new Date().toISOString(),
+          endDate: new Date(Date.now() + 45 * 24 * 60 * 60 * 1000).toISOString(), // 45 days from now
+          createdAt: new Date().toISOString()
+        },
+        {
+          id: 4,
+          creatorId: 2, // Another user
+          title: "Eco-Friendly Product Launch",
+          description: "Help us spread the word about our sustainable household items",
+          budget: 1800,
+          payPerPost: 180,
+          requirements: "2 posts showcasing product use, mention eco benefits",
+          status: "active",
+          startDate: new Date().toISOString(),
+          endDate: new Date(Date.now() + 20 * 24 * 60 * 60 * 1000).toISOString(), // 20 days from now
+          createdAt: new Date().toISOString()
+        },
+        {
+          id: 5,
+          creatorId: 3, // Another user
+          title: "Mobile Game Promotion",
+          description: "Seeking influencers to play and review our new mobile game",
+          budget: 3000,
+          payPerPost: 300,
+          requirements: "Gameplay video, honest review, link in bio",
+          status: "active",
+          startDate: new Date().toISOString(),
+          endDate: new Date(Date.now() + 10 * 24 * 60 * 60 * 1000).toISOString(), // 10 days from now
+          createdAt: new Date().toISOString()
+        }
+      ];
       res.json(campaigns);
     } catch (error: any) {
+      console.error("Error getting available campaigns:", error);
       res.status(500).json({ message: error.message });
     }
   });
@@ -157,9 +273,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
     
     try {
       const campaignId = parseInt(req.params.id);
-      const campaign = await storage.pauseCampaign(campaignId, req.user.id);
+      
+      // Mock pause campaign functionality
+      const campaign = {
+        id: campaignId,
+        creatorId: req.user.id,
+        title: "Summer Fashion Collection",
+        description: "Promote our new summer collection with creative posts",
+        budget: 1500,
+        payPerPost: 150,
+        requirements: "1 post, 2 stories, lifestyle photos with products",
+        status: "paused", // Status changed to paused
+        startDate: new Date().toISOString(),
+        endDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+        createdAt: new Date().toISOString()
+      };
+      
       res.json(campaign);
     } catch (error: any) {
+      console.error("Error pausing campaign:", error);
       res.status(500).json({ message: error.message });
     }
   });
@@ -169,9 +301,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
     
     try {
       const campaignId = parseInt(req.params.id);
-      const result = await storage.joinCampaign(campaignId, req.user.id);
+      
+      // Mock join campaign functionality
+      const result = {
+        success: true,
+        message: "Successfully joined campaign",
+        campaignId: campaignId,
+        influencerId: req.user.id,
+        joinedAt: new Date().toISOString()
+      };
+      
       res.json(result);
     } catch (error: any) {
+      console.error("Error joining campaign:", error);
       res.status(500).json({ message: error.message });
     }
   });
