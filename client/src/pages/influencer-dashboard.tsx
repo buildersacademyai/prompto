@@ -1,5 +1,4 @@
 import Header from "@/components/layout/header";
-import Sidebar from "@/components/layout/sidebar";
 import { Button } from "@/components/ui/button";
 import { PlusIcon, Link2Icon, CheckCircle2, AlertCircle, CreditCard, ArrowDownIcon } from "lucide-react";
 import StatsCard from "@/components/stats-card";
@@ -258,8 +257,10 @@ export default function InfluencerDashboard() {
                   Array.from({ length: 3 }).map((_, i) => (
                     <div key={i} className="bg-card rounded-xl p-6 shadow-md animate-pulse h-32"></div>
                   ))
-                ) : socialAccounts && socialAccounts.length > 0 ? (
-                  socialAccounts.map((account) => (
+                ) : socialAccounts && socialAccounts.filter(account => account.platform !== 'twitter').length > 0 ? (
+                  socialAccounts
+                    .filter(account => account.platform !== 'twitter') // Remove Twitter accounts
+                    .map((account) => (
                     <Card key={account.id} className="bg-card border-border">
                       <CardHeader className="pb-2">
                         <div className="flex justify-between items-start">
