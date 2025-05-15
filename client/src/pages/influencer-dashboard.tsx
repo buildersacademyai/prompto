@@ -124,7 +124,7 @@ export default function InfluencerDashboard() {
   return (
     <div className="min-h-screen flex flex-col bg-background">
       <Header />
-      <div className="flex-1 grid grid-cols-1 lg:grid-cols-sidebar">
+      <div className="flex-1 grid grid-cols-1 lg:grid-cols-sidebar pt-20">
         
         <div className="bg-background overflow-auto">
           <div className="max-w-6xl mx-auto p-6">
