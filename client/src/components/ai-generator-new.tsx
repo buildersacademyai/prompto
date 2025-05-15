@@ -168,6 +168,9 @@ export default function AIGenerator({ className }: AIGeneratorProps) {
                         src={url} 
                         alt={`Uploaded image ${index + 1}`} 
                         className="w-16 h-16 object-cover rounded-md border border-border"
+                        onError={(e) => {
+                          e.currentTarget.src = "https://placehold.co/400x400/1E1E1E/9945FF?text=Image+Error";
+                        }}
                       />
                       <button
                         type="button"
@@ -270,6 +273,9 @@ export default function AIGenerator({ className }: AIGeneratorProps) {
                           src={media.url} 
                           alt={media.alt} 
                           className="w-16 h-16 rounded-lg object-cover"
+                          onError={(e) => {
+                            e.currentTarget.src = "https://placehold.co/400x400/1E1E1E/9945FF?text=Media+Error";
+                          }}
                         />
                       ))}
                     </div>
