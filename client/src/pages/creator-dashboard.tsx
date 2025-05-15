@@ -1,8 +1,11 @@
 import Header from "@/components/layout/header";
 import Sidebar from "@/components/layout/sidebar";
 import { Button } from "@/components/ui/button";
-import { PlusIcon } from "lucide-react";
+import { PlusIcon, CreditCard, ArrowUpIcon } from "lucide-react";
 import StatsCard from "@/components/stats-card";
+import { useMutation } from "@tanstack/react-query";
+import { apiRequest, queryClient } from "@/lib/queryClient";
+import { useToast } from "@/hooks/use-toast";
 import AIGenerator from "@/components/ai-generator";
 import CampaignCard from "@/components/campaign-card";
 import InfluencerCard from "@/components/influencer-card";
@@ -15,9 +18,31 @@ import { useState } from "react";
 
 export default function CreatorDashboard() {
   const { user } = useAuth();
+  const { toast } = useToast();
   const [campaignSort, setCampaignSort] = useState("performance");
   const [influencerFilter, setInfluencerFilter] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
+  
+  const fundWalletMutation = useMutation({
+    mutationFn: async (amount: number) => {
+      const res = await apiRequest("POST", "/api/wallet/fund", { amount });
+      return await res.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/user"] });
+      toast({
+        title: "Wallet funded",
+        description: "Your wallet has been funded successfully.",
+      });
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Funding failed",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
 
   // Fetch campaigns
   const { data: campaigns, isLoading: campaignsLoading } = useQuery<Campaign[]>({
@@ -45,7 +70,7 @@ export default function CreatorDashboard() {
     <div className="min-h-screen flex flex-col bg-background">
       <Header />
       <div className="flex-1 grid grid-cols-1 lg:grid-cols-sidebar">
-        <Sidebar activeTab="dashboard" userRole="creator" />
+        
         
         <div className="bg-background overflow-auto">
           <div className="max-w-6xl mx-auto p-6">
@@ -60,6 +85,46 @@ export default function CreatorDashboard() {
                   <PlusIcon className="mr-2 h-4 w-4" />
                   Create New Campaign
                 </Button>
+              </div>
+            </div>
+            
+            {/* Wallet Balance Card */}
+            <div className="mb-6">
+              <div className="bg-card rounded-xl p-6 shadow-md border border-primary/20 relative overflow-hidden">
+                <div className="absolute -right-10 -top-10 w-40 h-40 bg-primary/10 rounded-full blur-3xl"></div>
+                <div className="absolute -left-10 -bottom-10 w-40 h-40 bg-accent/10 rounded-full blur-3xl"></div>
+                
+                <div className="flex flex-col md:flex-row justify-between items-start md:items-center relative z-10">
+                  <div className="flex items-center mb-4 md:mb-0">
+                    <div className="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center mr-4">
+                      <CreditCard className="h-6 w-6 text-primary" />
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-medium text-foreground">Wallet Balance</h3>
+                      <div className="flex items-baseline">
+                        <p className="text-2xl font-bold font-display">
+                          {user?.wallet?.balance?.toFixed(2) || "0.00"} USDC
+                        </p>
+                        <p className="text-sm ml-2 text-muted-foreground">
+                          ≈ ${user?.wallet?.usdBalance?.toFixed(2) || "0.00"} USD
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <Button 
+                    className="bg-primary hover:bg-primary/90 text-white"
+                    onClick={() => fundWalletMutation.mutate(100)}
+                    disabled={fundWalletMutation.isPending}
+                  >
+                    {fundWalletMutation.isPending ? (
+                      <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent mr-2" />
+                    ) : (
+                      <ArrowUpIcon className="h-4 w-4 mr-2" />
+                    )}
+                    Top Up Wallet
+                  </Button>
+                </div>
               </div>
             </div>
             
