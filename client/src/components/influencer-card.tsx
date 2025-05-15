@@ -130,7 +130,7 @@ export default function InfluencerCard({ influencer }: InfluencerCardProps) {
           <div className="flex justify-between items-center">
             <div>
               <p className="text-sm">
-                Avg. Engagement <span className="font-semibold text-foreground">{influencer.engagementRate.toFixed(1)}%</span>
+                Avg. Engagement <span className="font-semibold text-foreground">{(influencer.engagementRate || 0).toFixed(1)}%</span>
               </p>
             </div>
             <Button 

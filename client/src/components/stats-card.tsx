@@ -13,7 +13,9 @@ interface StatsCardProps {
 export default function StatsCard({ title, value, change, icon, valuePrefix }: StatsCardProps) {
   // Format the value based on the type and magnitude
   const formattedValue = (() => {
-    if (valuePrefix === "$") {
+    if (value === undefined || value === null) {
+      return "0";
+    } else if (valuePrefix === "$") {
       return formatCurrency(value);
     } else if (value >= 1000) {
       return formatCompactNumber(value);
@@ -22,7 +24,7 @@ export default function StatsCard({ title, value, change, icon, valuePrefix }: S
     }
   })();
 
-  const isPositive = change >= 0;
+  const isPositive = (change || 0) >= 0;
   
   // Icon component based on the icon type
   const IconComponent = () => {
@@ -60,7 +62,7 @@ export default function StatsCard({ title, value, change, icon, valuePrefix }: S
             <p className="text-xs flex items-center mt-1">
               <span className={`flex items-center ${isPositive ? 'text-secondary' : 'text-red-500'}`}>
                 {isPositive ? <ArrowUpIcon className="h-3 w-3 mr-1" /> : <ArrowDownIcon className="h-3 w-3 mr-1" />}
-                {Math.abs(change).toFixed(1)}%
+                {Math.abs(change || 0).toFixed(1)}%
               </span>
               <span className="text-muted-foreground ml-1">vs last month</span>
             </p>
