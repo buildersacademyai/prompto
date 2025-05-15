@@ -78,9 +78,12 @@ export default function InfluencerCard({ influencer }: InfluencerCardProps) {
     <Card className="bg-background overflow-hidden border-border hover:border-primary transition-colors">
       <div className="relative h-24">
         <img 
-          src={influencer.bannerUrl} 
+          src={influencer.bannerUrl || "https://placehold.co/800x200/1E1E1E/9945FF?text=Banner"} 
           alt={`${influencer.name} banner`} 
           className="w-full h-full object-cover"
+          onError={(e) => {
+            e.currentTarget.src = "https://placehold.co/800x200/1E1E1E/9945FF?text=Banner";
+          }}
         />
       </div>
       
@@ -88,9 +91,12 @@ export default function InfluencerCard({ influencer }: InfluencerCardProps) {
         <div className="absolute -top-8 left-4">
           <div className="w-16 h-16 rounded-full border-4 border-background overflow-hidden">
             <img 
-              src={influencer.profileImageUrl} 
+              src={influencer.profileImageUrl || "https://placehold.co/200x200/1E1E1E/9945FF?text=Profile"} 
               alt={`${influencer.name} profile`} 
               className="w-full h-full object-cover"
+              onError={(e) => {
+                e.currentTarget.src = "https://placehold.co/200x200/1E1E1E/9945FF?text=Profile";
+              }}
             />
           </div>
         </div>

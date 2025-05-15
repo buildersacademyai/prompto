@@ -84,9 +84,12 @@ export default function CampaignCard({ campaign, influencerView = false }: Campa
     >
       <div className="h-40 relative">
         <img 
-          src={campaign.imageUrl} 
+          src={campaign.imageUrl || "https://placehold.co/600x400/1E1E1E/9945FF?text=Campaign+Image"} 
           alt={campaign.title} 
           className="w-full h-full object-cover"
+          onError={(e) => {
+            e.currentTarget.src = "https://placehold.co/600x400/1E1E1E/9945FF?text=Campaign+Image";
+          }}
         />
         <Badge 
           className={`absolute top-3 right-3 bg-secondary text-background text-xs font-medium px-2 py-1 rounded-full`}
