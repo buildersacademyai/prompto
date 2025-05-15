@@ -74,36 +74,19 @@ export default function Header() {
   return (
     <header className="bg-background border-b border-border">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-16 items-center">
+        <div className="flex justify-between h-20 items-center">
           <div className="flex items-center">
             <div className="flex-shrink-0">
               <Link href="/">
                 <div className="flex items-center gap-2 cursor-pointer">
-                  <img src={logoImage} alt="Prompto Logo" className="h-10 w-auto" />
-                  <div className="font-display font-bold text-2xl gradient-text">
-                    Prompto
-                  </div>
+                  <img src={logoImage} alt="Prompto Logo" className="h-24 w-auto" />
+                  
                 </div>
               </Link>
             </div>
           </div>
           
           <div className="hidden md:flex items-center space-x-4">
-            {user?.role === 'creator' && (
-              <Link href="/influencers">
-                <span className={`text-${location === '/influencers' ? 'white' : 'gray-300'} hover:text-white px-3 py-2 text-sm font-medium cursor-pointer`}>
-                  Discover Influencers
-                </span>
-              </Link>
-            )}
-            
-            {user?.role === 'influencer' && (
-              <Link href="/campaigns">
-                <span className={`text-${location === '/campaigns' ? 'white' : 'gray-300'} hover:text-white px-3 py-2 text-sm font-medium cursor-pointer`}>
-                  Discover Campaigns
-                </span>
-              </Link>
-            )}
             
             <div className="ml-4 flex items-center">
               {user && (
