@@ -253,7 +253,10 @@ export default function AuthPage() {
                   onClick={async () => {
                     try {
                       setSigningIn(true);
+                      console.log("Starting Google sign-in process");
                       const result = await signInWithGoogle();
+                      console.log("Google sign-in result:", result);
+                      
                       if (result.success && result.user) {
                         // Handle successful sign-in
                         // Now we need to create or get user in our backend
@@ -261,6 +264,7 @@ export default function AuthPage() {
                         const userEmail = result.user.email || '';
                         const userDisplayName = result.user.displayName || '';
                         
+                        console.log("Sending auth data to server:", { email: userEmail, displayName: userDisplayName });
                         const response = await fetch('/api/auth/google', {
                           method: 'POST',
                           headers: {
@@ -273,14 +277,30 @@ export default function AuthPage() {
                           }),
                         });
                         
+                        console.log("Google authentication response status:", response.status);
+                        
                         if (response.ok) {
                           const data = await response.json();
-                          // After successful backend authentication, update our auth state
-                          loginMutation.mutate({
-                            username: data.username,
-                            password: data.tempPassword // This is just for the flow, not actually used
-                          });
+                          console.log("Google authentication server response:", data);
+                          
+                          if (data.success) {
+                            console.log("Authentication successful, redirecting to dashboard");
+                            // The session is already established on the server
+                            // We can just refresh the auth state
+                            window.location.href = data.user.role === 'creator' ? '/creator' : '/influencer';
+                          } else {
+                            console.error("Authentication response success flag is false");
+                            toast({
+                              title: "Authentication failed",
+                              description: "Could not authenticate with Google. Please try again.",
+                              variant: "destructive",
+                            });
+                          }
                         } else {
+                          console.error("Authentication response not OK:", response.status);
+                          const errorText = await response.text();
+                          console.error("Error response:", errorText);
+                          
                           toast({
                             title: "Authentication failed",
                             description: "Could not authenticate with Google. Please try again.",

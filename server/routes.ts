@@ -20,9 +20,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Google Authentication endpoint
   app.post("/api/auth/google", async (req, res) => {
     try {
+      console.log("Google auth endpoint called with body:", req.body);
       const { idToken, email, displayName } = req.body;
 
       if (!idToken || !email) {
+        console.error("Missing required parameters for Google auth");
         return res.status(400).json({ error: "Missing required authentication parameters" });
       }
 
@@ -31,16 +33,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // In production, you should verify the token with Firebase Admin
       
       // Check if user exists in our system
+      console.log("Looking up user by email:", email);
       let user = await storage.getUserByEmail(email);
+      console.log("User lookup result:", user ? "User found" : "User not found");
       
       if (!user) {
         // Create new user
-        const username = email.split('@')[0] + Math.floor(Math.random() * 1000);
+        const username = email.split('@')[0] + Math.floor(Math.random() * 10000);
         const tempPassword = randomBytes(16).toString('hex');
         
         // Use imported hashPassword from auth.ts
         const hashedPassword = await hashPassword(tempPassword);
         
+        console.log("Creating new user with username:", username);
         user = await storage.createUser({
           username,
           email,
@@ -48,18 +53,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
           profileImage: null,
           role: "creator", // Default role
         });
+        console.log("New user created:", user.id);
       }
       
-      // Log the user in
+      // Log the user in manually - this establishes the session
+      console.log("Logging in user with passport:", user.id);
       req.login(user, (err) => {
         if (err) {
+          console.error("Google auth login error:", err);
           return res.status(500).json({ error: "Failed to log in after Google authentication" });
         }
         
-        // Return user info
+        console.log("Login successful, session established");
+        // Return user info with successful session - client doesn't need to call login again
         return res.status(200).json({
-          username: user.username,
-          tempPassword: "google-auth", // This is just for the flow, not actually used
+          success: true,
+          user: {
+            id: user.id,
+            username: user.username,
+            email: user.email,
+            role: user.role
+          }
         });
       });
     } catch (error) {
