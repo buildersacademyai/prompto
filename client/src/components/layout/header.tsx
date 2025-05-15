@@ -15,7 +15,9 @@ import {
   MegaphoneIcon, 
   SparklesIcon, 
   UsersIcon, 
-  BarChart3Icon
+  BarChart3Icon,
+  PlusCircleIcon,
+  LinkIcon
 } from "lucide-react";
 import {
   Sheet,
