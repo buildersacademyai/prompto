@@ -123,7 +123,7 @@ export default function Header() {
                       </div>
                     </DropdownMenuLabel>
                     <DropdownMenuSeparator />
-                    {/* Role switching removed - users need separate accounts for each role */}
+                    {/* Role-specific menu items */}
                     <DropdownMenuItem 
                       asChild
                       className="cursor-pointer"
@@ -180,7 +180,7 @@ export default function Header() {
                       </Link>
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem className="flex justify-between cursor-pointer">
+                    <DropdownMenuItem className="flex justify-between cursor-default">
                       <div className="flex items-center">
                         <WalletIcon className="mr-2 h-4 w-4" />
                         <span>Balance: {user?.wallet?.balance?.toFixed(2) || "0.00"} USDC</span>
@@ -239,27 +239,45 @@ export default function Header() {
                     </span>
                   </Link>
                   
-                  {userRole === 'creator' && (
-                    <Link href="/influencers">
-                      <span 
-                        className={`px-3 py-2 text-${location === '/influencers' ? 'white' : 'gray-300'} hover:text-white font-medium block cursor-pointer`}
-                        onClick={() => setIsOpen(false)}
-                      >
-                        Discover Influencers
-                      </span>
-                    </Link>
-                  )}
+                  <Link href={userRole === 'creator' ? '/creator/campaigns' : '/influencer/campaigns'}>
+                    <span
+                      className="px-3 py-2 text-gray-300 hover:text-white font-medium block cursor-pointer"
+                      onClick={() => setIsOpen(false)}
+                    >
+                      <MegaphoneIcon className="inline-block mr-2 h-4 w-4" />
+                      Campaigns
+                    </span>
+                  </Link>
                   
-                  {userRole === 'influencer' && (
-                    <Link href="/campaigns">
-                      <span 
-                        className={`px-3 py-2 text-${location === '/campaigns' ? 'white' : 'gray-300'} hover:text-white font-medium block cursor-pointer`}
-                        onClick={() => setIsOpen(false)}
-                      >
-                        Discover Campaigns
-                      </span>
-                    </Link>
-                  )}
+                  <Link href={userRole === 'creator' ? '/creator/ai-generator' : '/influencer/content'}>
+                    <span
+                      className="px-3 py-2 text-gray-300 hover:text-white font-medium block cursor-pointer"
+                      onClick={() => setIsOpen(false)}
+                    >
+                      <SparklesIcon className="inline-block mr-2 h-4 w-4" />
+                      {userRole === 'creator' ? 'AI Generator' : 'Content Creation'}
+                    </span>
+                  </Link>
+                  
+                  <Link href={userRole === 'creator' ? '/creator/analytics' : '/influencer/analytics'}>
+                    <span
+                      className="px-3 py-2 text-gray-300 hover:text-white font-medium block cursor-pointer"
+                      onClick={() => setIsOpen(false)}
+                    >
+                      <BarChart3Icon className="inline-block mr-2 h-4 w-4" />
+                      Analytics
+                    </span>
+                  </Link>
+                  
+                  <Link href={userRole === 'creator' ? '/creator/payments' : '/influencer/payments'}>
+                    <span
+                      className="px-3 py-2 text-gray-300 hover:text-white font-medium block cursor-pointer"
+                      onClick={() => setIsOpen(false)}
+                    >
+                      <WalletIcon className="inline-block mr-2 h-4 w-4" />
+                      Payments
+                    </span>
+                  </Link>
                   
                   <div className="border-t border-border mt-2 pt-2 space-y-2">
                     {user ? (
