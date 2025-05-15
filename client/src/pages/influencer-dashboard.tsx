@@ -303,11 +303,11 @@ export default function InfluencerDashboard() {
                         <div className="flex items-center justify-between text-sm mt-2">
                           <div>
                             <span className="text-muted-foreground">Followers:</span>{' '}
-                            <span className="font-medium">{account.followers.toLocaleString()}</span>
+                            <span className="font-medium">{(account.followers || 0).toLocaleString()}</span>
                           </div>
                           <div>
                             <span className="text-muted-foreground">Engagement:</span>{' '}
-                            <span className="font-medium">{account.engagementRate.toFixed(1)}%</span>
+                            <span className="font-medium">{(account.engagementRate || 0).toFixed(1)}%</span>
                           </div>
                         </div>
                       </CardContent>

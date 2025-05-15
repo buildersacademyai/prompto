@@ -79,10 +79,8 @@ export default function Header() {
             <div className="flex-shrink-0">
               <Link href="/">
                 <div className="flex items-center gap-2 cursor-pointer">
-                  <img src={logoImage} alt="Prompto Logo" className="h-10 w-auto" />
-                  <div className="font-display font-bold text-2xl gradient-text">
-                    Prompto
-                  </div>
+                  <img src={logoImage} alt="Prompto Logo" className="h-24 w-auto" />
+                  
                 </div>
               </Link>
             </div>
@@ -148,7 +146,7 @@ export default function Header() {
                         </div>
                       </Link>
                     </DropdownMenuItem>
-                    <DropdownMenuItem 
+                    {/* <DropdownMenuItem 
                       asChild
                       className="cursor-pointer"
                     >
@@ -158,7 +156,7 @@ export default function Header() {
                           <span>{userRole === 'creator' ? 'Influencers' : 'Creators'}</span>
                         </div>
                       </Link>
-                    </DropdownMenuItem>
+                    </DropdownMenuItem> */}
                     <DropdownMenuItem 
                       asChild
                       className="cursor-pointer"
