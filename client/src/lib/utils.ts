@@ -25,6 +25,9 @@ export function formatCurrency(amount: number, currency = 'USD') {
 }
 
 export function formatPercentage(value: number) {
+  if (value === undefined || value === null) {
+    return '0.0%';
+  }
   return `${value.toFixed(1)}%`;
 }
 

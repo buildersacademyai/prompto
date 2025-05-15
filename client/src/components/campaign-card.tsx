@@ -31,8 +31,8 @@ export default function CampaignCard({ campaign, influencerView = false }: Campa
   const [isHovered, setIsHovered] = useState(false);
   
   // Calculate progress percentages
-  const budgetPercentage = (campaign.budget.spent / campaign.budget.total) * 100;
-  const engagementPercentage = campaign.engagementRate * 10; // Scale for progress bar
+  const budgetPercentage = (campaign.budget?.spent / (campaign.budget?.total || 1)) * 100 || 0;
+  const engagementPercentage = (campaign.engagementRate || 0) * 10; // Scale for progress bar, default to 0 if undefined
   
   const pauseCampaignMutation = useMutation({
     mutationFn: async () => {
@@ -103,7 +103,7 @@ export default function CampaignCard({ campaign, influencerView = false }: Campa
           <div>
             <p className="text-xs text-muted-foreground">Budget Spent</p>
             <p className="font-medium">
-              {formatCurrency(campaign.budget.spent)} / {formatCurrency(campaign.budget.total)}
+              {formatCurrency(campaign.budget?.spent || 0)} / {formatCurrency(campaign.budget?.total || 0)}
             </p>
             <div className="w-full bg-background rounded-full h-1.5 mt-1">
               <div 
@@ -114,7 +114,7 @@ export default function CampaignCard({ campaign, influencerView = false }: Campa
           </div>
           <div>
             <p className="text-xs text-muted-foreground">Engagement Rate</p>
-            <p className="font-medium">{formatPercentage(campaign.engagementRate)}</p>
+            <p className="font-medium">{formatPercentage(campaign.engagementRate || 0)}</p>
             <div className="w-full bg-background rounded-full h-1.5 mt-1">
               <div 
                 className="bg-secondary h-1.5 rounded-full" 
@@ -126,7 +126,7 @@ export default function CampaignCard({ campaign, influencerView = false }: Campa
         
         <div className="flex justify-between items-center">
           <div className="flex -space-x-2">
-            {campaign.influencers.slice(0, 3).map((influencer, index) => (
+            {campaign.influencers?.slice(0, 3).map((influencer, index) => (
               <Tooltip key={index}>
                 <TooltipTrigger asChild>
                   <div 
@@ -145,7 +145,7 @@ export default function CampaignCard({ campaign, influencerView = false }: Campa
                 </TooltipContent>
               </Tooltip>
             ))}
-            {campaign.influencers.length > 3 && (
+            {campaign.influencers && campaign.influencers.length > 3 && (
               <Tooltip>
                 <TooltipTrigger asChild>
                   <div className="w-8 h-8 rounded-full bg-card flex items-center justify-center text-xs border-2 border-card">
