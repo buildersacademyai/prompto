@@ -7,9 +7,10 @@ import { useState } from "react";
 interface WalletConnectButtonProps {
   walletAddress?: string | null;
   className?: string;
+  onClick?: () => void;
 }
 
-export default function WalletConnectButton({ walletAddress, className }: WalletConnectButtonProps) {
+export default function WalletConnectButton({ walletAddress, className, onClick }: WalletConnectButtonProps) {
   const { toast } = useToast();
   const [isConnecting, setIsConnecting] = useState(false);
 
@@ -42,9 +43,14 @@ export default function WalletConnectButton({ walletAddress, className }: Wallet
         });
       }
       
-      // Reload to refresh wallet status
-      // This is a quick solution; in a production app, you'd use React Query invalidation
-      window.location.reload();
+      // Call onClick prop if provided
+      if (onClick) {
+        onClick();
+      } else {
+        // Reload to refresh wallet status
+        // This is a quick solution; in a production app, you'd use React Query invalidation
+        window.location.reload();
+      }
     } catch (error) {
       console.error("Wallet operation failed:", error);
       toast({

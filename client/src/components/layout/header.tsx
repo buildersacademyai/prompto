@@ -93,54 +93,9 @@ export default function Header() {
             
             <div className="ml-4 flex items-center">
               {user && (
-                <Button 
-                  variant="outline" 
-                  className="border-primary hover:bg-primary hover:text-white text-primary rounded-full flex items-center"
-                  onClick={async () => {
-                    try {
-                      if (user?.wallet?.walletAddress) {
-                        // Disconnect wallet
-                        await disconnectPhantomWallet();
-                        toast({
-                          title: "Wallet disconnected",
-                          description: "Your wallet has been successfully disconnected.",
-                        });
-                      } else {
-                        // Connect wallet
-                        if (!isPhantomInstalled()) {
-                          toast({
-                            title: "Phantom wallet not found",
-                            description: "Please install the Phantom wallet extension to connect your wallet.",
-                            variant: "destructive",
-                          });
-                          return;
-                        }
-                        await connectPhantomWallet();
-                        toast({
-                          title: "Wallet connected",
-                          description: "Your wallet has been successfully connected.",
-                        });
-                      }
-                      // Reload to refresh wallet status
-                      // This is a quick solution; in a production app, you'd use React Query invalidation
-                      window.location.reload();
-                    } catch (error) {
-                      console.error("Wallet operation failed:", error);
-                      toast({
-                        title: "Wallet operation failed",
-                        description: error instanceof Error ? error.message : "Failed to process wallet operation.",
-                        variant: "destructive",
-                      });
-                    }
-                  }}
-                >
-                  <WalletIcon className="mr-1.5 h-4 w-4" />
-                  <span>
-                    {user?.wallet?.walletAddress 
-                      ? `${user.wallet.walletAddress.substring(0, 4)}...${user.wallet.walletAddress.substring(user.wallet.walletAddress.length - 4)}` 
-                      : "Connect Wallet"}
-                  </span>
-                </Button>
+                <WalletConnectButton 
+                  walletAddress={user?.wallet?.walletAddress || null}
+                />
               )}
               
               {user ? (
@@ -345,14 +300,11 @@ export default function Header() {
                       </>
                     ) : (
                       <>
-                        <Button 
-                          variant="outline" 
-                          className="w-full border-primary hover:bg-primary hover:text-white text-primary"
+                        <WalletConnectButton 
+                          walletAddress={null}
+                          className="w-full"
                           onClick={() => setIsOpen(false)}
-                        >
-                          <WalletIcon className="mr-1.5 h-4 w-4" />
-                          <span>Connect Wallet</span>
-                        </Button>
+                        />
                         
                         <Link href="/auth">
                           <Button 
