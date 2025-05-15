@@ -11,14 +11,8 @@ import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
 
-// Add multer types to Express Request interface
-declare global {
-  namespace Express {
-    interface Request {
-      files?: Express.Multer.File[]
-    }
-  }
-}
+// We don't need to declare the files interface because it's already included
+// in the @types/express package
 
 // Initialize Stripe if the secret key is available
 const stripeClient = process.env.STRIPE_SECRET_KEY 
@@ -425,7 +419,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
     fileFilter: function (req: Request, file: Express.Multer.File, cb) {
       // Accept images only
       if (!file.originalname.match(/\.(jpg|jpeg|png|gif|webp)$/i)) {
-        return cb(new Error('Only image files are allowed!'), false);
+        cb(null, false);
+        return;
       }
       cb(null, true);
     }
