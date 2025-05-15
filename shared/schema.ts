@@ -136,6 +136,10 @@ export type Wallet = typeof wallets.$inferSelect;
 export type Transaction = typeof transactions.$inferSelect;
 
 export type Campaign = typeof campaigns.$inferSelect & {
+  budget: {
+    total: number;
+    spent: number;
+  };
   influencers?: Array<{
     initials: string;
     name: string;
