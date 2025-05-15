@@ -63,7 +63,7 @@ export function setupAuth(app: Express) {
   passport.serializeUser((user, done) => done(null, user.id));
   passport.deserializeUser(async (id: number, done) => {
     try {
-      const user = await storage.getUser(id);
+      const user = await dbStorage.getUser(id);
       done(null, user);
     } catch (error) {
       done(error);
@@ -72,12 +72,12 @@ export function setupAuth(app: Express) {
 
   app.post("/api/register", async (req, res, next) => {
     try {
-      const existingUser = await storage.getUserByUsername(req.body.username);
+      const existingUser = await dbStorage.getUserByUsername(req.body.username);
       if (existingUser) {
         return res.status(400).send("Username already exists");
       }
 
-      const user = await storage.createUser({
+      const user = await dbStorage.createUser({
         ...req.body,
         password: await hashPassword(req.body.password),
       });
@@ -116,15 +116,15 @@ export function setupAuth(app: Express) {
     }
 
     // Update user role in database
-    storage.updateUserRole(req.user.id, role)
-      .then(updatedUser => {
+    dbStorage.updateUserRole(req.user.id, role)
+      .then((updatedUser: SelectUser) => {
         // Update session user object
         req.login(updatedUser, (err) => {
           if (err) throw err;
           res.status(200).json(updatedUser);
         });
       })
-      .catch(error => {
+      .catch((error: Error) => {
         res.status(500).send(error.message);
       });
   });
