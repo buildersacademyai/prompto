@@ -109,13 +109,6 @@ export default function Header() {
           </div>
           
           <div className="hidden md:flex items-center space-x-4">
-            {userRole === 'creator' && (
-              <Link href="/creator">
-                <span className={`text-${location === '/creator' ? 'white' : 'gray-300'} hover:text-white px-3 py-2 text-sm font-medium cursor-pointer`}>
-                  Create Campaign
-                </span>
-              </Link>
-            )}
             <Link href="/influencer">
               <span className={`text-${location === '/influencer' ? 'white' : 'gray-300'} hover:text-white px-3 py-2 text-sm font-medium cursor-pointer`}>
                 Discover
