@@ -1,6 +1,42 @@
 import { apiRequest } from "./queryClient";
+import { Connection, PublicKey, clusterApiUrl } from "@solana/web3.js";
 
-// Connect wallet
+// Solana connection
+export const connection = new Connection(clusterApiUrl("devnet"));
+
+// Check if Phantom wallet is available
+export function isPhantomInstalled(): boolean {
+  const phantom = window?.phantom?.solana;
+  return !!phantom?.isPhantom;
+}
+
+// Connect to Phantom wallet
+export async function connectPhantomWallet() {
+  try {
+    if (!isPhantomInstalled()) {
+      throw new Error("Phantom wallet is not installed");
+    }
+
+    const provider = window.phantom?.solana;
+    const response = await provider.connect();
+    const publicKey = response.publicKey.toString();
+    
+    // Also register the wallet with our backend
+    const apiResponse = await apiRequest("POST", "/api/wallet/connect", {
+      walletAddress: publicKey
+    });
+    
+    return {
+      publicKey,
+      ...await apiResponse.json()
+    };
+  } catch (error) {
+    console.error("Error connecting Phantom wallet:", error);
+    throw error;
+  }
+}
+
+// Connect wallet (legacy method)
 export async function connectWallet(walletAddress: string) {
   try {
     const response = await apiRequest("POST", "/api/wallet/connect", {

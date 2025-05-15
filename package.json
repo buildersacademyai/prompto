@@ -43,6 +43,7 @@
     "@radix-ui/react-tooltip": "^1.2.0",
     "@react-three/drei": "^9.77.10",
     "@react-three/fiber": "^8.13.4",
+    "@solana/web3.js": "^1.98.2",
     "@stripe/react-stripe-js": "^3.7.0",
     "@stripe/stripe-js": "^7.3.0",
     "@tailwindcss/vite": "^4.1.3",
