@@ -1,6 +1,6 @@
 import type { Express, Request } from "express";
 import { createServer, type Server } from "http";
-import { storage } from "./storage";
+import { storage as dbStorage } from "./storage";
 import { setupAuth } from "./auth";
 import { generateAdContent, analyzeContentSentiment, generateHashtags, optimizeContent } from "./openai";
 // Import hash function to reuse in Google auth
@@ -46,7 +46,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       // Check if user exists in our system
       console.log("Looking up user by email:", email);
-      let user = await storage.getUserByEmail(email);
+      let user = await dbStorage.getUserByEmail(email);
       console.log("User lookup result:", user ? "User found" : "User not found");
       
       if (!user) {
@@ -58,7 +58,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         const hashedPassword = await hashPassword(tempPassword);
         
         console.log("Creating new user with username:", username);
-        user = await storage.createUser({
+        user = await dbStorage.createUser({
           username,
           email,
           password: hashedPassword,
@@ -323,9 +323,54 @@ export async function registerRoutes(app: Express): Promise<Server> {
     if (!req.isAuthenticated()) return res.sendStatus(401);
     
     try {
-      const influencers = await storage.getInfluencers();
+      // Mock influencers data for frontend development
+      const influencers = [
+        {
+          id: 1,
+          username: "fashionista",
+          email: "fashion@example.com",
+          role: "influencer",
+          profileImage: "https://picsum.photos/id/64/200/200",
+          bio: "Fashion and lifestyle content creator with 5+ years experience",
+          socialStats: {
+            followers: 35000,
+            engagement: 4.8
+          },
+          categories: ["fashion", "lifestyle", "beauty"],
+          createdAt: new Date().toISOString()
+        },
+        {
+          id: 2,
+          username: "techreview",
+          email: "tech@example.com",
+          role: "influencer",
+          profileImage: "https://picsum.photos/id/65/200/200",
+          bio: "Tech reviewer and gaming enthusiast. Latest gadgets and honest reviews",
+          socialStats: {
+            followers: 42000,
+            engagement: 3.9
+          },
+          categories: ["technology", "gaming", "electronics"],
+          createdAt: new Date().toISOString()
+        },
+        {
+          id: 3,
+          username: "foodie_adventures",
+          email: "food@example.com",
+          role: "influencer",
+          profileImage: "https://picsum.photos/id/66/200/200",
+          bio: "Food blogger sharing recipes and restaurant reviews",
+          socialStats: {
+            followers: 28000,
+            engagement: 5.2
+          },
+          categories: ["food", "cooking", "restaurants"],
+          createdAt: new Date().toISOString()
+        }
+      ];
       res.json(influencers);
     } catch (error: any) {
+      console.error("Error getting influencers:", error);
       res.status(500).json({ message: error.message });
     }
   });
@@ -335,9 +380,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
     
     try {
       const influencerId = parseInt(req.params.id);
-      const result = await storage.connectWithInfluencer(influencerId, req.user.id);
+      
+      // Mock connect with influencer functionality
+      const result = {
+        success: true,
+        message: "Successfully connected with influencer",
+        creatorId: req.user.id,
+        influencerId: influencerId,
+        connectedAt: new Date().toISOString(),
+        status: "pending"
+      };
+      
       res.json(result);
     } catch (error: any) {
+      console.error("Error connecting with influencer:", error);
       res.status(500).json({ message: error.message });
     }
   });
@@ -350,7 +406,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     fs.mkdirSync(uploadsDir, { recursive: true });
   }
   
-  const storage = multer.diskStorage({
+  const multerStorage = multer.diskStorage({
     destination: function (req: Request, file: Express.Multer.File, cb: multer.FileFilterCallback) {
       cb(null, uploadsDir);
     },
@@ -361,7 +417,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
   
   const upload = multer({ 
-    storage: storage,
+    storage: multerStorage,
     limits: {
       fileSize: 5 * 1024 * 1024, // 5MB limit
       files: 5 // Maximum 5 files
@@ -446,7 +502,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     
     try {
       const { walletAddress } = req.body;
-      const result = await storage.connectWallet(req.user.id, walletAddress);
+      const result = await dbStorage.connectWallet(req.user.id, walletAddress);
       res.json(result);
     } catch (error: any) {
       res.status(500).json({ message: error.message });
