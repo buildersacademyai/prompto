@@ -22,17 +22,15 @@ export default function InfluencerDashboard() {
   const { toast } = useToast();
   const [campaignFilter, setCampaignFilter] = useState("all");
   const [withdrawAmount, setWithdrawAmount] = useState("");
-  const [withdrawDestination, setWithdrawDestination] = useState("bank");
   
   // Schema for withdraw validation
   const withdrawSchema = z.object({
-    amount: z.number().positive("Amount must be greater than 0"),
-    destination: z.string().min(1, "Destination is required")
+    amount: z.number().positive("Amount must be greater than 0")
   });
   
   // Withdraw funds mutation
   const withdrawMutation = useMutation({
-    mutationFn: async (data: {amount: number, destination: string}) => {
+    mutationFn: async (data: {amount: number}) => {
       const res = await apiRequest("POST", "/api/wallet/withdraw", data);
       return await res.json();
     },
@@ -40,7 +38,7 @@ export default function InfluencerDashboard() {
       queryClient.invalidateQueries({ queryKey: ["/api/user"] });
       toast({
         title: "Withdrawal successful",
-        description: `${withdrawAmount} USDC has been withdrawn to your ${withdrawDestination}.`,
+        description: `${withdrawAmount} USDC has been withdrawn to your connected wallet.`,
       });
       setWithdrawAmount("");
     },
@@ -58,10 +56,7 @@ export default function InfluencerDashboard() {
     try {
       // Validate input
       const amount = parseFloat(withdrawAmount);
-      const result = withdrawSchema.parse({
-        amount,
-        destination: withdrawDestination
-      });
+      const result = withdrawSchema.parse({ amount });
       
       // Check if user has enough balance
       const userBalance = user?.wallet?.balance || 0;
@@ -74,11 +69,18 @@ export default function InfluencerDashboard() {
         return;
       }
       
+      // Check if user has a connected wallet
+      if (!user?.wallet?.walletAddress) {
+        toast({
+          title: "No wallet connected",
+          description: "Please connect a wallet address in your profile settings first.",
+          variant: "destructive",
+        });
+        return;
+      }
+      
       // Process withdraw
-      withdrawMutation.mutate({
-        amount,
-        destination: withdrawDestination
-      });
+      withdrawMutation.mutate({ amount });
     } catch (error) {
       if (error instanceof z.ZodError) {
         const errorMessage = error.errors[0].message || "Invalid input";
@@ -212,24 +214,6 @@ export default function InfluencerDashboard() {
                       className="bg-background/50"
                     />
                   </div>
-                  <div className="flex-1">
-                    <label htmlFor="destination" className="block text-sm font-medium mb-1">
-                      Destination
-                    </label>
-                    <Select 
-                      value={withdrawDestination} 
-                      onValueChange={setWithdrawDestination}
-                    >
-                      <SelectTrigger id="destination" className="bg-background/50">
-                        <SelectValue placeholder="Select destination" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="bank">Bank Account</SelectItem>
-                        <SelectItem value="paypal">PayPal</SelectItem>
-                        <SelectItem value="crypto">Crypto Wallet</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
                   <div className="flex items-end">
                     <Button 
                       className="bg-primary hover:bg-primary/90 text-white h-10"
@@ -241,10 +225,21 @@ export default function InfluencerDashboard() {
                       ) : (
                         <ArrowDownIcon className="h-4 w-4 mr-2" />
                       )}
-                      Withdraw
+                      Withdraw to Wallet
                     </Button>
                   </div>
                 </div>
+                
+                <p className="text-sm text-muted-foreground mt-2">
+                  Funds will be sent to your connected wallet address: 
+                  {user?.wallet?.walletAddress ? (
+                    <span className="font-mono ml-2">
+                      {user.wallet.walletAddress.substring(0, 6)}...{user.wallet.walletAddress.substring(user.wallet.walletAddress.length - 4)}
+                    </span>
+                  ) : (
+                    <span className="italic ml-2">No wallet connected</span>
+                  )}
+                </p>
               </div>
             </div>
             
