@@ -147,7 +147,12 @@ export type Campaign = typeof campaigns.$inferSelect & {
   }>;
 };
 
-export type Influencer = typeof influencers.$inferSelect;
+export type Influencer = typeof influencers.$inferSelect & {
+  socialStats: Array<{
+    platform: SocialPlatform;
+    followers: number;
+  }>;
+};
 
 export type SocialPlatform = 'twitter' | 'instagram' | 'tiktok' | 'youtube' | 'discord';
 

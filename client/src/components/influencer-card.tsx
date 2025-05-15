@@ -109,20 +109,22 @@ export default function InfluencerCard({ influencer }: InfluencerCardProps) {
           </div>
           
           <div className="flex items-center text-sm mt-3 mb-4">
-            {influencer.socialStats.map((stat, index) => (
-              <div key={index} className="flex items-center mr-4">
-                <SocialIcon platform={stat.platform} />
-                <span>{formatCompactNumber(stat.followers)}</span>
-              </div>
-            ))}
+            {Array.isArray(influencer.socialStats) ? 
+              influencer.socialStats.map((stat, index) => (
+                <div key={index} className="flex items-center mr-4">
+                  <SocialIcon platform={stat.platform} />
+                  <span>{formatCompactNumber(stat.followers)}</span>
+                </div>
+              )) : null}
           </div>
           
           <div className="flex flex-wrap gap-2 mb-4">
-            {influencer.tags.map((tag, index) => (
-              <Badge key={index} variant="outline" className="bg-primary/10 text-primary text-xs">
-                {tag}
-              </Badge>
-            ))}
+            {Array.isArray(influencer.tags) ? 
+              influencer.tags.map((tag, index) => (
+                <Badge key={index} variant="outline" className="bg-primary/10 text-primary text-xs">
+                  {tag}
+                </Badge>
+              )) : null}
           </div>
           
           <div className="flex justify-between items-center">
