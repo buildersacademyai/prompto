@@ -3,6 +3,7 @@ import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/use-auth";
 import WalletConnectButton from "@/components/WalletConnectButton";
+import logoImage from "@/assets/logo.png";
 import { 
   WalletIcon, 
   UserIcon, 
@@ -77,8 +78,11 @@ export default function Header() {
           <div className="flex items-center">
             <div className="flex-shrink-0">
               <Link href="/">
-                <div className="font-display font-bold text-2xl gradient-text cursor-pointer">
-                  Prompto
+                <div className="flex items-center gap-2 cursor-pointer">
+                  <img src={logoImage} alt="Prompto Logo" className="h-10 w-auto" />
+                  <div className="font-display font-bold text-2xl gradient-text">
+                    Prompto
+                  </div>
                 </div>
               </Link>
             </div>
@@ -231,7 +235,10 @@ export default function Header() {
             </div>
           </div>
           
-          <div className="flex md:hidden">
+          <div className="flex items-center md:hidden">
+            <Link href="/" className="mr-2">
+              <img src={logoImage} alt="Prompto Logo" className="h-8 w-auto" />
+            </Link>
             <Sheet open={isOpen} onOpenChange={setIsOpen}>
               <SheetTrigger asChild>
                 <Button variant="ghost" size="icon" className="text-gray-400 hover:text-white">
