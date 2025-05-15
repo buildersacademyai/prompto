@@ -281,11 +281,32 @@ export class DatabaseStorage implements IStorage {
   }
 
   async connectWallet(userId: number, walletAddress: string): Promise<any> {
+    // Check if wallet exists
+    let wallet = await this.getUserWallet(userId);
+    
+    if (!wallet) {
+      // Create wallet if it doesn't exist
+      wallet = await this.createWallet(userId);
+    }
+    
+    // Update wallet with address
     const [updatedWallet] = await db
       .update(wallets)
       .set({ walletAddress })
       .where(eq(wallets.userId, userId))
       .returning();
+    
+    // Record transaction for wallet connection
+    await db
+      .insert(transactions)
+      .values({
+        userId,
+        type: 'wallet_connected',
+        amount: 0,
+        status: 'completed',
+        createdAt: new Date(),
+        description: `Connected wallet: ${walletAddress.substring(0, 6)}...${walletAddress.substring(walletAddress.length - 4)}`
+      });
     
     return updatedWallet;
   }

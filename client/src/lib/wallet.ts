@@ -39,6 +39,31 @@ export async function connectPhantomWallet() {
   }
 }
 
+// Disconnect Phantom wallet
+export async function disconnectPhantomWallet() {
+  try {
+    if (!isPhantomInstalled()) {
+      throw new Error("Phantom wallet is not installed");
+    }
+
+    const provider = window.phantom?.solana;
+    if (!provider) {
+      throw new Error("Phantom provider not found");
+    }
+    
+    // Disconnect from Phantom
+    await provider.disconnect();
+    
+    // Also disconnect the wallet from our backend
+    const apiResponse = await apiRequest("POST", "/api/wallet/disconnect");
+    
+    return await apiResponse.json();
+  } catch (error) {
+    console.error("Error disconnecting Phantom wallet:", error);
+    throw error;
+  }
+}
+
 // Connect wallet (legacy method)
 export async function connectWallet(walletAddress: string) {
   try {

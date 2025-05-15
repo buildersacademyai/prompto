@@ -35,10 +35,11 @@ export const wallets = pgTable("wallets", {
 export const transactions = pgTable("transactions", {
   id: serial("id").primaryKey(),
   userId: integer("user_id").notNull().references(() => users.id),
-  type: text("type").notNull(), // deposit, withdrawal, payment, etc.
+  type: text("type").notNull(), // deposit, withdrawal, payment, wallet_connected, etc.
   amount: doublePrecision("amount").notNull(),
   destination: text("destination"),
   status: text("status").notNull(), // pending, completed, failed
+  description: text("description"),
   createdAt: timestamp("created_at").defaultNow(),
 });
 

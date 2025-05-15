@@ -249,6 +249,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ message: error.message });
     }
   });
+  
+  app.post("/api/wallet/disconnect", async (req, res) => {
+    if (!req.isAuthenticated()) return res.sendStatus(401);
+    
+    try {
+      // Remove wallet address by setting to null
+      const result = await storage.connectWallet(req.user.id, null);
+      res.json(result);
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  });
 
   app.post("/api/wallet/fund", async (req, res) => {
     if (!req.isAuthenticated()) return res.sendStatus(401);
