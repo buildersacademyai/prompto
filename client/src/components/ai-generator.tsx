@@ -77,7 +77,7 @@ export default function AIGenerator({ className }: AIGeneratorProps) {
     <Card className={`bg-card shadow-md ${className}`}>
       <CardHeader className="pb-0 border-b border-border">
         <CardTitle>AI Ad Generator</CardTitle>
-        <CardDescription>Create compelling ad copy with GPT-4 technology</CardDescription>
+        <CardDescription>Create compelling ad copy with Prompto technology</CardDescription>
       </CardHeader>
       
       <CardContent className="p-6">

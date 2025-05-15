@@ -102,7 +102,7 @@ export default function Header() {
             <div className="flex-shrink-0">
               <Link href="/">
                 <div className="font-display font-bold text-2xl gradient-text cursor-pointer">
-                  DecentralAds
+                  Prompto
                 </div>
               </Link>
             </div>
