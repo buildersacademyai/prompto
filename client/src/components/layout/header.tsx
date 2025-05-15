@@ -146,6 +146,27 @@ export default function Header() {
                         </div>
                       </Link>
                     </DropdownMenuItem>
+                    
+                    {/* Role-specific actions */}
+                    {userRole === 'creator' ? (
+                      <DropdownMenuItem asChild className="cursor-pointer">
+                        <Link href="/creator/new-campaign">
+                          <div className="flex items-center w-full">
+                            <PlusCircleIcon className="mr-2 h-4 w-4" />
+                            <span>New Campaign</span>
+                          </div>
+                        </Link>
+                      </DropdownMenuItem>
+                    ) : (
+                      <DropdownMenuItem asChild className="cursor-pointer">
+                        <Link href="/influencer/accounts">
+                          <div className="flex items-center w-full">
+                            <LinkIcon className="mr-2 h-4 w-4" />
+                            <span>Manage Accounts</span>
+                          </div>
+                        </Link>
+                      </DropdownMenuItem>
+                    )}
                     {/* <DropdownMenuItem 
                       asChild
                       className="cursor-pointer"
@@ -186,17 +207,20 @@ export default function Header() {
                         <span>Balance: {user?.wallet?.balance?.toFixed(2) || "0.00"} USDC</span>
                       </div>
                     </DropdownMenuItem>
-                    <DropdownMenuItem 
-                      onClick={() => fundWalletMutation.mutate(100)}
-                      disabled={fundWalletMutation.isPending}
-                      className="cursor-pointer"
-                    >
-                      <PlusIcon className="mr-2 h-4 w-4" />
-                      <span>Fund Wallet</span>
-                      {fundWalletMutation.isPending && (
-                        <div className="ml-auto h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent" />
-                      )}
-                    </DropdownMenuItem>
+                    {/* Only creators need to fund wallet for campaigns */}
+                    {userRole === 'creator' && (
+                      <DropdownMenuItem 
+                        onClick={() => fundWalletMutation.mutate(100)}
+                        disabled={fundWalletMutation.isPending}
+                        className="cursor-pointer"
+                      >
+                        <PlusIcon className="mr-2 h-4 w-4" />
+                        <span>Fund Wallet</span>
+                        {fundWalletMutation.isPending && (
+                          <div className="ml-auto h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+                        )}
+                      </DropdownMenuItem>
+                    )}
                     <DropdownMenuSeparator />
                     <DropdownMenuItem 
                       onClick={handleLogout}
@@ -279,6 +303,29 @@ export default function Header() {
                     </span>
                   </Link>
                   
+                  {/* Role-specific mobile actions */}
+                  {userRole === 'creator' ? (
+                    <Link href="/creator/new-campaign">
+                      <span
+                        className="px-3 py-2 text-gray-300 hover:text-white font-medium block cursor-pointer"
+                        onClick={() => setIsOpen(false)}
+                      >
+                        <PlusCircleIcon className="inline-block mr-2 h-4 w-4" />
+                        New Campaign
+                      </span>
+                    </Link>
+                  ) : (
+                    <Link href="/influencer/accounts">
+                      <span
+                        className="px-3 py-2 text-gray-300 hover:text-white font-medium block cursor-pointer"
+                        onClick={() => setIsOpen(false)}
+                      >
+                        <LinkIcon className="inline-block mr-2 h-4 w-4" />
+                        Manage Accounts
+                      </span>
+                    </Link>
+                  )}
+                  
                   <div className="border-t border-border mt-2 pt-2 space-y-2">
                     {user ? (
                       <>
@@ -310,20 +357,23 @@ export default function Header() {
                             <WalletIcon className="mr-1.5 h-4 w-4 text-muted-foreground" />
                             <span className="text-sm">{user?.wallet?.balance?.toFixed(2) || "0.00"} USDC</span>
                           </div>
-                          <Button 
-                            variant="ghost" 
-                            size="sm"
-                            className="bg-secondary text-background hover:bg-secondary/90"
-                            onClick={() => fundWalletMutation.mutate(100)}
-                            disabled={fundWalletMutation.isPending}
-                          >
-                            {fundWalletMutation.isPending ? (
-                              <div className="h-3 w-3 animate-spin rounded-full border-2 border-background border-t-transparent mr-1" />
-                            ) : (
-                              <PlusIcon className="h-3 w-3 mr-1" />
-                            )}
-                            Fund
-                          </Button>
+                          {/* Only show Fund button for creators */}
+                          {userRole === 'creator' && (
+                            <Button 
+                              variant="ghost" 
+                              size="sm"
+                              className="bg-secondary text-background hover:bg-secondary/90"
+                              onClick={() => fundWalletMutation.mutate(100)}
+                              disabled={fundWalletMutation.isPending}
+                            >
+                              {fundWalletMutation.isPending ? (
+                                <div className="h-3 w-3 animate-spin rounded-full border-2 border-background border-t-transparent mr-1" />
+                              ) : (
+                                <PlusIcon className="h-3 w-3 mr-1" />
+                              )}
+                              Fund
+                            </Button>
+                          )}
                         </div>
                         
                         <Button 
