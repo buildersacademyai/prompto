@@ -46,32 +46,7 @@ export default function Header() {
     logoutMutation.mutate();
   };
   
-  const switchRoleMutation = useMutation({
-    mutationFn: async () => {
-      const newRole = userRole === 'creator' ? 'influencer' : 'creator';
-      const res = await apiRequest("POST", "/api/user/switch-role", { role: newRole });
-      return await res.json();
-    },
-    onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ["/api/user"] });
-      
-      // Redirect to the appropriate dashboard
-      const newPath = data.role === 'creator' ? '/creator' : '/influencer';
-      setLocation(newPath);
-      
-      toast({
-        title: "Role switched",
-        description: `You are now in ${data.role} mode.`,
-      });
-    },
-    onError: (error: Error) => {
-      toast({
-        title: "Error switching role",
-        description: error.message,
-        variant: "destructive",
-      });
-    },
-  });
+  // Removed role switching functionality - users need separate accounts for each role
 
   const fundWalletMutation = useMutation({
     mutationFn: async (amount: number) => {
@@ -152,18 +127,7 @@ export default function Header() {
                       </div>
                     </DropdownMenuLabel>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem 
-                      onClick={() => switchRoleMutation.mutate()}
-                      disabled={switchRoleMutation.isPending}
-                      className="cursor-pointer"
-                    >
-                      <User2Icon className="mr-2 h-4 w-4" />
-                      <span>Switch to {userRole === 'creator' ? 'Influencer' : 'Creator'} mode</span>
-                      {switchRoleMutation.isPending && (
-                        <div className="ml-auto h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent" />
-                      )}
-                    </DropdownMenuItem>
-                    <DropdownMenuSeparator />
+                    {/* Role switching removed - users need separate accounts for each role */}
                     <DropdownMenuItem 
                       asChild
                       className="cursor-pointer"
@@ -300,20 +264,7 @@ export default function Header() {
                           </div>
                         </div>
                         
-                        <Button 
-                          variant="outline" 
-                          className="w-full justify-between"
-                          onClick={() => switchRoleMutation.mutate()}
-                          disabled={switchRoleMutation.isPending}
-                        >
-                          <div className="flex items-center">
-                            <User2Icon className="mr-1.5 h-4 w-4" />
-                            <span>Switch to {userRole === 'creator' ? 'Influencer' : 'Creator'}</span>
-                          </div>
-                          {switchRoleMutation.isPending && (
-                            <div className="h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent" />
-                          )}
-                        </Button>
+                        {/* Role switching removed - users need separate accounts for each role */}
                         
                         <div className="flex items-center justify-between px-3 py-2">
                           <div className="flex items-center">

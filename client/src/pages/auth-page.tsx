@@ -233,6 +233,7 @@ export default function AuthPage() {
                                 Influencer
                               </Label>
                             </div>
+                            <p className="text-xs text-muted-foreground mt-1">Note: This choice is permanent. You will need to create a separate account to use the other role.</p>
                             <FormMessage />
                           </FormItem>
                         )}
