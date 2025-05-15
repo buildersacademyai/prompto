@@ -282,9 +282,6 @@ export default function Header() {
                       Dashboard
                     </span>
                   </Link>
-                  <a href="#" className="px-3 py-2 text-gray-300 hover:text-white font-medium">
-                    Docs
-                  </a>
                   
                   <div className="border-t border-border mt-2 pt-2 space-y-2">
                     {user ? (
