@@ -164,14 +164,14 @@ export default function CampaignCard({ campaign, influencerView = false }: Campa
           {influencerView ? (
             <Button 
               className="bg-primary hover:bg-primary/90 text-white text-sm"
-              onClick={() => joinCampaignMutation.mutate()}
-              disabled={joinCampaignMutation.isPending}
+              onClick={() => {
+                toast({
+                  title: "Ad Ready to Share",
+                  description: "This ad content is ready to be shared on your social accounts.",
+                });
+              }}
             >
-              {joinCampaignMutation.isPending ? (
-                <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
-              ) : (
-                <>Join</>
-              )}
+              Share
             </Button>
           ) : (
             <div className="flex items-center">
