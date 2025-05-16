@@ -2,6 +2,7 @@ import Header from "@/components/layout/header";
 import Sidebar from "@/components/layout/sidebar";
 import { Button } from "@/components/ui/button";
 import { PlusIcon, CreditCard, ArrowUpIcon } from "lucide-react";
+import { Link } from "wouter";
 import StatsCard from "@/components/stats-card";
 import { useMutation } from "@tanstack/react-query";
 import { apiRequest, queryClient } from "@/lib/queryClient";
@@ -81,9 +82,11 @@ export default function CreatorDashboard() {
                 <p className="text-muted-foreground mt-1">Launch and manage your ad campaigns</p>
               </div>
               <div className="mt-4 lg:mt-0">
-                <Button className="bg-primary hover:bg-primary/90 text-white flex items-center">
-                  <PlusIcon className="mr-2 h-4 w-4" />
-                  Create New Campaign
+                <Button className="bg-primary hover:bg-primary/90 text-white flex items-center" asChild>
+                  <Link href="/creator/new-campaign">
+                    <PlusIcon className="mr-2 h-4 w-4" />
+                    Create New Campaign
+                  </Link>
                 </Button>
               </div>
             </div>
@@ -205,9 +208,11 @@ export default function CreatorDashboard() {
                     </div>
                     <h3 className="font-semibold text-lg mb-2">No Active Campaigns</h3>
                     <p className="text-muted-foreground text-sm mb-4">You don't have any active campaigns at the moment. Create your first campaign to start reaching your audience.</p>
-                    <Button className="bg-primary hover:bg-primary/90 text-white">
-                      <PlusIcon className="mr-2 h-4 w-4" />
-                      Create New Campaign
+                    <Button className="bg-primary hover:bg-primary/90 text-white" asChild>
+                      <Link href="/creator/new-campaign">
+                        <PlusIcon className="mr-2 h-4 w-4" />
+                        Create New Campaign
+                      </Link>
                     </Button>
                   </div>
                 )}
