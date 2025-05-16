@@ -234,6 +234,56 @@ export default function WhitepaperPage() {
               <li>Engagement analysis via NLP/vision on social posts</li>
             </ul>
 
+            <h2>Market Comparison</h2>
+            <div className="overflow-x-auto my-6">
+              <table className="min-w-full">
+                <thead>
+                  <tr className="border-b border-border">
+                    <th className="py-2 px-4 text-left">Platform</th>
+                    <th className="py-2 px-4 text-center">AI Ad Gen</th>
+                    <th className="py-2 px-4 text-center">On-Chain Escrow</th>
+                    <th className="py-2 px-4 text-center">Social Analytics</th>
+                    <th className="py-2 px-4 text-center">Influencer Rewarding</th>
+                    <th className="py-2 px-4 text-center">Transparency</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr className="border-b border-border">
+                    <td className="py-2 px-4 font-medium">Prompto</td>
+                    <td className="py-2 px-4 text-center text-green-500">✅</td>
+                    <td className="py-2 px-4 text-center text-green-500">✅</td>
+                    <td className="py-2 px-4 text-center text-green-500">✅</td>
+                    <td className="py-2 px-4 text-center text-green-500">✅</td>
+                    <td className="py-2 px-4 text-center text-green-500">✅</td>
+                  </tr>
+                  <tr className="border-b border-border">
+                    <td className="py-2 px-4 font-medium">Facebook Ads</td>
+                    <td className="py-2 px-4 text-center text-red-500">❌</td>
+                    <td className="py-2 px-4 text-center text-red-500">❌</td>
+                    <td className="py-2 px-4 text-center text-green-500">✅</td>
+                    <td className="py-2 px-4 text-center text-red-500">❌</td>
+                    <td className="py-2 px-4 text-center text-red-500">❌</td>
+                  </tr>
+                  <tr className="border-b border-border">
+                    <td className="py-2 px-4 font-medium">Collabstr</td>
+                    <td className="py-2 px-4 text-center text-red-500">❌</td>
+                    <td className="py-2 px-4 text-center text-red-500">❌</td>
+                    <td className="py-2 px-4 text-center text-red-500">❌</td>
+                    <td className="py-2 px-4 text-center text-green-500">✅</td>
+                    <td className="py-2 px-4 text-center text-red-500">❌</td>
+                  </tr>
+                  <tr className="border-b border-border">
+                    <td className="py-2 px-4 font-medium">Promoty</td>
+                    <td className="py-2 px-4 text-center text-red-500">❌</td>
+                    <td className="py-2 px-4 text-center text-red-500">❌</td>
+                    <td className="py-2 px-4 text-center text-green-500">✅</td>
+                    <td className="py-2 px-4 text-center text-green-500">✅</td>
+                    <td className="py-2 px-4 text-center text-red-500">❌</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
             <h2>Roadmap</h2>
             <div className="space-y-4 my-6 not-prose">
               <div className="bg-card/30 p-4 rounded-md border border-primary/20">
