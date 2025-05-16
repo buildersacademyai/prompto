@@ -163,9 +163,6 @@ export default function CreatorDashboard() {
               )}
             </div>
             
-            {/* AI Generator */}
-            <AIGenerator className="mb-8" />
-            
             {/* Active Campaigns */}
             <div className="mb-8">
               <div className="flex justify-between items-center mb-4">
