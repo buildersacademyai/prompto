@@ -83,7 +83,7 @@ export default function AuthPage() {
       role: "creator"
     }
   });
-  //
+  
 
   // Handle form submissions
   const onLoginSubmit = (data: LoginFormValues) => {
