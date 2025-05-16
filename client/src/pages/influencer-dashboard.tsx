@@ -340,10 +340,10 @@ export default function InfluencerDashboard() {
               </div>
             </div>
             
-            {/* Available Campaigns */}
+            {/* Joined Ad Campaigns */}
             <div>
               <div className="flex justify-between items-center mb-4">
-                <h2 className="font-semibold text-xl">Available Campaigns</h2>
+                <h2 className="font-semibold text-xl">Joined Ad Campaigns</h2>
                 <Select value={campaignFilter} onValueChange={setCampaignFilter}>
                   <SelectTrigger className="w-36 bg-card border-border">
                     <SelectValue />
