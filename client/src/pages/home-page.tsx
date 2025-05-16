@@ -511,7 +511,7 @@ export default function HomePage() {
               transition={{ type: "spring", stiffness: 400, damping: 10 }}
             >
               <Link href="/">
-                <img src="/src/assets/logo.png" alt="Prompto Logo" className="h-28 mb-2" />
+                <img src="/logo.svg" alt="Prompto Logo" className="h-16 mb-2" />
               </Link>
               <p className="text-sm text-muted-foreground">The decentralized advertising platform</p>
             </motion.div>
