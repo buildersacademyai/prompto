@@ -32,7 +32,8 @@ import { useQuery } from "@tanstack/react-query";
 import { Campaign } from "@shared/schema";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { SavedAd } from "@/components/ai-generator-new";
 
 export default function CreatorDashboard() {
   const { user } = useAuth();
@@ -40,6 +41,19 @@ export default function CreatorDashboard() {
   const [campaignSort, setCampaignSort] = useState("performance");
   const [adFilter, setAdFilter] = useState("newest");
   const [searchTerm, setSearchTerm] = useState("");
+  const [savedAds, setSavedAds] = useState<SavedAd[]>([]);
+  
+  // Load saved ads from localStorage
+  useEffect(() => {
+    const storedAds = localStorage.getItem('savedAds');
+    if (storedAds) {
+      try {
+        setSavedAds(JSON.parse(storedAds));
+      } catch (error) {
+        console.error('Failed to parse saved ads from localStorage', error);
+      }
+    }
+  }, []);
   
   const fundWalletMutation = useMutation({
     mutationFn: async (amount: number) => {
@@ -277,155 +291,132 @@ export default function CreatorDashboard() {
                 </div>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {/* Generated Ad Card 1 */}
-                  <div className="bg-background rounded-lg p-5 border border-border">
-                    <div className="flex justify-between items-start mb-3">
-                      <div>
-                        <h3 className="font-medium text-lg">Summer Collection Ad</h3>
-                        <div className="text-xs text-muted-foreground mt-1">
-                          Created: May 10, 2024
-                        </div>
+                  {savedAds.length === 0 ? (
+                    <div className="col-span-2 bg-background rounded-xl p-8 text-center border border-border">
+                      <div className="mx-auto w-16 h-16 bg-muted/20 rounded-full flex items-center justify-center mb-4">
+                        <SparklesIcon className="h-8 w-8 text-muted-foreground" />
                       </div>
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="icon" className="h-8 w-8">
-                            <MoreVerticalIcon className="h-4 w-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuItem>
-                            <CopyIcon className="mr-2 h-4 w-4" />
-                            Copy Text
-                          </DropdownMenuItem>
-                          <DropdownMenuItem>
-                            <ImageIcon className="mr-2 h-4 w-4" />
-                            Download Image
-                          </DropdownMenuItem>
-                          <DropdownMenuItem>
-                            <PencilIcon className="mr-2 h-4 w-4" />
-                            Edit & Regenerate
-                          </DropdownMenuItem>
-                          <DropdownMenuItem>
-                            <TrashIcon className="mr-2 h-4 w-4" />
-                            Delete
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
+                      <h3 className="font-semibold text-lg mb-2">No Generated Ads</h3>
+                      <p className="text-muted-foreground text-sm mb-4">You haven't generated any ads yet. Create your first AI-powered ad to get started.</p>
+                      <Button className="bg-primary hover:bg-primary/90 text-white" asChild>
+                        <Link href="/creator/ai-generator">
+                          <SparklesIcon className="mr-2 h-4 w-4" />
+                          Generate Ad
+                        </Link>
+                      </Button>
                     </div>
-                    
-                    <div className="flex flex-col md:flex-row gap-4">
-                      <div className="md:w-1/2">
-                        <div className="relative aspect-square bg-muted rounded-md overflow-hidden">
-                          <img 
-                            src="https://images.unsplash.com/photo-1523381210434-271e8be1f52b" 
-                            alt="Summer Collection" 
-                            className="object-cover w-full h-full"
-                          />
+                  ) : (
+                    savedAds
+                      .filter(ad => searchTerm === "" || 
+                        ad.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                        ad.generatedText.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                        ad.prompt.toLowerCase().includes(searchTerm.toLowerCase())
+                      )
+                      .sort((a, b) => {
+                        if (adFilter === "newest") {
+                          return new Date(b.date).getTime() - new Date(a.date).getTime();
+                        } else {
+                          return new Date(a.date).getTime() - new Date(b.date).getTime();
+                        }
+                      })
+                      .map((ad) => (
+                        <div key={ad.id} className="bg-background rounded-lg p-5 border border-border">
+                          <div className="flex justify-between items-start mb-3">
+                            <div>
+                              <h3 className="font-medium text-lg">{ad.title}</h3>
+                              <div className="text-xs text-muted-foreground mt-1">
+                                Created: {ad.date}
+                              </div>
+                            </div>
+                            <DropdownMenu>
+                              <DropdownMenuTrigger asChild>
+                                <Button variant="ghost" size="icon" className="h-8 w-8">
+                                  <MoreVerticalIcon className="h-4 w-4" />
+                                </Button>
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent align="end">
+                                <DropdownMenuItem onClick={() => {
+                                  navigator.clipboard.writeText(ad.generatedText);
+                                  toast({
+                                    title: "Copied to clipboard",
+                                    description: "Ad text has been copied to your clipboard."
+                                  });
+                                }}>
+                                  <CopyIcon className="mr-2 h-4 w-4" />
+                                  Copy Text
+                                </DropdownMenuItem>
+                                <DropdownMenuItem>
+                                  <ImageIcon className="mr-2 h-4 w-4" />
+                                  Download Image
+                                </DropdownMenuItem>
+                                <DropdownMenuItem>
+                                  <PencilIcon className="mr-2 h-4 w-4" />
+                                  Edit & Regenerate
+                                </DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => {
+                                  // Delete ad from localStorage
+                                  const storedAds = localStorage.getItem('savedAds');
+                                  if (storedAds) {
+                                    try {
+                                      const parsedAds: SavedAd[] = JSON.parse(storedAds);
+                                      const filteredAds = parsedAds.filter(savedAd => savedAd.id !== ad.id);
+                                      localStorage.setItem('savedAds', JSON.stringify(filteredAds));
+                                      setSavedAds(filteredAds);
+                                      toast({
+                                        title: "Ad deleted",
+                                        description: "The ad has been removed from your saved ads."
+                                      });
+                                    } catch (error) {
+                                      console.error('Failed to delete ad', error);
+                                    }
+                                  }
+                                }}>
+                                  <TrashIcon className="mr-2 h-4 w-4" />
+                                  Delete
+                                </DropdownMenuItem>
+                              </DropdownMenuContent>
+                            </DropdownMenu>
+                          </div>
+                          
+                          <div className="flex flex-col md:flex-row gap-4">
+                            <div className="md:w-1/2">
+                              <div className="relative aspect-square bg-muted rounded-md overflow-hidden">
+                                <img 
+                                  src={ad.imageUrl} 
+                                  alt={ad.title} 
+                                  className="object-cover w-full h-full"
+                                  onError={(e) => {
+                                    e.currentTarget.src = "https://placehold.co/400x400/1E1E1E/9945FF?text=Ad+Image";
+                                  }}
+                                />
+                              </div>
+                            </div>
+                            <div className="md:w-1/2">
+                              <div className="text-sm mb-3">
+                                <span className="font-medium">Prompt:</span>
+                                <p className="text-muted-foreground mt-1">{ad.prompt}</p>
+                              </div>
+                              <div className="text-sm mb-4">
+                                <span className="font-medium">Generated Text:</span>
+                                <p className="text-muted-foreground mt-1 line-clamp-4">{ad.generatedText}</p>
+                              </div>
+                              <div className="flex flex-wrap gap-1 mb-3">
+                                {ad.hashtags.map((tag, index) => (
+                                  <Badge key={index} variant="outline" className="bg-background/50 text-xs">
+                                    {tag}
+                                  </Badge>
+                                ))}
+                              </div>
+                              <Button size="sm" className="w-full bg-primary hover:bg-primary/90" asChild>
+                                <Link href="/creator/new-campaign">
+                                  Create Campaign
+                                </Link>
+                              </Button>
+                            </div>
+                          </div>
                         </div>
-                      </div>
-                      <div className="md:w-1/2">
-                        <div className="text-sm mb-3">
-                          <span className="font-medium">Prompt:</span>
-                          <p className="text-muted-foreground mt-1">Create a vibrant summer fashion collection ad for young adults featuring sustainable materials.</p>
-                        </div>
-                        <div className="text-sm mb-4">
-                          <span className="font-medium">Generated Text:</span>
-                          <p className="text-muted-foreground mt-1 line-clamp-4">Introducing our eco-conscious Summer Collection. Made with 100% sustainable materials, this vibrant lineup gives you style without compromise. #SummerEthics #EcoFashion</p>
-                        </div>
-                        <div className="flex flex-wrap gap-1 mb-3">
-                          <Badge variant="outline" className="bg-background/50 text-xs">
-                            #SummerEthics
-                          </Badge>
-                          <Badge variant="outline" className="bg-background/50 text-xs">
-                            #EcoFashion
-                          </Badge>
-                          <Badge variant="outline" className="bg-background/50 text-xs">
-                            #Sustainable
-                          </Badge>
-                        </div>
-                        <Button size="sm" className="w-full bg-primary hover:bg-primary/90" asChild>
-                          <Link href="/creator/new-campaign">
-                            Create Campaign
-                          </Link>
-                        </Button>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  {/* Generated Ad Card 2 */}
-                  <div className="bg-background rounded-lg p-5 border border-border">
-                    <div className="flex justify-between items-start mb-3">
-                      <div>
-                        <h3 className="font-medium text-lg">Smart Home Devices</h3>
-                        <div className="text-xs text-muted-foreground mt-1">
-                          Created: May 8, 2024
-                        </div>
-                      </div>
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="icon" className="h-8 w-8">
-                            <MoreVerticalIcon className="h-4 w-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuItem>
-                            <CopyIcon className="mr-2 h-4 w-4" />
-                            Copy Text
-                          </DropdownMenuItem>
-                          <DropdownMenuItem>
-                            <ImageIcon className="mr-2 h-4 w-4" />
-                            Download Image
-                          </DropdownMenuItem>
-                          <DropdownMenuItem>
-                            <PencilIcon className="mr-2 h-4 w-4" />
-                            Edit & Regenerate
-                          </DropdownMenuItem>
-                          <DropdownMenuItem>
-                            <TrashIcon className="mr-2 h-4 w-4" />
-                            Delete
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </div>
-                    
-                    <div className="flex flex-col md:flex-row gap-4">
-                      <div className="md:w-1/2">
-                        <div className="relative aspect-square bg-muted rounded-md overflow-hidden">
-                          <img 
-                            src="https://images.unsplash.com/photo-1558002038-648415d93022" 
-                            alt="Smart Home Devices" 
-                            className="object-cover w-full h-full"
-                          />
-                        </div>
-                      </div>
-                      <div className="md:w-1/2">
-                        <div className="text-sm mb-3">
-                          <span className="font-medium">Prompt:</span>
-                          <p className="text-muted-foreground mt-1">Generate an ad for smart home devices that emphasize energy efficiency and ease of use.</p>
-                        </div>
-                        <div className="text-sm mb-4">
-                          <span className="font-medium">Generated Text:</span>
-                          <p className="text-muted-foreground mt-1 line-clamp-4">Transform your living space with our Smart Home ecosystem. Control everything with a tap, save on energy bills, and enjoy the comfort of true automation. Your future home is here today. #SmartLiving #EnergyEfficient</p>
-                        </div>
-                        <div className="flex flex-wrap gap-1 mb-3">
-                          <Badge variant="outline" className="bg-background/50 text-xs">
-                            #SmartLiving
-                          </Badge>
-                          <Badge variant="outline" className="bg-background/50 text-xs">
-                            #EnergyEfficient
-                          </Badge>
-                          <Badge variant="outline" className="bg-background/50 text-xs">
-                            #HomeTech
-                          </Badge>
-                        </div>
-                        <Button size="sm" className="w-full bg-primary hover:bg-primary/90" asChild>
-                          <Link href="/creator/new-campaign">
-                            Create Campaign
-                          </Link>
-                        </Button>
-                      </div>
-                    </div>
-                  </div>
+                      ))
+                  )}
                 </div>
               </div>
             </div>
