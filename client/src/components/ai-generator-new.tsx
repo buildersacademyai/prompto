@@ -276,7 +276,7 @@ export default function AIGenerator({ className, onSave }: AIGeneratorProps & { 
               ) : (
                 <WandSparkles className="mr-2 h-4 w-4" />
               )}
-              Generate Ad Content
+              Generate Ad
             </Button>
           </div>
           

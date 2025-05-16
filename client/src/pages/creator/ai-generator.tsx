@@ -15,6 +15,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useToast } from "@/hooks/use-toast";
+import { mockGeneratedAds, loadSampleData } from "@/data/mock-data";
 
 export default function AIGeneratorPage() {
   const { toast } = useToast();
@@ -22,6 +23,10 @@ export default function AIGeneratorPage() {
   
   // Load saved ads from localStorage on component mount
   useEffect(() => {
+    // Initialize with sample data if needed
+    loadSampleData();
+    
+    // Then load from localStorage
     const storedAds = localStorage.getItem('savedAds');
     if (storedAds) {
       try {
@@ -81,12 +86,7 @@ export default function AIGeneratorPage() {
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <div className="lg:col-span-2">
                   <Card>
-                    <CardHeader>
-                      <CardTitle>Generate New Ad Content</CardTitle>
-                      <CardDescription>
-                        Use our AI to create engaging ad copy and campaign content
-                      </CardDescription>
-                    </CardHeader>
+                    
                     <CardContent>
                       <AIGenerator className="mt-4" onSave={handleSaveAd} />
                     </CardContent>

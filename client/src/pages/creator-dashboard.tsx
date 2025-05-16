@@ -34,6 +34,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Input } from "@/components/ui/input";
 import { useState, useEffect } from "react";
 import { SavedAd } from "@/components/ai-generator-new";
+import { mockGeneratedAds, mockCampaigns, mockInfluencers, creatorAnalyticsData, loadSampleData } from "@/data/mock-data";
 
 export default function CreatorDashboard() {
   const { user } = useAuth();
