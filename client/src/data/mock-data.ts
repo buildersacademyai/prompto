@@ -24,12 +24,21 @@ const fitnessHashtags = ['#FitnessGoals', '#HealthyLifestyle', '#Workout', '#Gym
 export const mockGeneratedAds: SavedAd[] = [
   {
     id: uuidv4(),
-    title: "Summer Fashion Collection",
+    title: "Prompto Summer Fashion Campaign",
     prompt: "Create a vibrant summer fashion collection ad for young adults featuring sustainable materials.",
     generatedText: "Introducing our eco-conscious Summer Collection. Made with 100% sustainable materials, this vibrant lineup gives you style without compromise. Perfect for the eco-conscious trendsetter looking to make a statement while making a difference.",
     imageUrl: "https://images.unsplash.com/photo-1523381210434-271e8be1f52b",
-    date: createDateString(5),
+    date: createDateString(1),
     hashtags: fashionHashtags.slice(0, 3),
+  },
+  {
+    id: uuidv4(),
+    title: "Summer Solstice Fundraiser Event",
+    prompt: "Create an ad for our charity summer solstice event that raises funds for environmental causes.",
+    generatedText: "Join us for a magical night under the stars at our Summer Solstice Fundraiser! All proceeds directly support critical environmental initiatives. Dance, dine, and donate as we celebrate the longest day of the year with purpose. Early bird tickets available now!",
+    imageUrl: "https://images.unsplash.com/photo-1517457373958-b7bdd4587205",
+    date: createDateString(2),
+    hashtags: ['#SummerSolstice', '#EcoFundraiser', '#SaveThePlanet'],
   },
   {
     id: uuidv4(),
@@ -66,6 +75,24 @@ export const mockGeneratedAds: SavedAd[] = [
     imageUrl: "https://images.unsplash.com/photo-1510771463146-e89e6e86560e",
     date: createDateString(20),
     hashtags: fitnessHashtags.slice(0, 3),
+  },
+  {
+    id: uuidv4(),
+    title: "Blockchain Rewards Program",
+    prompt: "Create an ad for our new blockchain-based customer rewards program that offers digital tokens.",
+    generatedText: "Introducing Prompto Rewards – the future of customer loyalty! Earn digital tokens with every purchase that can be traded, saved, or redeemed across our partner network. Our blockchain technology ensures complete transparency and security. Download our app today and start earning!",
+    imageUrl: "https://images.unsplash.com/photo-1621761191319-c6fb62004040",
+    date: createDateString(1),
+    hashtags: ['#BlockchainRewards', '#DigitalTokens', '#NextGenLoyalty'],
+  },
+  {
+    id: uuidv4(),
+    title: "Virtual Fashion Drop",
+    prompt: "Create an ad for a limited virtual fashion NFT drop featuring digital-only clothing.",
+    generatedText: "VIRTUAL COUTURE DROP • 05.22 • EXPRESS YOUR DIGITAL SELF. Our first-ever digital fashion collection lets you dress your online persona in exclusive designs that will never exist physically. Limited to 500 pieces, each garment is authenticated on the blockchain. Pre-register now for early access.",
+    imageUrl: "https://images.unsplash.com/photo-1633265486501-0cf524a07213",
+    date: createDateString(3),
+    hashtags: ['#VirtualFashion', '#DigitalCouture', '#NFTDrop', '#MetaStyle', '#Web3Fashion'],
   }
 ];
 
