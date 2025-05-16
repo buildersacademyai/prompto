@@ -136,19 +136,17 @@ export default function Header() {
                         </div>
                       </Link>
                     </DropdownMenuItem>
-                    {userRole === 'influencer' && (
-                      <DropdownMenuItem 
-                        asChild
-                        className="cursor-pointer"
-                      >
-                        <Link href="/influencer/content">
-                          <div className="flex items-center w-full">
-                            <SparklesIcon className="mr-2 h-4 w-4" />
-                            <span>Content Creation</span>
-                          </div>
-                        </Link>
-                      </DropdownMenuItem>
-                    )}
+                    <DropdownMenuItem 
+                      asChild
+                      className="cursor-pointer"
+                    >
+                      <Link href={userRole === 'creator' ? '/creator/ai-generator' : '/influencer/content'}>
+                        <div className="flex items-center w-full">
+                          <SparklesIcon className="mr-2 h-4 w-4" />
+                          <span>{userRole === 'creator' ? 'AI Generator' : 'Content Creation'}</span>
+                        </div>
+                      </Link>
+                    </DropdownMenuItem>
                     
                     {/* Role-specific actions */}
                     {userRole === 'creator' ? (
@@ -276,17 +274,15 @@ export default function Header() {
                     </span>
                   </Link>
                   
-                  {userRole === 'influencer' && (
-                    <Link href="/influencer/content">
-                      <span
-                        className="px-3 py-2 text-gray-300 hover:text-white font-medium block cursor-pointer"
-                        onClick={() => setIsOpen(false)}
-                      >
-                        <SparklesIcon className="inline-block mr-2 h-4 w-4" />
-                        Content Creation
-                      </span>
-                    </Link>
-                  )}
+                  <Link href={userRole === 'creator' ? '/creator/ai-generator' : '/influencer/content'}>
+                    <span
+                      className="px-3 py-2 text-gray-300 hover:text-white font-medium block cursor-pointer"
+                      onClick={() => setIsOpen(false)}
+                    >
+                      <SparklesIcon className="inline-block mr-2 h-4 w-4" />
+                      {userRole === 'creator' ? 'AI Generator' : 'Content Creation'}
+                    </span>
+                  </Link>
                   
                   <Link href={userRole === 'creator' ? '/creator/analytics' : '/influencer/analytics'}>
                     <span

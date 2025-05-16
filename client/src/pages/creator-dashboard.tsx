@@ -7,7 +7,7 @@ import StatsCard from "@/components/stats-card";
 import { useMutation } from "@tanstack/react-query";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
-import AIGenerator from "@/components/ai-generator-new";
+
 import CampaignCard from "@/components/campaign-card";
 import InfluencerCard from "@/components/influencer-card";
 import { useAuth } from "@/hooks/use-auth";
