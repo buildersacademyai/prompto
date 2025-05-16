@@ -1,6 +1,6 @@
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, FileText, Download, Share2 } from "lucide-react";
+import { ArrowLeft, FileText, Download, Share2, Check } from "lucide-react";
 
 export default function WhitepaperPage() {
   return (
@@ -74,104 +74,197 @@ export default function WhitepaperPage() {
           </div>
           
           <div className="prose prose-invert max-w-none">
-            <h2>Abstract</h2>
-            <p>
-              The digital advertising industry faces significant challenges related to transparency, fraud, intermediary costs, and data privacy. This whitepaper introduces Prompto, a decentralized platform leveraging blockchain technology and artificial intelligence to create a more efficient, transparent, and equitable advertising ecosystem for content creators and influencers.
-            </p>
+            <h2>Introduction</h2>
+            <p>Prompto is a next-generation, AI-powered, blockchain-secured advertising platform that connects brands (creators) with influencers in a decentralized, transparent, and performance-based ecosystem. Built on the Solana blockchain, Prompto ensures fast, secure, and low-cost interactions between advertisers and content promoters.</p>
+
+            <h2>Key Features</h2>
             
-            <h2>1. Introduction</h2>
-            <p>
-              The digital advertising market continues to grow rapidly, with influencer marketing becoming an increasingly important channel. However, the industry faces several critical challenges:
-            </p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 my-8 not-prose">
+              <div className="bg-card/30 p-6 rounded-lg border border-border">
+                <h3 className="text-xl font-semibold mb-4 text-primary">For Influencers</h3>
+                <ul className="space-y-2">
+                  <li className="flex items-start gap-2">
+                    <Check className="h-5 w-5 text-green-500 flex-shrink-0 mt-0.5" />
+                    <span>Sign up with Google or email</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <Check className="h-5 w-5 text-green-500 flex-shrink-0 mt-0.5" />
+                    <span>Secure wallet connection</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <Check className="h-5 w-5 text-green-500 flex-shrink-0 mt-0.5" />
+                    <span>Personalized dashboard with engagement analytics</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <Check className="h-5 w-5 text-green-500 flex-shrink-0 mt-0.5" />
+                    <span>Connect social accounts (Instagram, TikTok)</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <Check className="h-5 w-5 text-green-500 flex-shrink-0 mt-0.5" />
+                    <span>Real-time reward estimation</span>
+                  </li>
+                </ul>
+              </div>
+
+              <div className="bg-card/30 p-6 rounded-lg border border-border">
+                <h3 className="text-xl font-semibold mb-4 text-accent">For Creators (Advertisers)</h3>
+                <ul className="space-y-2">
+                  <li className="flex items-start gap-2">
+                    <Check className="h-5 w-5 text-green-500 flex-shrink-0 mt-0.5" />
+                    <span>Intuitive ad generation (2 free on signup)</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <Check className="h-5 w-5 text-green-500 flex-shrink-0 mt-0.5" />
+                    <span>AI-powered ad copy creation</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <Check className="h-5 w-5 text-green-500 flex-shrink-0 mt-0.5" />
+                    <span>Manage, list/unlist ad campaigns</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <Check className="h-5 w-5 text-green-500 flex-shrink-0 mt-0.5" />
+                    <span>Escrow-based payment system</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <Check className="h-5 w-5 text-green-500 flex-shrink-0 mt-0.5" />
+                    <span>Campaign analytics dashboard</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <Check className="h-5 w-5 text-green-500 flex-shrink-0 mt-0.5" />
+                    <span>Purchase credits via card or crypto</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            <h2>Blockchain Integration (Solana)</h2>
+            <p>Prompto leverages Solana's high-speed, low-cost blockchain technology to provide:</p>
             <ul>
-              <li>Lack of transparency in campaign performance reporting</li>
-              <li>High fees charged by intermediaries</li>
-              <li>Payment delays and disputes</li>
-              <li>Fraud and fake engagement</li>
-              <li>Content quality and consistency issues</li>
+              <li>Wallet-based identity and payments</li>
+              <li>Escrow smart contracts that hold ad budgets securely</li>
+              <li>Automatic release of funds upon completion of campaign criteria</li>
+              <li>Refund to creator if influencer fails to meet requirements</li>
             </ul>
-            <p>
-              Prompto addresses these challenges through a decentralized platform that connects content creators directly with influencers, facilitated by blockchain-based payment systems and AI-powered content generation.
-            </p>
+
+            <h2>Prompto Reward Engine — "PFEM" (Prompto Fair Engagement Model)</h2>
             
-            <h2>2. Technical Architecture</h2>
-            <h3>2.1 Blockchain Implementation</h3>
-            <p>
-              Prompto utilizes a hybrid blockchain architecture, combining the security and transparency of public chains with the efficiency of layer-2 solutions for handling high transaction volumes.
-            </p>
+            <h3>Objective</h3>
+            <p>To ensure fair, transparent, and performance-driven reward distribution to influencers who promote ads on TikTok and Instagram using both on-chain and off-chain data.</p>
+
+            <h3>Reward Formula</h3>
+            <div className="bg-primary/10 p-4 rounded-md border border-primary/20 my-4 font-mono text-sm">
+              TotalReward = Base × PlatformWeight × (ReachFactor + EngagementFactor + PerformanceFactor) × DurationMultiplier + Bonus
+            </div>
+
+            <h3>Formula Breakdown</h3>
             
-            <h3>2.2 Smart Contracts</h3>
-            <p>
-              The platform implements several key smart contracts:
-            </p>
+            <div className="overflow-x-auto my-6">
+              <table className="min-w-full">
+                <thead>
+                  <tr className="border-b border-border">
+                    <th className="py-2 px-4 text-left">Factor</th>
+                    <th className="py-2 px-4 text-left">Definition</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr className="border-b border-border">
+                    <td className="py-2 px-4 font-medium">Base</td>
+                    <td className="py-2 px-4">Base rate per engagement point. Dynamically adjustable per campaign. (e.g., $0.01)</td>
+                  </tr>
+                  <tr className="border-b border-border">
+                    <td className="py-2 px-4 font-medium">PlatformWeight</td>
+                    <td className="py-2 px-4">Adjusts reward based on platform influence. (e.g., TikTok = 1.2, Instagram = 1.0)</td>
+                  </tr>
+                  <tr className="border-b border-border">
+                    <td className="py-2 px-4 font-medium">ReachFactor</td>
+                    <td className="py-2 px-4">log10(Followers + 1) — logarithmic normalization to avoid over-rewarding massive accounts.</td>
+                  </tr>
+                  <tr className="border-b border-border">
+                    <td className="py-2 px-4 font-medium">EngagementFactor</td>
+                    <td className="py-2 px-4">Average interaction rate across posts, normalized. (Likes + Comments + Shares) / Views × 10</td>
+                  </tr>
+                  <tr className="border-b border-border">
+                    <td className="py-2 px-4 font-medium">PerformanceFactor</td>
+                    <td className="py-2 px-4">Actual ad post performance. (Post Views / Followers) × CTR × 0.5</td>
+                  </tr>
+                  <tr className="border-b border-border">
+                    <td className="py-2 px-4 font-medium">DurationMultiplier</td>
+                    <td className="py-2 px-4">Campaign duration booster. 1 + (Campaign Days / 30)</td>
+                  </tr>
+                  <tr className="border-b border-border">
+                    <td className="py-2 px-4 font-medium">Bonus</td>
+                    <td className="py-2 px-4">Additional rewards for early sharing, verified creators, or high-quality content</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <h3>Example: TikTok 15-Day Campaign</h3>
+            <div className="bg-card/30 p-4 rounded-md border border-border my-4">
+              <ul className="list-none space-y-1">
+                <li><strong>Followers:</strong> 25,000</li>
+                <li><strong>Avg Engagement Rate:</strong> 8%</li>
+                <li><strong>Views:</strong> 30,000</li>
+                <li><strong>Clicks:</strong> 600 (2%)</li>
+                <li><strong>Duration:</strong> 15 days</li>
+              </ul>
+              
+              <div className="mt-4 pt-4 border-t border-border font-mono text-sm">
+                <p>ReachFactor = log10(25000) ≈ 4.40</p>
+                <p>EngagementFactor = 0.08 × 10 = 0.8</p>
+                <p>PerformanceFactor = (30000 / 25000) × 0.02 × 0.5 = 0.012</p>
+                <p>DurationMultiplier = 1.5</p>
+                <p>TotalReward = 0.01 × 1.2 × (4.40 + 0.8 + 0.012) × 1.5 ≈ $0.094</p>
+              </div>
+            </div>
+
+            <h2>Revenue Model</h2>
             <ul>
-              <li><strong>Campaign Contract:</strong> Defines campaign parameters, funding, and completion criteria</li>
-              <li><strong>Escrow Contract:</strong> Manages secure fund holding and release based on predefined conditions</li>
-              <li><strong>Verification Contract:</strong> Validates engagement metrics through oracle integrations</li>
-              <li><strong>Reputation Contract:</strong> Maintains on-chain reputation scores for platform participants</li>
+              <li><strong>Credit Purchase:</strong> Users buy credits via fiat or crypto</li>
+              <li><strong>Subscription Tiers:</strong> For advanced analytics, AI credits, faster payouts</li>
+              <li><strong>Escrow Fees:</strong> Small percentage fee held on transactions</li>
+              <li><strong>Sponsored Ads:</strong> Premium placement in Prompto feed</li>
+              <li><strong>Analytics API Access:</strong> Paid access to campaign data for external brands</li>
             </ul>
-            
-            <h3>2.3 AI Content Generation</h3>
-            <p>
-              Prompto leverages advanced language models to assist creators in generating optimized advertising content. The AI system:
-            </p>
+
+            <h2>AI Use Cases</h2>
             <ul>
-              <li>Analyzes creator inputs and brand guidelines</li>
-              <li>Generates platform-specific content variations</li>
-              <li>Optimizes content based on historical performance data</li>
-              <li>Provides engagement predictions and improvement suggestions</li>
+              <li>AI ad copy generation</li>
+              <li>Dynamic reward prediction engine</li>
+              <li>Engagement analysis via NLP/vision on social posts</li>
             </ul>
-            
-            <h2>3. Economic Model</h2>
-            <h3>3.1 Token Utility</h3>
-            <p>
-              The platform's native token (PMPT) serves multiple functions:
-            </p>
+
+            <h2>Roadmap</h2>
+            <div className="space-y-4 my-6 not-prose">
+              <div className="bg-card/30 p-4 rounded-md border border-primary/20">
+                <h3 className="text-primary font-medium">Phase 1: MVP</h3>
+                <p>Login, Ad Generation, Wallet Integration, Analytics Dashboard</p>
+              </div>
+              <div className="bg-card/30 p-4 rounded-md border border-primary/20">
+                <h3 className="text-primary font-medium">Phase 2: Platform Expansion</h3>
+                <p>Social Media Integration, AI Enhancements, Smart Contract Expansion (Escrow conditions, dispute resolution, audit logs)</p>
+              </div>
+              <div className="bg-card/30 p-4 rounded-md border border-primary/20">
+                <h3 className="text-primary font-medium">Phase 3: Ecosystem Development</h3>
+                <p>DAO Governance, Marketplace, Reputation System</p>
+              </div>
+              <div className="bg-card/30 p-4 rounded-md border border-primary/20">
+                <h3 className="text-primary font-medium">Phase 4: Global Scaling</h3>
+                <p>Multichain Support, Public Launch</p>
+              </div>
+            </div>
+
+            <h2>Security & Compliance</h2>
             <ul>
-              <li>Transaction fees and campaign funding</li>
-              <li>Platform governance participation</li>
-              <li>Staking for reputation and premium features</li>
-              <li>Rewards for network contributions and engagement verification</li>
+              <li>Smart contract audits</li>
+              <li>OAuth 2.0 + Wallet authentication</li>
+              <li>End-to-end encryption for media & user data</li>
             </ul>
-            
-            <h3>3.2 Fee Structure</h3>
-            <p>
-              Prompto implements a transparent fee structure significantly lower than traditional platforms:
-            </p>
-            <ul>
-              <li>Base platform fee: 5% of campaign value</li>
-              <li>Discounted fees for PMPT stakers and high-volume users</li>
-              <li>Optional priority features for additional fees</li>
-              <li>No hidden or additional charges</li>
-            </ul>
-            
-            <h2>4. Governance</h2>
-            <p>
-              Prompto implements a decentralized governance system allowing stakeholders to influence platform development through:
-            </p>
-            <ul>
-              <li>Proposal submission and voting</li>
-              <li>Parameter adjustments</li>
-              <li>Feature prioritization</li>
-              <li>Revenue allocation for development and ecosystem growth</li>
-            </ul>
-            
-            <h2>5. Roadmap</h2>
-            <p>
-              The development and deployment of Prompto will proceed according to the following timeline:
-            </p>
-            <ul>
-              <li><strong>Q2 2023:</strong> Initial platform launch with core features</li>
-              <li><strong>Q3 2023:</strong> Integration of AI content generation capabilities</li>
-              <li><strong>Q4 2023:</strong> Implementation of token economics and staking</li>
-              <li><strong>Q1 2024:</strong> Governance system deployment</li>
-              <li><strong>Q2 2024:</strong> Expansion to additional social platforms and content types</li>
-            </ul>
-            
-            <h2>6. Conclusion</h2>
-            <p>
-              Prompto represents a significant advancement in digital advertising, addressing key industry challenges through blockchain technology and artificial intelligence. By creating a more transparent, efficient, and equitable ecosystem, Prompto aims to transform how creators and influencers collaborate in the digital advertising space.
-            </p>
+
+            <h2>Contact</h2>
+            <p><strong>Website:</strong> <a href="https://prompto.ad" className="text-primary hover:underline">https://prompto.ad</a></p>
+            <p><strong>Twitter:</strong> <a href="https://twitter.com/promptoplatform" className="text-primary hover:underline">@promptoplatform</a></p>
+            <p><strong>Email:</strong> <a href="mailto:team@prompto.ad" className="text-primary hover:underline">team@prompto.ad</a></p>
           </div>
           
           <div className="mt-12 flex justify-center">
