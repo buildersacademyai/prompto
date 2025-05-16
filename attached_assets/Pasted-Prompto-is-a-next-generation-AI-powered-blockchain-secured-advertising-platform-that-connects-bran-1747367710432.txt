@@ -1,0 +1,148 @@
+Prompto is a next-generation, AI-powered, blockchain-secured advertising platform that connects brands (creators) with influencers in a decentralized, transparent, and performance-based ecosystem. Built on the Solana blockchain, Prompto ensures fast, secure, and low-cost interactions between advertisers and content promoters.
+
+🌟 Key Features
+
+For Influencers
+
+Sign up with Google or email
+
+Secure wallet connection
+
+Personalized dashboard with:
+
+Shared ad history
+
+Time left for ad campaigns
+
+Engagement analytics
+
+Connect social accounts (Instagram, TikTok)
+
+Real-time reward estimation
+
+For Creators (Advertisers)
+
+Intuitive ad generation (2 free on signup)
+
+AI-powered ad copy creation
+
+Manage, list/unlist ads
+
+Escrow-based payment system
+
+Campaign analytics dashboard
+
+Purchase credits via card or crypto
+
+🔗 Blockchain Integration (Solana)
+
+Wallet-based identity and payments
+
+Escrow smart contract holds ad budget securely
+
+Automatic release of funds upon completion of campaign criteria
+
+Refund to creator if influencer fails to meet requirements
+
+📐 Prompto Reward Engine — "PFEM" (Prompto Fair Engagement Model)
+
+Objective
+
+To ensure fair, transparent, and performance-driven reward distribution to influencers who promote ads on TikTok and Instagram using both on-chain and off-chain data.
+
+Formula
+
+TotalReward = Base × PlatformWeight × (ReachFactor + EngagementFactor + PerformanceFactor) × DurationMultiplier + Bonus
+
+Breakdown
+
+Factor
+
+Definition
+
+Base
+
+Base rate per engagement point. Dynamically adjustable per campaign. (e.g., $0.01)
+
+PlatformWeight
+
+Adjusts reward based on platform influence. (e.g., TikTok = 1.2, Instagram = 1.0)
+
+ReachFactor
+
+log10(Followers + 1) — logarithmic normalization to avoid over-rewarding massive accounts.
+
+EngagementFactor
+
+Average interaction rate across posts, normalized. (Likes + Comments + Shares) / Views × 10
+
+PerformanceFactor
+
+Actual ad post performance. (Post Views / Followers) × CTR × 0.5
+
+DurationMultiplier
+
+Campaign duration booster. 1 + (Campaign Days / 30)
+
+Bonus
+
+Additional rewards for early sharing, verified creators, or high-quality content
+
+Example: TikTok 15-Day Campaign
+
+Followers: 25,000
+
+Avg Engagement Rate: 8%
+
+Views: 30,000
+
+Clicks: 600 (2%)
+
+Duration: 15 days
+
+ReachFactor        = log10(25000) ≈ 4.40
+EngagementFactor   = 0.08 × 10 = 0.8
+PerformanceFactor  = (30000 / 25000) × 0.02 × 0.5 = 0.012
+DurationMultiplier = 1.5
+TotalReward        = 0.01 × 1.2 × (4.40 + 0.8 + 0.012) × 1.5
+                   ≈ $0.094
+
+💰 Revenue Model
+
+Credit Purchase: Users buy credits via fiat or crypto
+
+Subscription Tiers: For advanced analytics, AI credits, faster payouts
+
+Escrow Fees: Small % fee held on transactions
+
+Sponsored Ads: Premium placement in Prompto feed
+
+Analytics API Access: Paid access to campaign data for external brands
+
+🧠 AI Use Cases
+
+AI ad copy generation
+
+Dynamic reward prediction engine
+
+Engagement analysis via NLP/vision on social posts
+
+🚀 Roadmap
+
+Phase 1: MVP (Login, Ad Gen, Wallet, Analytics)Phase 2: Social Media Integration, AI Enhancements, Smart Contract Expansion (Escrow conditions, dispute resolution, audit logs)Phase 3: DAO Governance, Marketplace, Reputation SystemPhase 4: Multichain Support, Public Launch
+
+🛡 Security & Compliance
+
+Smart contract audits
+
+OAuth 2.0 + Wallet auth
+
+End-to-end encryption for media & user data
+
+📫 Contact
+
+Website: https://prompto.ad
+
+Twitter: @promptoplatform
+
+Email: team@prompto.ad
