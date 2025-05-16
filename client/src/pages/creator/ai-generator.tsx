@@ -29,9 +29,9 @@ export default function AIGeneratorPage() {
         <div className="flex flex-col gap-6">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div>
-              <h1 className="text-3xl font-bold tracking-tight">AI Content Generator</h1>
+              <h1 className="text-3xl font-bold tracking-tight">Ads Generator</h1>
               <p className="text-muted-foreground mt-1">
-                Create engaging content for your campaigns using AI
+                Create engaging ads for your campaigns using AI
               </p>
             </div>
           </div>
@@ -40,11 +40,11 @@ export default function AIGeneratorPage() {
             <TabsList className="grid grid-cols-2 w-[400px]">
               <TabsTrigger value="generator" className="flex items-center gap-2">
                 <MessageSquarePlus className="h-4 w-4" />
-                New Content
+                New Ad
               </TabsTrigger>
               <TabsTrigger value="saved" className="flex items-center gap-2">
                 <Save className="h-4 w-4" />
-                Saved Content
+                Saved Ads
               </TabsTrigger>
             </TabsList>
             

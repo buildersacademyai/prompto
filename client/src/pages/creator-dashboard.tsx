@@ -1,7 +1,18 @@
 import Header from "@/components/layout/header";
 import Sidebar from "@/components/layout/sidebar";
 import { Button } from "@/components/ui/button";
-import { PlusIcon, CreditCard, ArrowUpIcon, SparklesIcon } from "lucide-react";
+import { 
+  PlusIcon, 
+  CreditCard, 
+  ArrowUpIcon, 
+  SparklesIcon, 
+  SearchIcon, 
+  MoreVerticalIcon,
+  CopyIcon,
+  ImageIcon,
+  PencilIcon,
+  TrashIcon
+} from "lucide-react";
 import { Link } from "wouter";
 import StatsCard from "@/components/stats-card";
 import { useMutation } from "@tanstack/react-query";
@@ -9,10 +20,16 @@ import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 
 import CampaignCard from "@/components/campaign-card";
-import InfluencerCard from "@/components/influencer-card";
+import { 
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/hooks/use-auth";
 import { useQuery } from "@tanstack/react-query";
-import { Campaign, Influencer } from "@shared/schema";
+import { Campaign } from "@shared/schema";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
@@ -21,7 +38,7 @@ export default function CreatorDashboard() {
   const { user } = useAuth();
   const { toast } = useToast();
   const [campaignSort, setCampaignSort] = useState("performance");
-  const [influencerFilter, setInfluencerFilter] = useState("all");
+  const [adFilter, setAdFilter] = useState("newest");
   const [searchTerm, setSearchTerm] = useState("");
   
   const fundWalletMutation = useMutation({
@@ -50,10 +67,8 @@ export default function CreatorDashboard() {
     queryKey: ["/api/campaigns"],
   });
 
-  // Fetch influencers
-  const { data: influencers, isLoading: influencersLoading } = useQuery<Influencer[]>({
-    queryKey: ["/api/influencers"],
-  });
+  // No need to fetch influencers since we don't display them anymore
+  const [adSort, setAdSort] = useState("newest");
 
   // Fetch stats
   const { data: stats, isLoading: statsLoading } = useQuery<{
@@ -222,12 +237,15 @@ export default function CreatorDashboard() {
               </div>
             </div>
             
-            {/* Influencer Marketplace */}
+            {/* Generated Ads */}
             <div>
               <div className="flex justify-between items-center mb-4">
-                <h2 className="font-semibold text-xl">Discover Influencers</h2>
-                <Button variant="ghost" className="text-accent hover:text-accent/90">
-                  View All
+                <h2 className="font-semibold text-xl">Generated Ads</h2>
+                <Button variant="ghost" className="text-accent hover:text-accent/90" asChild>
+                  <Link href="/creator/ai-generator">
+                    <PlusIcon className="mr-2 h-4 w-4" />
+                    Generate New
+                  </Link>
                 </Button>
               </div>
               
@@ -237,83 +255,177 @@ export default function CreatorDashboard() {
                     <div className="relative">
                       <Input 
                         type="text" 
-                        placeholder="Search by name, category, or tags..." 
+                        placeholder="Search generated ads..." 
                         className="w-full bg-background border-border pl-10" 
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                       />
-                      <svg 
-                        xmlns="http://www.w3.org/2000/svg" 
-                        className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" 
-                        fill="none" 
-                        viewBox="0 0 24 24" 
-                        stroke="currentColor"
-                      >
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                      </svg>
+                      <SearchIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                     </div>
                   </div>
                   <div className="flex space-x-2">
-                    <Select value={influencerFilter} onValueChange={setInfluencerFilter}>
+                    <Select value={adFilter} onValueChange={setAdFilter}>
                       <SelectTrigger className="bg-background border-border w-36">
-                        <SelectValue placeholder="All Categories" />
+                        <SelectValue placeholder="Sort By" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="all">All Categories</SelectItem>
-                        <SelectItem value="crypto">Crypto</SelectItem>
-                        <SelectItem value="nft">NFT</SelectItem>
-                        <SelectItem value="defi">DeFi</SelectItem>
-                        <SelectItem value="web3">Web3</SelectItem>
+                        <SelectItem value="newest">Newest First</SelectItem>
+                        <SelectItem value="oldest">Oldest First</SelectItem>
                       </SelectContent>
                     </Select>
-                    <Button variant="outline" className="bg-background border-border">
-                      <svg 
-                        xmlns="http://www.w3.org/2000/svg" 
-                        className="h-4 w-4" 
-                        fill="none" 
-                        viewBox="0 0 24 24" 
-                        stroke="currentColor"
-                      >
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
-                      </svg>
-                    </Button>
                   </div>
                 </div>
                 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  {influencersLoading ? (
-                    Array.from({ length: 3 }).map((_, i) => (
-                      <div key={i} className="bg-background rounded-xl overflow-hidden border border-border animate-pulse">
-                        <div className="h-24 bg-muted"></div>
-                        <div className="p-5 space-y-3 pt-12">
-                          <div className="h-6 bg-muted rounded w-1/2"></div>
-                          <div className="h-4 bg-muted rounded w-2/3"></div>
-                          <div className="h-4 bg-muted rounded w-full"></div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {/* Generated Ad Card 1 */}
+                  <div className="bg-background rounded-lg p-5 border border-border">
+                    <div className="flex justify-between items-start mb-3">
+                      <div>
+                        <h3 className="font-medium text-lg">Summer Collection Ad</h3>
+                        <div className="text-xs text-muted-foreground mt-1">
+                          Created: May 10, 2024
                         </div>
                       </div>
-                    ))
-                  ) : influencers && influencers.length > 0 ? (
-                    influencers
-                      .filter(influencer => 
-                        influencerFilter === "all" || 
-                        influencer.tags.includes(influencerFilter)
-                      )
-                      .filter(influencer => 
-                        searchTerm === "" || 
-                        influencer.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                        influencer.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                        influencer.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()))
-                      )
-                      .slice(0, 3)
-                      .map((influencer) => (
-                        <InfluencerCard key={influencer.id} influencer={influencer} />
-                      ))
-                  ) : (
-                    <div className="col-span-3 bg-background rounded-xl p-8 text-center border border-border">
-                      <h3 className="font-semibold text-lg mb-2">No Influencers Found</h3>
-                      <p className="text-muted-foreground text-sm">Try adjusting your search or filter criteria.</p>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" size="icon" className="h-8 w-8">
+                            <MoreVerticalIcon className="h-4 w-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem>
+                            <CopyIcon className="mr-2 h-4 w-4" />
+                            Copy Text
+                          </DropdownMenuItem>
+                          <DropdownMenuItem>
+                            <ImageIcon className="mr-2 h-4 w-4" />
+                            Download Image
+                          </DropdownMenuItem>
+                          <DropdownMenuItem>
+                            <PencilIcon className="mr-2 h-4 w-4" />
+                            Edit & Regenerate
+                          </DropdownMenuItem>
+                          <DropdownMenuItem>
+                            <TrashIcon className="mr-2 h-4 w-4" />
+                            Delete
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
                     </div>
-                  )}
+                    
+                    <div className="flex flex-col md:flex-row gap-4">
+                      <div className="md:w-1/2">
+                        <div className="relative aspect-square bg-muted rounded-md overflow-hidden">
+                          <img 
+                            src="https://images.unsplash.com/photo-1523381210434-271e8be1f52b" 
+                            alt="Summer Collection" 
+                            className="object-cover w-full h-full"
+                          />
+                        </div>
+                      </div>
+                      <div className="md:w-1/2">
+                        <div className="text-sm mb-3">
+                          <span className="font-medium">Prompt:</span>
+                          <p className="text-muted-foreground mt-1">Create a vibrant summer fashion collection ad for young adults featuring sustainable materials.</p>
+                        </div>
+                        <div className="text-sm mb-4">
+                          <span className="font-medium">Generated Text:</span>
+                          <p className="text-muted-foreground mt-1 line-clamp-4">Introducing our eco-conscious Summer Collection. Made with 100% sustainable materials, this vibrant lineup gives you style without compromise. #SummerEthics #EcoFashion</p>
+                        </div>
+                        <div className="flex flex-wrap gap-1 mb-3">
+                          <Badge variant="outline" className="bg-background/50 text-xs">
+                            #SummerEthics
+                          </Badge>
+                          <Badge variant="outline" className="bg-background/50 text-xs">
+                            #EcoFashion
+                          </Badge>
+                          <Badge variant="outline" className="bg-background/50 text-xs">
+                            #Sustainable
+                          </Badge>
+                        </div>
+                        <Button size="sm" className="w-full bg-primary hover:bg-primary/90" asChild>
+                          <Link href="/creator/new-campaign">
+                            Create Campaign
+                          </Link>
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* Generated Ad Card 2 */}
+                  <div className="bg-background rounded-lg p-5 border border-border">
+                    <div className="flex justify-between items-start mb-3">
+                      <div>
+                        <h3 className="font-medium text-lg">Smart Home Devices</h3>
+                        <div className="text-xs text-muted-foreground mt-1">
+                          Created: May 8, 2024
+                        </div>
+                      </div>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" size="icon" className="h-8 w-8">
+                            <MoreVerticalIcon className="h-4 w-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem>
+                            <CopyIcon className="mr-2 h-4 w-4" />
+                            Copy Text
+                          </DropdownMenuItem>
+                          <DropdownMenuItem>
+                            <ImageIcon className="mr-2 h-4 w-4" />
+                            Download Image
+                          </DropdownMenuItem>
+                          <DropdownMenuItem>
+                            <PencilIcon className="mr-2 h-4 w-4" />
+                            Edit & Regenerate
+                          </DropdownMenuItem>
+                          <DropdownMenuItem>
+                            <TrashIcon className="mr-2 h-4 w-4" />
+                            Delete
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </div>
+                    
+                    <div className="flex flex-col md:flex-row gap-4">
+                      <div className="md:w-1/2">
+                        <div className="relative aspect-square bg-muted rounded-md overflow-hidden">
+                          <img 
+                            src="https://images.unsplash.com/photo-1558002038-648415d93022" 
+                            alt="Smart Home Devices" 
+                            className="object-cover w-full h-full"
+                          />
+                        </div>
+                      </div>
+                      <div className="md:w-1/2">
+                        <div className="text-sm mb-3">
+                          <span className="font-medium">Prompt:</span>
+                          <p className="text-muted-foreground mt-1">Generate an ad for smart home devices that emphasize energy efficiency and ease of use.</p>
+                        </div>
+                        <div className="text-sm mb-4">
+                          <span className="font-medium">Generated Text:</span>
+                          <p className="text-muted-foreground mt-1 line-clamp-4">Transform your living space with our Smart Home ecosystem. Control everything with a tap, save on energy bills, and enjoy the comfort of true automation. Your future home is here today. #SmartLiving #EnergyEfficient</p>
+                        </div>
+                        <div className="flex flex-wrap gap-1 mb-3">
+                          <Badge variant="outline" className="bg-background/50 text-xs">
+                            #SmartLiving
+                          </Badge>
+                          <Badge variant="outline" className="bg-background/50 text-xs">
+                            #EnergyEfficient
+                          </Badge>
+                          <Badge variant="outline" className="bg-background/50 text-xs">
+                            #HomeTech
+                          </Badge>
+                        </div>
+                        <Button size="sm" className="w-full bg-primary hover:bg-primary/90" asChild>
+                          <Link href="/creator/new-campaign">
+                            Create Campaign
+                          </Link>
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
