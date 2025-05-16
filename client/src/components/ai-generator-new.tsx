@@ -2,10 +2,12 @@ import { useState, useRef } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
 import { useMutation } from "@tanstack/react-query";
-import { RefreshCcwIcon, CopyIcon, WandSparkles, UploadIcon, XIcon, ImageIcon } from "lucide-react";
+import { RefreshCcwIcon, CopyIcon, WandSparkles, UploadIcon, XIcon, BookmarkIcon, ImageIcon } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Badge } from "@/components/ui/badge";
+import { v4 as uuidv4 } from "uuid";
 
 interface AIGeneratorProps {
   className?: string;
@@ -19,8 +21,19 @@ interface GeneratedContent {
   }>;
 }
 
-export default function AIGenerator({ className }: AIGeneratorProps) {
+export interface SavedAd {
+  id: string;
+  title: string;
+  prompt: string;
+  generatedText: string;
+  imageUrl: string;
+  date: string;
+  hashtags: string[];
+}
+
+export default function AIGenerator({ className, onSave }: AIGeneratorProps & { onSave?: (ad: SavedAd) => void }) {
   const { toast } = useToast();
+  const [adTitle, setAdTitle] = useState("");
   const [productDescription, setProductDescription] = useState("");
   const [uploadedImages, setUploadedImages] = useState<File[]>([]);
   const [imagePreviewUrls, setImagePreviewUrls] = useState<string[]>([]);
@@ -128,6 +141,46 @@ export default function AIGenerator({ className }: AIGeneratorProps) {
   const handleRegenerateContent = () => {
     generateMutation.mutate();
   };
+  
+  const handleSaveAd = () => {
+    if (!generatedContent) return;
+    
+    // Extract hashtags from generated text
+    const hashtags: string[] = [];
+    generatedContent.text.split(' ').forEach(word => {
+      if (word.startsWith('#')) {
+        hashtags.push(word);
+      }
+    });
+    
+    const adData: SavedAd = {
+      id: uuidv4(),
+      title: adTitle || "Untitled Ad",
+      prompt: productDescription,
+      generatedText: generatedContent.text,
+      imageUrl: generatedContent.suggestedMedia.length > 0 
+        ? generatedContent.suggestedMedia[0].url 
+        : imagePreviewUrls.length > 0 
+          ? imagePreviewUrls[0] 
+          : "https://images.unsplash.com/photo-1523381210434-271e8be1f52b",
+      date: new Date().toLocaleDateString('en-US', { 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric' 
+      }),
+      hashtags
+    };
+    
+    // Call onSave with the saved ad data
+    if (onSave) {
+      onSave(adData);
+    }
+    
+    toast({
+      title: "Ad saved successfully",
+      description: "You can view your saved ad in the dashboard.",
+    });
+  };
 
   return (
     <Card className={`bg-card shadow-md ${className}`}>
@@ -139,6 +192,14 @@ export default function AIGenerator({ className }: AIGeneratorProps) {
       <CardContent className="p-6">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <div>
+            <label className="block text-sm font-medium mb-2">Ad Title</label>
+            <Input
+              placeholder="Enter a title for your ad..."
+              className="w-full bg-background border border-border rounded-lg mb-4"
+              value={adTitle}
+              onChange={(e) => setAdTitle(e.target.value)}
+            />
+            
             <label className="block text-sm font-medium mb-2">Product Description</label>
             <Textarea 
               placeholder="Describe your product or service..."
@@ -240,6 +301,15 @@ export default function AIGenerator({ className }: AIGeneratorProps) {
                   disabled={!generatedContent}
                 >
                   <CopyIcon className="h-4 w-4" />
+                </Button>
+                <Button 
+                  variant="ghost" 
+                  size="icon"
+                  className="text-muted-foreground hover:text-foreground"
+                  onClick={handleSaveAd}
+                  disabled={!generatedContent}
+                >
+                  <BookmarkIcon className="h-4 w-4" />
                 </Button>
               </div>
             </div>
