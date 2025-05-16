@@ -276,67 +276,154 @@ export default function CreatorDashboard() {
                   </div>
                 </div>
                 
-                <div className="space-y-4">
-                  {/* Generated Ad Item 1 */}
-                  <div className="bg-background rounded-lg p-4 border border-border">
-                    <div className="flex justify-between items-center mb-2">
-                      <div className="text-xs text-muted-foreground">
-                        Saved on May 10, 2024
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {/* Generated Ad Card 1 */}
+                  <div className="bg-background rounded-lg p-5 border border-border">
+                    <div className="flex justify-between items-start mb-3">
+                      <div>
+                        <h3 className="font-medium text-lg">Summer Collection Ad</h3>
+                        <div className="text-xs text-muted-foreground mt-1">
+                          Created: May 10, 2024
+                        </div>
                       </div>
-                      <div className="flex space-x-2">
-                        <Button variant="ghost" size="icon" className="h-7 w-7">
-                          <CopyIcon className="h-4 w-4" />
-                        </Button>
-                        <Button variant="ghost" size="icon" className="h-7 w-7">
-                          <ImageIcon className="h-4 w-4" />
-                        </Button>
-                      </div>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" size="icon" className="h-8 w-8">
+                            <MoreVerticalIcon className="h-4 w-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem>
+                            <CopyIcon className="mr-2 h-4 w-4" />
+                            Copy Text
+                          </DropdownMenuItem>
+                          <DropdownMenuItem>
+                            <ImageIcon className="mr-2 h-4 w-4" />
+                            Download Image
+                          </DropdownMenuItem>
+                          <DropdownMenuItem>
+                            <PencilIcon className="mr-2 h-4 w-4" />
+                            Edit & Regenerate
+                          </DropdownMenuItem>
+                          <DropdownMenuItem>
+                            <TrashIcon className="mr-2 h-4 w-4" />
+                            Delete
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
                     </div>
                     
-                    <div className="text-sm">
-                      <p className="mb-1">Introducing our eco-conscious Summer Collection. Made with 100% sustainable materials, this vibrant lineup gives you style without compromise. #SummerEthics #EcoFashion #Sustainable</p>
+                    <div className="flex flex-col md:flex-row gap-4">
+                      <div className="md:w-1/2">
+                        <div className="relative aspect-square bg-muted rounded-md overflow-hidden">
+                          <img 
+                            src="https://images.unsplash.com/photo-1523381210434-271e8be1f52b" 
+                            alt="Summer Collection" 
+                            className="object-cover w-full h-full"
+                          />
+                        </div>
+                      </div>
+                      <div className="md:w-1/2">
+                        <div className="text-sm mb-3">
+                          <span className="font-medium">Prompt:</span>
+                          <p className="text-muted-foreground mt-1">Create a vibrant summer fashion collection ad for young adults featuring sustainable materials.</p>
+                        </div>
+                        <div className="text-sm mb-4">
+                          <span className="font-medium">Generated Text:</span>
+                          <p className="text-muted-foreground mt-1 line-clamp-4">Introducing our eco-conscious Summer Collection. Made with 100% sustainable materials, this vibrant lineup gives you style without compromise. #SummerEthics #EcoFashion</p>
+                        </div>
+                        <div className="flex flex-wrap gap-1 mb-3">
+                          <Badge variant="outline" className="bg-background/50 text-xs">
+                            #SummerEthics
+                          </Badge>
+                          <Badge variant="outline" className="bg-background/50 text-xs">
+                            #EcoFashion
+                          </Badge>
+                          <Badge variant="outline" className="bg-background/50 text-xs">
+                            #Sustainable
+                          </Badge>
+                        </div>
+                        <Button size="sm" className="w-full bg-primary hover:bg-primary/90" asChild>
+                          <Link href="/creator/new-campaign">
+                            Create Campaign
+                          </Link>
+                        </Button>
+                      </div>
                     </div>
                   </div>
                   
-                  {/* Generated Ad Item 2 */}
-                  <div className="bg-background rounded-lg p-4 border border-border">
-                    <div className="flex justify-between items-center mb-2">
-                      <div className="text-xs text-muted-foreground">
-                        Saved on April 28, 2024
+                  {/* Generated Ad Card 2 */}
+                  <div className="bg-background rounded-lg p-5 border border-border">
+                    <div className="flex justify-between items-start mb-3">
+                      <div>
+                        <h3 className="font-medium text-lg">Smart Home Devices</h3>
+                        <div className="text-xs text-muted-foreground mt-1">
+                          Created: May 8, 2024
+                        </div>
                       </div>
-                      <div className="flex space-x-2">
-                        <Button variant="ghost" size="icon" className="h-7 w-7">
-                          <CopyIcon className="h-4 w-4" />
-                        </Button>
-                        <Button variant="ghost" size="icon" className="h-7 w-7">
-                          <ImageIcon className="h-4 w-4" />
-                        </Button>
-                      </div>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" size="icon" className="h-8 w-8">
+                            <MoreVerticalIcon className="h-4 w-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem>
+                            <CopyIcon className="mr-2 h-4 w-4" />
+                            Copy Text
+                          </DropdownMenuItem>
+                          <DropdownMenuItem>
+                            <ImageIcon className="mr-2 h-4 w-4" />
+                            Download Image
+                          </DropdownMenuItem>
+                          <DropdownMenuItem>
+                            <PencilIcon className="mr-2 h-4 w-4" />
+                            Edit & Regenerate
+                          </DropdownMenuItem>
+                          <DropdownMenuItem>
+                            <TrashIcon className="mr-2 h-4 w-4" />
+                            Delete
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
                     </div>
                     
-                    <div className="text-sm">
-                      <p className="mb-1">Elevate your skincare routine with our new organic face serum. Packed with natural ingredients that nourish and revitalize your skin. #skincare #organic #beauty</p>
-                    </div>
-                  </div>
-                  
-                  {/* Generated Ad Item 3 */}
-                  <div className="bg-background rounded-lg p-4 border border-border">
-                    <div className="flex justify-between items-center mb-2">
-                      <div className="text-xs text-muted-foreground">
-                        Saved on April 15, 2024
+                    <div className="flex flex-col md:flex-row gap-4">
+                      <div className="md:w-1/2">
+                        <div className="relative aspect-square bg-muted rounded-md overflow-hidden">
+                          <img 
+                            src="https://images.unsplash.com/photo-1558002038-648415d93022" 
+                            alt="Smart Home Devices" 
+                            className="object-cover w-full h-full"
+                          />
+                        </div>
                       </div>
-                      <div className="flex space-x-2">
-                        <Button variant="ghost" size="icon" className="h-7 w-7">
-                          <CopyIcon className="h-4 w-4" />
-                        </Button>
-                        <Button variant="ghost" size="icon" className="h-7 w-7">
-                          <ImageIcon className="h-4 w-4" />
+                      <div className="md:w-1/2">
+                        <div className="text-sm mb-3">
+                          <span className="font-medium">Prompt:</span>
+                          <p className="text-muted-foreground mt-1">Generate an ad for smart home devices that emphasize energy efficiency and ease of use.</p>
+                        </div>
+                        <div className="text-sm mb-4">
+                          <span className="font-medium">Generated Text:</span>
+                          <p className="text-muted-foreground mt-1 line-clamp-4">Transform your living space with our Smart Home ecosystem. Control everything with a tap, save on energy bills, and enjoy the comfort of true automation. Your future home is here today. #SmartLiving #EnergyEfficient</p>
+                        </div>
+                        <div className="flex flex-wrap gap-1 mb-3">
+                          <Badge variant="outline" className="bg-background/50 text-xs">
+                            #SmartLiving
+                          </Badge>
+                          <Badge variant="outline" className="bg-background/50 text-xs">
+                            #EnergyEfficient
+                          </Badge>
+                          <Badge variant="outline" className="bg-background/50 text-xs">
+                            #HomeTech
+                          </Badge>
+                        </div>
+                        <Button size="sm" className="w-full bg-primary hover:bg-primary/90" asChild>
+                          <Link href="/creator/new-campaign">
+                            Create Campaign
+                          </Link>
                         </Button>
                       </div>
-                    </div>
-                    
-                    <div className="text-sm">
-                      <p className="mb-1">Transform your living space with our Smart Home ecosystem. Control everything with a tap, save on energy bills, and enjoy the comfort of true automation. Your future home is here today. #SmartLiving #EnergyEfficient #HomeTech</p>
                     </div>
                   </div>
                 </div>
