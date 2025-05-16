@@ -84,7 +84,11 @@ export default function CreatorDashboard() {
   // Fetch campaigns
   const { data: campaigns, isLoading: campaignsLoading } = useQuery<Campaign[]>({
     queryKey: ["/api/campaigns"],
+    enabled: !mockCampaigns, // Only fetch if we don't have mock data
   });
+  
+  // Use mock campaigns data if API data is not available
+  const displayCampaigns = campaigns || mockCampaigns;
 
   // No need to fetch influencers since we don't display them anymore
   const [adSort, setAdSort] = useState("newest");
@@ -99,7 +103,18 @@ export default function CreatorDashboard() {
     engagementChange: number;
   }>({
     queryKey: ["/api/creator/stats"],
+    enabled: !creatorAnalyticsData, // Only fetch if we don't have mock data
   });
+  
+  // Use mock stats if the API data is not available
+  const displayStats = stats || {
+    totalSpend: creatorAnalyticsData.overall.spent,
+    activeCampaigns: creatorAnalyticsData.overall.campaigns,
+    totalEngagement: creatorAnalyticsData.overall.engagement,
+    spendChange: creatorAnalyticsData.overall.spentChange,
+    campaignsChange: creatorAnalyticsData.overall.campaignsChange,
+    engagementChange: creatorAnalyticsData.overall.engagementChange
+  };
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
@@ -234,8 +249,8 @@ export default function CreatorDashboard() {
                       </div>
                     </div>
                   ))
-                ) : campaigns && campaigns.length > 0 ? (
-                  campaigns.map((campaign) => (
+                ) : displayCampaigns && displayCampaigns.length > 0 ? (
+                  displayCampaigns.map((campaign) => (
                     <CampaignCard key={campaign.id} campaign={campaign} />
                   ))
                 ) : (

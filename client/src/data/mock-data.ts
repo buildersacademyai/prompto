@@ -76,16 +76,17 @@ export const mockCampaigns: Campaign[] = [
     creatorId: 2,
     title: "Summer Fashion Collection",
     description: "Promoting our new sustainable summer fashion line targeting eco-conscious consumers",
+    imageUrl: "https://images.unsplash.com/photo-1523381210434-271e8be1f52b",
     status: "active",
+    category: "fashion",
     budget: {
       total: 5000,
       spent: 2750
     },
-    goal: "brand_awareness",
-    targetAudience: "young_adults",
+    engagementRate: 3.8,
     startDate: new Date(new Date().setDate(new Date().getDate() - 10)),
     endDate: new Date(new Date().setDate(new Date().getDate() + 20)),
-    platforms: ["instagram", "tiktok"],
+
     createdAt: new Date(new Date().setDate(new Date().getDate() - 15)),
     updatedAt: new Date(),
     influencers: [
@@ -117,8 +118,9 @@ export const mockCampaigns: Campaign[] = [
       total: 7500,
       spent: 3200
     },
-    goal: "sales",
-    targetAudience: "homeowners",
+    category: "tech",
+    engagementRate: 2.9,
+    imageUrl: "https://images.unsplash.com/photo-1558002038-648415d93022",
     startDate: new Date(new Date().setDate(new Date().getDate() - 5)),
     endDate: new Date(new Date().setDate(new Date().getDate() + 25)),
     platforms: ["youtube", "instagram"],
@@ -332,7 +334,7 @@ export const mockInfluencers: Influencer[] = [
     engagement: 4.5,
     location: "Los Angeles, USA",
     tags: ["fitness", "workout", "nutrition", "wellness"],
-    createdAt: new Date(new Date().setMonth(new Date().getMonth() - 18)).toISOString(),
+    createdAt: new Date(new Date().setMonth(new Date().getMonth() - 18)),
     socialStats: [
       { platform: "instagram", followers: 290000 },
       { platform: "youtube", followers: 320000 },
@@ -359,7 +361,7 @@ export const mockInfluencers: Influencer[] = [
     engagement: 4.2,
     location: "Melbourne, Australia",
     tags: ["travel", "adventure", "sustainable", "photography"],
-    createdAt: new Date(new Date().setMonth(new Date().getMonth() - 12)).toISOString(),
+    createdAt: new Date(new Date().setMonth(new Date().getMonth() - 12)),
     socialStats: [
       { platform: "instagram", followers: 240000 },
       { platform: "youtube", followers: 180000 },
