@@ -143,7 +143,7 @@ export default function Header() {
                       <Link href={userRole === 'creator' ? '/creator/ai-generator' : '/influencer/content'}>
                         <div className="flex items-center w-full">
                           <SparklesIcon className="mr-2 h-4 w-4" />
-                          <span>{userRole === 'creator' ? 'AI Generator' : 'Content Creation'}</span>
+                          <span>{userRole === 'creator' ? 'Generate Ad' : 'Content Creation'}</span>
                         </div>
                       </Link>
                     </DropdownMenuItem>
@@ -280,7 +280,7 @@ export default function Header() {
                       onClick={() => setIsOpen(false)}
                     >
                       <SparklesIcon className="inline-block mr-2 h-4 w-4" />
-                      {userRole === 'creator' ? 'AI Generator' : 'Content Creation'}
+                      {userRole === 'creator' ? 'Generate Ad' : 'Content Creation'}
                     </span>
                   </Link>
                   

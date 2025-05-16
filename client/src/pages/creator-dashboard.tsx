@@ -1,7 +1,7 @@
 import Header from "@/components/layout/header";
 import Sidebar from "@/components/layout/sidebar";
 import { Button } from "@/components/ui/button";
-import { PlusIcon, CreditCard, ArrowUpIcon } from "lucide-react";
+import { PlusIcon, CreditCard, ArrowUpIcon, SparklesIcon } from "lucide-react";
 import { Link } from "wouter";
 import StatsCard from "@/components/stats-card";
 import { useMutation } from "@tanstack/react-query";
@@ -81,11 +81,17 @@ export default function CreatorDashboard() {
                 <h1 className="font-bold text-3xl">Creator Dashboard</h1>
                 <p className="text-muted-foreground mt-1">Launch and manage your ad campaigns</p>
               </div>
-              <div className="mt-4 lg:mt-0">
+              <div className="mt-4 lg:mt-0 flex space-x-2">
                 <Button className="bg-primary hover:bg-primary/90 text-white flex items-center" asChild>
                   <Link href="/creator/new-campaign">
                     <PlusIcon className="mr-2 h-4 w-4" />
                     Create New Campaign
+                  </Link>
+                </Button>
+                <Button variant="outline" className="flex items-center" asChild>
+                  <Link href="/creator/ai-generator">
+                    <SparklesIcon className="mr-2 h-4 w-4" />
+                    Generate Ad
                   </Link>
                 </Button>
               </div>
