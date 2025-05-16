@@ -46,6 +46,10 @@ export default function CreatorDashboard() {
   
   // Load saved ads from localStorage
   useEffect(() => {
+    // Initialize with sample data
+    loadSampleData();
+    
+    // Then load from localStorage
     const storedAds = localStorage.getItem('savedAds');
     if (storedAds) {
       try {
