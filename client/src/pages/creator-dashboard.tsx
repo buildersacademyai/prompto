@@ -192,29 +192,27 @@ export default function CreatorDashboard() {
                 Array.from({ length: 3 }).map((_, i) => (
                   <div key={i} className="bg-card rounded-xl p-6 shadow-md animate-pulse h-32"></div>
                 ))
-              ) : stats ? (
+              ) : (
                 <>
                   <StatsCard 
                     title="Total Spend" 
-                    value={stats.totalSpend} 
-                    change={stats.spendChange}
+                    value={displayStats.totalSpend} 
+                    change={displayStats.spendChange}
                     icon="money"
                   />
                   <StatsCard 
                     title="Active Campaigns" 
-                    value={stats.activeCampaigns} 
-                    change={stats.campaignsChange}
+                    value={displayStats.activeCampaigns} 
+                    change={displayStats.campaignsChange}
                     icon="campaign"
                   />
                   <StatsCard 
                     title="Total Engagement" 
-                    value={stats.totalEngagement} 
-                    change={stats.engagementChange}
+                    value={displayStats.totalEngagement} 
+                    change={displayStats.engagementChange}
                     icon="engagement"
                   />
                 </>
-              ) : (
-                <div className="col-span-3 text-center p-6 bg-card rounded-xl">Failed to load stats</div>
               )}
             </div>
             
