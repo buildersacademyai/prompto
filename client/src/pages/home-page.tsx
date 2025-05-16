@@ -91,9 +91,9 @@ export default function HomePage() {
             >
               <Link href="/" className="flex items-center">
                 <motion.img 
-                  src="/src/assets/logo.png" 
+                  src="/logo.svg" 
                   alt="Prompto Logo" 
-                  className="h-24" 
+                  className="h-12" 
                   whileHover={{ scale: 1.05 }}
                   transition={{ type: "spring", stiffness: 400, damping: 10 }}
                 />
