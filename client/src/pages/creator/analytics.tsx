@@ -152,19 +152,19 @@ export default function CreatorAnalyticsPage() {
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
                 <div className="bg-primary/5 p-4 rounded-lg">
                   <p className="text-sm text-muted-foreground">Impressions</p>
-                  <p className="text-2xl font-semibold">{analytics.impressions.toLocaleString()}</p>
+                  <p className="text-2xl font-semibold">{analytics?.impressions?.toLocaleString() || '0'}</p>
                 </div>
                 <div className="bg-primary/5 p-4 rounded-lg">
                   <p className="text-sm text-muted-foreground">Clicks</p>
-                  <p className="text-2xl font-semibold">{analytics.clicks.toLocaleString()}</p>
+                  <p className="text-2xl font-semibold">{analytics?.clicks?.toLocaleString() || '0'}</p>
                 </div>
                 <div className="bg-primary/5 p-4 rounded-lg">
                   <p className="text-sm text-muted-foreground">CTR</p>
-                  <p className="text-2xl font-semibold">{analytics.ctr}%</p>
+                  <p className="text-2xl font-semibold">{analytics?.ctr || '0'}%</p>
                 </div>
                 <div className="bg-primary/5 p-4 rounded-lg">
                   <p className="text-sm text-muted-foreground">ROI</p>
-                  <p className="text-2xl font-semibold">{analytics.roi}x</p>
+                  <p className="text-2xl font-semibold">{analytics?.roi || '0'}x</p>
                 </div>
               </div>
             </CardContent>
