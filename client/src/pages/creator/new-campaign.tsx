@@ -23,8 +23,7 @@ import {
   DollarSign, 
   Users, 
   Calendar, 
-  Target, 
-  ArrowRight,
+  Target,
   Upload,
   X,
   Image as ImageIcon,
@@ -57,7 +56,6 @@ export default function NewCampaignPage() {
   const [selectedInfluencers, setSelectedInfluencers] = useState<number[]>([]);
   const [campaignImage, setCampaignImage] = useState<string | null>(null);
   const [selectedAdId, setSelectedAdId] = useState<string | null>(null);
-  const [step, setStep] = useState(1);
 
   // Check wallet balance
   const { data: walletInfo } = useQuery({
@@ -96,26 +94,21 @@ export default function NewCampaignPage() {
         if (key === 'influencerIds') {
           formData.append(key, JSON.stringify(value));
         } else if (key === 'startDate' || key === 'endDate') {
-          formData.append(key, value.toISOString());
+          formData.append(key, (value as Date).toISOString());
         } else {
           formData.append(key, String(value));
         }
       });
-      const res = await fetch('/api/creator/campaigns', {
-        method: 'POST',
-        body: formData
-      });
-      if (!res.ok) {
-        throw new Error(await res.text());
-      }
+      
+      const res = await apiRequest("POST", "/api/creator/campaigns", formData);
       return await res.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/creator/campaigns"] });
       toast({
-        title: "Campaign created",
-        description: "Your campaign has been created successfully.",
+        title: "Campaign created successfully!",
+        description: "Your campaign is now live and visible to influencers.",
       });
+      queryClient.invalidateQueries({ queryKey: ["/api/creator/campaigns"] });
       navigate("/creator/campaigns");
     },
     onError: (error: Error) => {
@@ -127,13 +120,13 @@ export default function NewCampaignPage() {
     },
   });
 
-  const onSubmit = (data: CampaignFormValues) => {
-    // Add selected influencers and image to form data
+  const onSubmit = async (data: CampaignFormValues) => {
     const campaignData = {
       ...data,
       influencerIds: selectedInfluencers,
-      image: campaignImage
+      image: campaignImage,
     };
+
     createCampaignMutation.mutate(campaignData);
   };
 
@@ -158,22 +151,6 @@ export default function NewCampaignPage() {
     setSelectedAdId(null);
   };
 
-  const nextStep = () => {
-    if (step === 1) {
-      // Validate first step fields
-      const result = form.trigger(["title", "description", "budget", "startDate", "endDate"]);
-      if (result) {
-        setStep(2);
-      }
-    }
-  };
-
-  const prevStep = () => {
-    if (step === 2) {
-      setStep(1);
-    }
-  };
-
   const insufficientFunds = form.watch("budget") > (walletInfo?.balance || 0);
 
   return (
@@ -195,361 +172,318 @@ export default function NewCampaignPage() {
             </Link>
           </div>
 
-          <div className="flex items-center justify-center mb-6">
-            <div className="flex items-center">
-              <div className={`w-10 h-10 rounded-full flex items-center justify-center ${step === 1 ? 'bg-primary text-white' : 'bg-primary/20 text-primary'}`}>
-                1
-              </div>
-              <div className={`h-1 w-24 ${step === 1 ? 'bg-primary/20' : 'bg-primary'}`}></div>
-              <div className={`w-10 h-10 rounded-full flex items-center justify-center ${step === 2 ? 'bg-primary text-white' : 'bg-primary/20 text-primary'}`}>
-                2
-              </div>
-            </div>
-          </div>
-
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-              {step === 1 && (
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Campaign Details</CardTitle>
-                    <CardDescription>
-                      Enter the basic information about your campaign
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="space-y-6">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <div className="space-y-6">
-                        <FormField
-                          control={form.control}
-                          name="title"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Campaign Title</FormLabel>
-                              <FormControl>
-                                <Input placeholder="e.g., Summer Product Launch" {...field} />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
+              {/* Campaign Details */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>Campaign Details</CardTitle>
+                  <CardDescription>
+                    Enter the basic information about your campaign
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div className="space-y-6">
+                      <FormField
+                        control={form.control}
+                        name="title"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Campaign Title</FormLabel>
+                            <FormControl>
+                              <Input placeholder="e.g., Summer Product Launch" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
 
-                        <FormField
-                          control={form.control}
-                          name="description"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Campaign Description</FormLabel>
-                              <FormControl>
-                                <Textarea 
-                                  placeholder="Describe the goals and details of your campaign..." 
-                                  className="min-h-[120px]" 
-                                  {...field} 
+                      <FormField
+                        control={form.control}
+                        name="description"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Campaign Description</FormLabel>
+                            <FormControl>
+                              <Textarea 
+                                placeholder="Describe the goals and details of your campaign..." 
+                                className="min-h-[120px]" 
+                                {...field} 
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      <FormField
+                        control={form.control}
+                        name="budget"
+                        render={({ field: { value, onChange, ...field } }) => (
+                          <FormItem>
+                            <FormLabel>Campaign Budget (USDC)</FormLabel>
+                            <div className="flex items-center gap-4">
+                              <div className="relative flex-1">
+                                <DollarSign className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                                <Input 
+                                  type="number" 
+                                  min={100} 
+                                  className="pl-8" 
+                                  value={value} 
+                                  onChange={(e) => onChange(parseFloat(e.target.value))} 
+                                  {...field}
                                 />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-
-                        <FormField
-                          control={form.control}
-                          name="budget"
-                          render={({ field: { value, onChange, ...field } }) => (
-                            <FormItem>
-                              <FormLabel>Campaign Budget (USDC)</FormLabel>
-                              <div className="flex items-center gap-4">
-                                <div className="relative flex-1">
-                                  <DollarSign className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                                  <Input 
-                                    type="number" 
-                                    min={100} 
-                                    className="pl-8" 
-                                    value={value} 
-                                    onChange={(e) => onChange(parseFloat(e.target.value))} 
-                                    {...field}
-                                  />
-                                </div>
-                                <div className="w-32 flex-shrink-0">
-                                  <div className="flex items-center gap-2 text-sm">
-                                    <Wallet className="h-4 w-4 text-muted-foreground" />
-                                    <span>Balance:</span>
-                                    <span className={insufficientFunds ? "text-destructive font-medium" : ""}>${walletInfo?.balance || 0}</span>
-                                  </div>
+                              </div>
+                              <div className="w-32 flex-shrink-0">
+                                <div className="flex items-center gap-2 text-sm">
+                                  <Wallet className="h-4 w-4 text-muted-foreground" />
+                                  <span>Balance:</span>
+                                  <span className={insufficientFunds ? "text-destructive font-medium" : ""}>${walletInfo?.balance || 0}</span>
                                 </div>
                               </div>
-                              {insufficientFunds && (
-                                <p className="text-destructive text-sm mt-1">
-                                  Insufficient funds. Please add more to your wallet or reduce your budget.
-                                </p>
-                              )}
-                              <FormDescription>
-                                Slide to adjust your budget. Minimum $100.
-                              </FormDescription>
-                              <Slider 
-                                value={[value]} 
-                                min={100} 
-                                max={5000} 
-                                step={100}
-                                onValueChange={(values) => onChange(values[0])}
-                                className="mt-2"
-                              />
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                      </div>
-
-                      <div className="space-y-6">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                          <FormField
-                            control={form.control}
-                            name="startDate"
-                            render={({ field }) => (
-                              <FormItem className="flex flex-col">
-                                <FormLabel>Start Date</FormLabel>
-                                <DatePicker date={field.value} setDate={field.onChange} />
-                                <FormMessage />
-                              </FormItem>
+                            </div>
+                            {insufficientFunds && (
+                              <p className="text-destructive text-sm mt-1">
+                                Insufficient funds. Please add more to your wallet or reduce your budget.
+                              </p>
                             )}
-                          />
+                            <FormDescription>
+                              Slide to adjust your budget. Minimum $100.
+                            </FormDescription>
+                            <Slider 
+                              value={[value]} 
+                              min={100} 
+                              max={5000} 
+                              step={100}
+                              onValueChange={(values) => onChange(values[0])}
+                              className="mt-2"
+                            />
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
 
-                          <FormField
-                            control={form.control}
-                            name="endDate"
-                            render={({ field }) => (
-                              <FormItem className="flex flex-col">
-                                <FormLabel>End Date</FormLabel>
-                                <DatePicker date={field.value} setDate={field.onChange} />
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-                        </div>
+                    <div className="space-y-6">
+                      <FormField
+                        control={form.control}
+                        name="startDate"
+                        render={({ field }) => (
+                          <FormItem className="flex flex-col">
+                            <FormLabel>Start Date</FormLabel>
+                            <DatePicker 
+                              date={field.value} 
+                              onDateChange={field.onChange} 
+                            />
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
 
-                        <div className="space-y-3">
-                          <FormLabel>Campaign Image</FormLabel>
+                      <FormField
+                        control={form.control}
+                        name="endDate"
+                        render={({ field }) => (
+                          <FormItem className="flex flex-col">
+                            <FormLabel>End Date</FormLabel>
+                            <DatePicker 
+                              date={field.value} 
+                              onDateChange={field.onChange} 
+                            />
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      {/* Image selection from saved ads */}
+                      <div className="space-y-3">
+                        <FormLabel>Campaign Image (Optional)</FormLabel>
+                        <div className="border-2 border-dashed border-border rounded-lg p-4">
                           {campaignImage ? (
-                            <div className="relative rounded-md overflow-hidden">
+                            <div className="relative">
                               <img 
                                 src={campaignImage} 
                                 alt="Campaign" 
-                                className="w-full h-48 object-cover" 
+                                className="w-full h-40 object-cover rounded-lg"
                               />
-                              <Button 
+                              <Button
                                 type="button"
-                                variant="destructive" 
-                                size="icon" 
-                                className="absolute top-2 right-2" 
+                                variant="destructive"
+                                size="sm"
+                                className="absolute top-2 right-2"
                                 onClick={removeImage}
                               >
                                 <X className="h-4 w-4" />
                               </Button>
                             </div>
                           ) : (
-                            <div className="space-y-3">
-                              {(savedAds as any[]).length > 0 ? (
-                                <Select onValueChange={handleAdSelection} value={selectedAdId || ""}>
-                                  <SelectTrigger>
-                                    <SelectValue placeholder="Select from your generated ads" />
-                                  </SelectTrigger>
-                                  <SelectContent>
-                                    {(savedAds as any[]).map((ad: any) => (
-                                      <SelectItem key={ad.id} value={ad.id.toString()}>
-                                        <div className="flex items-center gap-2">
-                                          <ImageIcon className="h-4 w-4" />
-                                          {ad.title}
-                                        </div>
-                                      </SelectItem>
-                                    ))}
-                                  </SelectContent>
-                                </Select>
-                              ) : (
-                                <div className="border-2 border-dashed border-border rounded-md p-6 text-center">
-                                  <ImageIcon className="h-8 w-8 mx-auto mb-2 text-muted-foreground" />
-                                  <p className="text-sm text-muted-foreground mb-2">No generated ads available</p>
-                                  <p className="text-xs text-muted-foreground">Create some ads in the AI Generator first</p>
-                                </div>
-                              )}
+                            <div className="text-center space-y-2">
+                              <ImageIcon className="h-8 w-8 mx-auto text-muted-foreground" />
+                              <p className="text-sm text-muted-foreground">Select from your saved ads</p>
+                              <Select onValueChange={handleAdSelection} value={selectedAdId || ""}>
+                                <SelectTrigger className="w-full">
+                                  <SelectValue placeholder="Choose a saved ad" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  {(savedAds as any[]).map((ad: any) => (
+                                    <SelectItem key={ad.id} value={ad.id.toString()}>
+                                      {ad.title || `Ad ${ad.id}`}
+                                    </SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
                             </div>
                           )}
                         </div>
                       </div>
                     </div>
-                  </CardContent>
-                  <CardFooter className="flex justify-between">
-                    <Button type="button" variant="outline" onClick={() => navigate("/creator/campaigns")}>
-                      Cancel
-                    </Button>
-                    <Button type="button" onClick={nextStep} className="gap-2" disabled={insufficientFunds}>
-                      Next Step
-                      <ArrowRight className="h-4 w-4" />
-                    </Button>
-                  </CardFooter>
-                </Card>
-              )}
+                  </div>
+                </CardContent>
+              </Card>
 
-              {step === 2 && (
-                <>
-                  <Card className="mb-6">
-                    <CardHeader>
-                      <CardTitle>Campaign Settings</CardTitle>
-                      <CardDescription>
-                        Define your campaign targeting and content requirements
-                      </CardDescription>
-                    </CardHeader>
-                    <CardContent className="space-y-6">
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        <FormField
-                          control={form.control}
-                          name="targetAudience"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Target Audience</FormLabel>
-                              <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                <FormControl>
-                                  <SelectTrigger>
-                                    <SelectValue placeholder="Select audience" />
-                                  </SelectTrigger>
-                                </FormControl>
-                                <SelectContent>
-                                  <SelectItem value="millennials">Millennials (25-40)</SelectItem>
-                                  <SelectItem value="genZ">Gen Z (18-24)</SelectItem>
-                                  <SelectItem value="parents">Parents</SelectItem>
-                                  <SelectItem value="professionals">Professionals</SelectItem>
-                                  <SelectItem value="students">Students</SelectItem>
-                                </SelectContent>
-                              </Select>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
+              {/* Campaign Settings */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>Campaign Settings</CardTitle>
+                  <CardDescription>
+                    Define your campaign targeting and content requirements
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <FormField
+                      control={form.control}
+                      name="targetAudience"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Target Audience</FormLabel>
+                          <Select onValueChange={field.onChange} defaultValue={field.value}>
+                            <FormControl>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select audience" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              <SelectItem value="millennials">Millennials (25-40)</SelectItem>
+                              <SelectItem value="genZ">Gen Z (18-24)</SelectItem>
+                              <SelectItem value="parents">Parents</SelectItem>
+                              <SelectItem value="professionals">Professionals</SelectItem>
+                              <SelectItem value="students">Students</SelectItem>
+                              <SelectItem value="seniors">Seniors (55+)</SelectItem>
+                            </SelectContent>
+                          </Select>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
 
-                        <FormField
-                          control={form.control}
-                          name="contentType"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Content Type</FormLabel>
-                              <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                <FormControl>
-                                  <SelectTrigger>
-                                    <SelectValue placeholder="Select content type" />
-                                  </SelectTrigger>
-                                </FormControl>
-                                <SelectContent>
-                                  <SelectItem value="post">Social Post</SelectItem>
-                                  <SelectItem value="video">Video</SelectItem>
-                                  <SelectItem value="story">Story</SelectItem>
-                                  <SelectItem value="reel">Reel/Short</SelectItem>
-                                  <SelectItem value="review">Product Review</SelectItem>
-                                </SelectContent>
-                              </Select>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
+                    <FormField
+                      control={form.control}
+                      name="contentType"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Content Type</FormLabel>
+                          <Select onValueChange={field.onChange} defaultValue={field.value}>
+                            <FormControl>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select content type" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              <SelectItem value="image">Image Post</SelectItem>
+                              <SelectItem value="video">Video Content</SelectItem>
+                              <SelectItem value="story">Story/Reel</SelectItem>
+                              <SelectItem value="article">Article/Blog</SelectItem>
+                              <SelectItem value="livestream">Live Stream</SelectItem>
+                            </SelectContent>
+                          </Select>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
 
-                        <FormField
-                          control={form.control}
-                          name="platform"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Platform</FormLabel>
-                              <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                <FormControl>
-                                  <SelectTrigger>
-                                    <SelectValue placeholder="Select platform" />
-                                  </SelectTrigger>
-                                </FormControl>
-                                <SelectContent>
-                                  <SelectItem value="instagram">Instagram</SelectItem>
-                                  <SelectItem value="tiktok">TikTok</SelectItem>
-                                  <SelectItem value="youtube">YouTube</SelectItem>
-                                  <SelectItem value="discord">Discord</SelectItem>
-                                  <SelectItem value="multiple">Multiple Platforms</SelectItem>
-                                </SelectContent>
-                              </Select>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                      </div>
-                    </CardContent>
-                  </Card>
+                    <FormField
+                      control={form.control}
+                      name="platform"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Platform</FormLabel>
+                          <Select onValueChange={field.onChange} defaultValue={field.value}>
+                            <FormControl>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select platform" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              <SelectItem value="instagram">Instagram</SelectItem>
+                              <SelectItem value="tiktok">TikTok</SelectItem>
+                              <SelectItem value="youtube">YouTube</SelectItem>
+                              <SelectItem value="twitter">Twitter</SelectItem>
+                              <SelectItem value="discord">Discord</SelectItem>
+                            </SelectContent>
+                          </Select>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                </CardContent>
+              </Card>
 
-                  <Card>
-                    <CardHeader>
-                      <CardTitle>Select Influencers</CardTitle>
-                      <CardDescription>
-                        Choose influencers to promote your campaign
-                      </CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      {isLoadingInfluencers ? (
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                          {[...Array(3)].map((_, i) => (
-                            <Card key={i} className="w-full h-[350px] animate-pulse bg-primary/5" />
-                          ))}
-                        </div>
-                      ) : influencers.length === 0 ? (
-                        <div className="text-center py-10">
-                          <p className="text-muted-foreground mb-4">No recommended influencers found</p>
-                          <Button variant="outline">
-                            Browse All Influencers
+              {/* Influencer Selection */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Users className="h-5 w-5" />
+                    Select Influencers
+                  </CardTitle>
+                  <CardDescription>
+                    Choose influencers who align with your campaign goals
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  {isLoadingInfluencers ? (
+                    <div className="flex items-center justify-center py-8">
+                      <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+                    </div>
+                  ) : (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                      {influencers.map((influencer) => (
+                        <div key={influencer.id} className="relative">
+                          <InfluencerCard influencer={influencer} />
+                          <Button
+                            type="button"
+                            size="sm"
+                            variant={selectedInfluencers.includes(influencer.id) ? "default" : "outline"}
+                            className="absolute top-3 right-3"
+                            onClick={() => toggleInfluencer(influencer.id)}
+                          >
+                            {selectedInfluencers.includes(influencer.id) ? "Selected" : "Select"}
                           </Button>
                         </div>
-                      ) : (
-                        <>
-                          <div className="flex items-center justify-between mb-4">
-                            <div className="text-sm text-muted-foreground">
-                              Selected: {selectedInfluencers.length} influencers
-                            </div>
-                            <Button variant="outline" size="sm" onClick={() => setSelectedInfluencers([])}>
-                              Clear All
-                            </Button>
-                          </div>
-                          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                            {influencers.map((influencer) => (
-                              <div 
-                                key={influencer.id} 
-                                className={`border rounded-lg cursor-pointer transition-all ${selectedInfluencers.includes(influencer.id) ? 'border-primary bg-primary/5' : 'border-border'}`}
-                                onClick={() => toggleInfluencer(influencer.id)}
-                              >
-                                <InfluencerCard influencer={influencer} />
-                                <div className="p-4 border-t">
-                                  <Button 
-                                    type="button"
-                                    variant={selectedInfluencers.includes(influencer.id) ? "default" : "outline"}
-                                    size="sm"
-                                    className="w-full"
-                                  >
-                                    {selectedInfluencers.includes(influencer.id) ? "Selected" : "Select Influencer"}
-                                  </Button>
-                                </div>
-                              </div>
-                            ))}
-                          </div>
-                        </>
-                      )}
-                    </CardContent>
-                    <CardFooter className="flex justify-between">
-                      <Button type="button" variant="outline" onClick={prevStep}>
-                        Previous Step
-                      </Button>
-                      <Button 
-                        type="submit" 
-                        disabled={createCampaignMutation.isPending || selectedInfluencers.length === 0 || insufficientFunds}
-                      >
-                        {createCampaignMutation.isPending ? (
-                          <div className="h-4 w-4 animate-spin rounded-full border-2 border-background border-t-transparent mr-2" />
-                        ) : null}
-                        Create Campaign
-                      </Button>
-                    </CardFooter>
-                  </Card>
-                </>
-              )}
+                      ))}
+                    </div>
+                  )}
+                  {selectedInfluencers.length === 0 && (
+                    <p className="text-destructive text-sm mt-2">
+                      Please select at least one influencer for your campaign.
+                    </p>
+                  )}
+                </CardContent>
+                <CardFooter>
+                  <Button 
+                    type="submit" 
+                    className="w-full"
+                    disabled={createCampaignMutation.isPending || selectedInfluencers.length === 0 || insufficientFunds}
+                  >
+                    {createCampaignMutation.isPending ? (
+                      <div className="h-4 w-4 animate-spin rounded-full border-2 border-background border-t-transparent mr-2" />
+                    ) : null}
+                    Create Campaign
+                  </Button>
+                </CardFooter>
+              </Card>
             </form>
           </Form>
         </div>
