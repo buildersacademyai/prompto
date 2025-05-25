@@ -47,8 +47,8 @@ export default function AIGenerator({ className, onSave }: AIGeneratorProps & { 
       formData.append("description", productDescription);
       
       // Append each file to the FormData
-      uploadedImages.forEach((image, index) => {
-        formData.append(`image_${index}`, image);
+      uploadedImages.forEach((image) => {
+        formData.append('image', image);
       });
       
       const res = await fetch("/api/ai/generate-ad", {
@@ -200,7 +200,7 @@ export default function AIGenerator({ className, onSave }: AIGeneratorProps & { 
               onChange={(e) => setAdTitle(e.target.value)}
             />
             
-            <label className="block text-sm font-medium mb-2">Product Description</label>
+            <label className="block text-sm font-medium mb-2">Ad Description</label>
             <Textarea 
               placeholder="Describe your product or service..."
               className="w-full bg-background border border-border rounded-lg p-3 h-40 focus-visible:ring-1 focus-visible:ring-primary resize-none"

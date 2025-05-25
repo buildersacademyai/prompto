@@ -35,8 +35,8 @@ export default function AIGenerator({ className }: AIGeneratorProps) {
       formData.append("description", productDescription);
       
       // Append each file to the FormData
-      uploadedImages.forEach((image, index) => {
-        formData.append(`image_${index}`, image);
+      uploadedImages.forEach((image) => {
+        formData.append('image', image);
       });
       
       const res = await fetch("/api/ai/generate-ad", {

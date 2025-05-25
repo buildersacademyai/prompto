@@ -10,6 +10,7 @@ interface SuggestedMedia {
 
 interface GeneratedAdResponse {
   text: string;
+  generatedImageUrl: string;
   suggestedMedia: SuggestedMedia[];
 }
 
