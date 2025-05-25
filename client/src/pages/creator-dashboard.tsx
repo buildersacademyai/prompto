@@ -2,19 +2,27 @@ import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { PlusIcon } from "lucide-react";
 import { Link } from "wouter";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation } from "@tanstack/react-query";
+import { apiRequest, queryClient } from "@/lib/queryClient";
 import StatsCard from "@/components/stats-card";
 import CampaignCard from "@/components/campaign-card";
 import Header from "@/components/layout/header";
 import { Campaign } from "@shared/schema";
 import { useState } from "react";
 import { creatorAnalyticsData, mockCampaigns } from "@/data/mock-data";
+import { useToast } from "@/hooks/use-toast";
 
 export default function CreatorDashboard() {
   const { user } = useAuth();
+  const { toast } = useToast();
   const [campaignSort, setCampaignSort] = useState("performance");
+  const [topUpAmount, setTopUpAmount] = useState("");
+  const [isTopUpDialogOpen, setIsTopUpDialogOpen] = useState(false);
 
   // Fetch stats
   const { data: stats, isLoading: statsLoading } = useQuery<{
@@ -44,6 +52,43 @@ export default function CreatorDashboard() {
     queryKey: ["/api/campaigns"],
     enabled: !mockCampaigns.length, // Only fetch if we don't have mock data
   });
+
+  // Fetch wallet info
+  const { data: walletInfo, isLoading: walletLoading } = useQuery<{ balance: number }>({
+    queryKey: ["/api/creator/wallet"],
+    queryFn: getQueryFn({ on401: "throw" }),
+  });
+
+  // Top up wallet mutation
+  const topUpMutation = useMutation({
+    mutationFn: async (amount: number) => {
+      const response = await apiRequest("POST", "/api/creator/wallet/fund", { amount });
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/creator/wallet"] });
+      toast({
+        title: "Wallet Topped Up!",
+        description: `Successfully added $${topUpAmount} USDC to your wallet`,
+      });
+      setTopUpAmount("");
+      setIsTopUpDialogOpen(false);
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Top Up Failed",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
+
+  const handleTopUp = () => {
+    const amount = parseFloat(topUpAmount);
+    if (amount > 0) {
+      topUpMutation.mutate(amount);
+    }
+  };
   
   // Use mock campaigns if API data is not available
   const displayCampaigns = campaigns || mockCampaigns;
