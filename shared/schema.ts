@@ -100,11 +100,24 @@ export const socialAccounts = pgTable("social_accounts", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
+// Generated ads schema
+export const generatedAds = pgTable("generated_ads", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id),
+  title: text("title").notNull(),
+  prompt: text("prompt").notNull(),
+  generatedText: text("generated_text").notNull(),
+  imageUrl: text("image_url").notNull(),
+  hashtags: jsonb("hashtags").$type<string[]>().notNull().default([]),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
 // Relations
 export const usersRelations = relations(users, ({ many }) => ({
   wallets: many(wallets),
   campaigns: many(campaigns),
   socialAccounts: many(socialAccounts),
+  generatedAds: many(generatedAds),
 }));
 
 export const campaignsRelations = relations(campaigns, ({ one, many }) => ({
@@ -157,3 +170,6 @@ export type Influencer = typeof influencers.$inferSelect & {
 export type SocialPlatform = 'twitter' | 'instagram' | 'tiktok' | 'youtube' | 'discord';
 
 export type SocialAccount = typeof socialAccounts.$inferSelect;
+
+export type GeneratedAd = typeof generatedAds.$inferSelect;
+export type InsertGeneratedAd = typeof generatedAds.$inferInsert;
