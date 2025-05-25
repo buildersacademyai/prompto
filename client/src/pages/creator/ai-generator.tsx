@@ -33,7 +33,10 @@ export default function AIGeneratorPage() {
   const deleteAdMutation = useMutation({
     mutationFn: async (adId: number) => {
       const response = await apiRequest("DELETE", `/api/ai/generated-ads/${adId}`);
-      return response.json();
+      if (response.ok) {
+        return { success: true };
+      }
+      throw new Error('Failed to delete ad');
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/ai/generated-ads"] });
