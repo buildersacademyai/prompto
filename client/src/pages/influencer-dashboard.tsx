@@ -112,9 +112,6 @@ export default function InfluencerDashboard() {
     enabled: !influencerAnalyticsData, // Only fetch if we don't have mock data
   });
   
-  // Use real stats from actual data
-  const displayStats = realStats;
-
   // Fetch social accounts
   const { data: socialAccounts = [], isLoading: accountsLoading } = useQuery<SocialAccount[]>({
     queryKey: ["/api/influencer/social-accounts"],
@@ -126,7 +123,7 @@ export default function InfluencerDashboard() {
   });
 
   // Calculate real stats from actual data
-  const realStats = {
+  const displayStats = {
     totalEarnings: user?.wallet?.balance || 0,
     activeCampaigns: campaigns.filter(campaign => campaign.status === 'active').length,
     totalEngagement: socialAccounts.reduce((sum, account) => sum + (account.followers || 0), 0),
