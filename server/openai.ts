@@ -107,29 +107,15 @@ ${imageFiles.length > 0 ? `Additional visual guidance based on user-uploaded ima
 
 Do not generate any watermarks, logos, or branding unless specified. Keep the design clean and brand-neutral.`;
     
-    const imageResponse = await fetch('https://api.openai.com/v1/images/generations', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${process.env.PROMPTO_OPENAI_API_KEY}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: "gpt-image-1",
-        prompt: imagePrompt,
-        n: 1,
-        size: "1024x1024",
-        quality: "standard",
-        response_format: "url"
-      }),
+    const imageResponse = await openai.images.generate({
+      model: "dall-e-3",
+      prompt: imagePrompt,
+      n: 1,
+      size: "1024x1024",
+      quality: "standard",
     });
 
-    if (!imageResponse.ok) {
-      const errorData = await imageResponse.json();
-      throw new Error(`Image generation failed: ${errorData.error?.message || imageResponse.statusText}`);
-    }
-
-    const imageData = await imageResponse.json();
-    const generatedImageUrl = imageData.data?.[0]?.url || "";
+    const generatedImageUrl = imageResponse.data[0]?.url || "";
 
     return {
       text: result.text,
