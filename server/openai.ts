@@ -1,9 +1,45 @@
 import OpenAI from "openai";
 import fs from 'fs';
 import path from 'path';
+import https from 'https';
+import { v4 as uuidv4 } from 'uuid';
 
 // Initialize OpenAI API client
 const openai = new OpenAI({ apiKey: process.env.PROMPTO_OPENAI_API_KEY });
+
+// Ensure uploads directory exists
+const uploadsDir = path.join(process.cwd(), 'uploads');
+if (!fs.existsSync(uploadsDir)) {
+  fs.mkdirSync(uploadsDir, { recursive: true });
+}
+
+/**
+ * Download image from URL and save it locally
+ */
+async function downloadAndSaveImage(imageUrl: string): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const fileName = `generated-${uuidv4()}.png`;
+    const filePath = path.join(uploadsDir, fileName);
+    const file = fs.createWriteStream(filePath);
+
+    https.get(imageUrl, (response) => {
+      response.pipe(file);
+      
+      file.on('finish', () => {
+        file.close();
+        // Return the relative URL path that can be served by the web server
+        resolve(`/uploads/${fileName}`);
+      });
+      
+      file.on('error', (err) => {
+        fs.unlink(filePath, () => {}); // Delete the file on error
+        reject(err);
+      });
+    }).on('error', (err) => {
+      reject(err);
+    });
+  });
+}
 
 interface SuggestedMedia {
   url: string;
@@ -115,11 +151,14 @@ Do not generate any watermarks, logos, or branding unless specified. Keep the de
       quality: "standard",
     });
 
-    const generatedImageUrl = imageResponse.data[0]?.url || "";
+    const tempImageUrl = imageResponse.data[0]?.url || "";
+    
+    // Download and save the image permanently to avoid expiration
+    const permanentImageUrl = await downloadAndSaveImage(tempImageUrl);
 
     return {
       text: "", // No text generation - image only
-      generatedImageUrl: generatedImageUrl,
+      generatedImageUrl: permanentImageUrl,
       suggestedMedia: [] // No suggested media - focus on generated image only
     };
   } catch (error: any) {
