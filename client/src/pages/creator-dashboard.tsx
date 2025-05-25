@@ -39,9 +39,9 @@ export default function CreatorDashboard() {
   
   // Use mock stats if API data is not available
   const displayStats = stats || {
-    totalSpend: creatorAnalyticsData.overall.spent,
-    activeCampaigns: creatorAnalyticsData.overall.campaigns,
-    totalEngagement: creatorAnalyticsData.overall.engagement,
+    totalSpend: campaigns.reduce((sum, campaign) => sum + (campaign.budget?.total || 0), 0),
+    activeCampaigns: campaigns.filter(campaign => campaign.status === 'active').length,
+    totalEngagement: campaigns.reduce((sum, campaign) => sum + (campaign.engagementRate || 0), 0),
     spendChange: creatorAnalyticsData.overall.spendChange,
     campaignsChange: creatorAnalyticsData.overall.campaignsChange,
     engagementChange: creatorAnalyticsData.overall.engagementChange
