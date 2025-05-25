@@ -286,6 +286,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
     
     try {
       const campaigns = await storage.getAllMarketplaceCampaigns();
+      console.log("📤 Sending marketplace campaigns:", JSON.stringify(campaigns, null, 2));
+      
+      // Prevent caching to ensure fresh data
+      res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+      res.setHeader('Pragma', 'no-cache');
+      res.setHeader('Expires', '0');
+      
       res.json(campaigns);
     } catch (error: any) {
       console.error("Error fetching marketplace campaigns:", error);

@@ -343,6 +343,7 @@ export class DatabaseStorage implements IStorage {
     
     // Transform database results to match Campaign type
     return results.map(campaign => {
+      console.log(`🔍 Processing campaign ${campaign.title}: budget raw = ${campaign.budget}, type = ${typeof campaign.budget}`);
       let budgetTotal = 0;
       let budgetSpent = 0;
       
