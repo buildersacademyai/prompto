@@ -65,47 +65,12 @@ export async function generateAdContent(
       }
     `;
 
-    // Add uploaded images if available
+    // Note uploaded images in prompt if any
     if (imageFiles.length > 0) {
-      // For text-only message
       messages.push({
         role: "user",
-        content: "I'm going to share product information and some images for you to analyze and create ad copy."
+        content: `I have uploaded ${imageFiles.length} supporting image(s) for reference.`
       });
-
-      // Add image message(s)
-      for (const imagePath of imageFiles) {
-        try {
-          if (fs.existsSync(imagePath)) {
-            const mimeType = path.extname(imagePath).toLowerCase() === '.png' 
-              ? 'image/png' 
-              : path.extname(imagePath).toLowerCase() === '.webp'
-                ? 'image/webp'
-                : 'image/jpeg';
-            
-            const imageBuffer = fs.readFileSync(imagePath);
-            const base64Image = imageBuffer.toString('base64');
-            
-            messages.push({
-              role: "user",
-              content: [
-                {
-                  type: "text",
-                  text: "Here's a product image to analyze:"
-                },
-                {
-                  type: "image_url",
-                  image_url: {
-                    url: `data:${mimeType};base64,${base64Image}`
-                  }
-                }
-              ] as any
-            });
-          }
-        } catch (err) {
-          console.error(`Error processing image ${imagePath}:`, err);
-        }
-      }
     }
     
     // Add the main text prompt after any images
