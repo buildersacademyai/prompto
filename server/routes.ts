@@ -10,6 +10,9 @@ import Stripe from "stripe";
 import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
+import { db } from "./db";
+import { generatedAds } from "@shared/schema";
+import { eq, and } from "drizzle-orm";
 
 // We don't need to declare the files interface because it's already included
 // in the @types/express package
@@ -530,14 +533,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
     
     try {
-      // Import required modules with proper ES module syntax
-      const { db } = await import("./db");
-      const { generatedAds } = await import("@shared/schema");
-      const { eq, and } = await import("drizzle-orm");
-      
       console.log('🔧 Executing database delete operation...');
       
-      // Execute the delete operation
+      // Execute the delete operation using imports at top of file
       const result = await db
         .delete(generatedAds)
         .where(and(eq(generatedAds.id, adId), eq(generatedAds.userId, userId)))
