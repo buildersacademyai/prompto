@@ -368,6 +368,53 @@ export class DatabaseStorage implements IStorage {
     }) as Campaign[];
   }
 
+  async getJoinedCampaigns(userId: number): Promise<Campaign[]> {
+    console.log(`🤝 Fetching joined campaigns for user: ${userId}`);
+    
+    // Get campaigns the user has joined through the junction table
+    const results = await db
+      .select({
+        id: campaigns.id,
+        creatorId: campaigns.creatorId,
+        title: campaigns.title,
+        description: campaigns.description,
+        imageUrl: campaigns.imageUrl,
+        status: campaigns.status,
+        category: campaigns.category,
+        budget: campaigns.budget,
+        engagementRate: campaigns.engagementRate,
+        startDate: campaigns.startDate,
+        endDate: campaigns.endDate,
+        createdAt: campaigns.createdAt
+      })
+      .from(campaigns)
+      .innerJoin(campaignInfluencers, eq(campaigns.id, campaignInfluencers.campaignId))
+      .where(eq(campaignInfluencers.influencerId, userId));
+    
+    console.log(`📊 Found ${results.length} joined campaigns for user ${userId}`);
+    
+    // Transform database results to match Campaign type
+    return results.map(campaign => {
+      let budgetTotal = 0;
+      let budgetSpent = 0;
+      
+      // Handle JSONB column that contains plain numbers
+      if (typeof campaign.budget === 'number') {
+        budgetTotal = campaign.budget;
+      } else if (campaign.budget !== null && campaign.budget !== undefined) {
+        budgetTotal = Number(campaign.budget) || 0;
+      }
+      
+      return {
+        ...campaign,
+        budget: {
+          total: budgetTotal,
+          spent: budgetSpent
+        }
+      };
+    }) as Campaign[];
+  }
+
   // Social account operations
   async getSocialAccounts(userId: number): Promise<SocialAccount[]> {
     const accounts = await db
