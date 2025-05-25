@@ -118,12 +118,9 @@ Do not generate any watermarks, logos, or branding unless specified. Keep the de
     const generatedImageUrl = imageResponse.data[0]?.url || "";
 
     return {
-      text: result.text,
+      text: "", // No text generation - image only
       generatedImageUrl: generatedImageUrl,
-      suggestedMedia: result.suggestedMedia.map((media: any) => ({
-        url: media.url,
-        alt: media.alt
-      }))
+      suggestedMedia: [] // No suggested media - focus on generated image only
     };
   } catch (error: any) {
     console.error("Error generating ad content:", error);

@@ -340,26 +340,7 @@ export default function AIGenerator({ className, onSave }: AIGeneratorProps & { 
                   </div>
                 )}
                 
-                {/* Generated Text (Secondary) */}
-                <div className="border-t border-border pt-4">
-                  <h4 className="text-sm font-medium mb-2 text-muted-foreground">Generated Text</h4>
-                  <div className="space-y-2 text-sm bg-muted/20 rounded-lg p-3">
-                    {generatedContent.text.split('\n').map((paragraph, index) => (
-                      <p key={index} className="text-muted-foreground">
-                        {paragraph.split(' ').map((word, wordIndex) => {
-                          if (word.startsWith('#')) {
-                            return (
-                              <Badge key={wordIndex} variant="outline" className="bg-transparent text-accent mr-1 text-xs">
-                                {word}
-                              </Badge>
-                            );
-                          }
-                          return <span key={wordIndex}>{word} </span>;
-                        })}
-                      </p>
-                    ))}
-                  </div>
-                </div>
+
               </div>
             ) : generateMutation.isPending ? (
               <div className="flex flex-col items-center justify-center h-[240px]">
