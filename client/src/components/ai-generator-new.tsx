@@ -285,35 +285,6 @@ export default function AIGenerator({ className, onSave }: AIGeneratorProps & { 
           <div className="bg-background rounded-lg p-4 border border-border">
             <div className="flex justify-between items-center mb-4">
               <h3 className="font-medium">Generated Content</h3>
-              <div className="flex space-x-2">
-                <Button 
-                  variant="ghost" 
-                  size="icon"
-                  className="text-muted-foreground hover:text-foreground"
-                  onClick={handleRegenerateContent}
-                  disabled={generateMutation.isPending || !generatedContent}
-                >
-                  <RefreshCcwIcon className="h-4 w-4" />
-                </Button>
-                <Button 
-                  variant="ghost" 
-                  size="icon"
-                  className="text-muted-foreground hover:text-foreground"
-                  onClick={handleCopyContent}
-                  disabled={!generatedContent}
-                >
-                  <CopyIcon className="h-4 w-4" />
-                </Button>
-                <Button 
-                  variant="ghost" 
-                  size="icon"
-                  className="text-muted-foreground hover:text-foreground"
-                  onClick={handleSaveAd}
-                  disabled={!generatedContent}
-                >
-                  <BookmarkIcon className="h-4 w-4" />
-                </Button>
-              </div>
             </div>
             
             {generatedContent ? (
@@ -325,13 +296,9 @@ export default function AIGenerator({ className, onSave }: AIGeneratorProps & { 
                       <img 
                         src={generatedContent.generatedImageUrl} 
                         alt={adTitle || "Generated Ad"}
-                        className="w-full h-auto max-h-[400px] object-contain rounded-lg border border-border"
+                        className="w-full h-full object-cover rounded-lg border border-border"
                       />
-                      <div className="absolute top-3 right-3">
-                        <div className="bg-primary/90 text-primary-foreground px-2 py-1 rounded-full text-xs font-medium">
-                          AI Generated
-                        </div>
-                      </div>
+                      
                     </div>
                   </div>
                 ) : (

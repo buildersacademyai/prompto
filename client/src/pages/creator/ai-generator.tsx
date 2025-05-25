@@ -223,8 +223,8 @@ export default function AIGeneratorPage() {
                                 <p className="text-muted-foreground mt-1">{ad.prompt}</p>
                               </div>
                               <div className="text-sm mb-4">
-                                <span className="font-medium">Generated Text:</span>
-                                <p className="text-muted-foreground mt-1 line-clamp-4">{ad.generatedText}</p>
+                                <span className="font-medium">Created by:</span>
+                                <p className="text-muted-foreground mt-1">Prompto AI Generator</p>
                               </div>
                               <div className="flex flex-wrap gap-1 mb-3">
                                 {ad.hashtags.map((tag, index) => (
