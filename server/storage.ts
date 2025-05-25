@@ -456,6 +456,19 @@ export class DatabaseStorage implements IStorage {
   async deleteGeneratedAd(adId: number, userId: number): Promise<boolean> {
     console.log('🗑️ Deleting generated ad:', adId, 'for user:', userId);
     
+    // First, check if the ad exists and belongs to the user
+    const existingAd = await db
+      .select()
+      .from(generatedAds)
+      .where(and(eq(generatedAds.id, adId), eq(generatedAds.userId, userId)));
+    
+    console.log('🔍 Found existing ad:', existingAd.length > 0 ? 'Yes' : 'No');
+    
+    if (existingAd.length === 0) {
+      console.log('❌ Ad not found or unauthorized');
+      return false;
+    }
+    
     // Delete the ad, ensuring it belongs to the requesting user
     const result = await db
       .delete(generatedAds)
@@ -463,7 +476,8 @@ export class DatabaseStorage implements IStorage {
       .returning();
     
     const deleted = result.length > 0;
-    console.log('✅ Ad deletion result:', deleted ? 'Success' : 'Failed (not found or unauthorized)');
+    console.log('✅ Ad deletion result:', deleted ? 'Success' : 'Failed');
+    console.log('📊 Deleted rows:', result.length);
     
     return deleted;
   }
