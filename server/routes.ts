@@ -455,8 +455,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const files = req.files as Express.Multer.File[];
       const uploadedFiles = files ? files.map(file => file.path) : [];
       
-      // Call OpenAI with the description and image paths
-      const content = await generateAdContent(description, uploadedFiles);
+      // Call OpenAI with the title, description and image paths
+      const content = await generateAdContent(description, uploadedFiles, title);
       
       // Clean up the uploaded files after processing
       uploadedFiles.forEach(filePath => {

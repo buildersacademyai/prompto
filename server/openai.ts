@@ -30,7 +30,8 @@ interface OptimizedContentResponse {
  */
 export async function generateAdContent(
   description: string,
-  imageFiles: string[] = []
+  imageFiles: string[] = [],
+  title?: string
 ): Promise<GeneratedAdResponse> {
   try {
     const fs = require('fs');
@@ -128,8 +129,19 @@ export async function generateAdContent(
       throw new Error("Invalid response format from OpenAI");
     }
 
-    // Generate image using OpenAI Images API according to official docs
-    const imagePrompt = `Create a professional, high-quality advertising image for: ${description}. Style: modern, clean, professional, eye-catching, suitable for social media marketing.`;
+    // Generate image using detailed prompt template
+    const imagePrompt = `Create a visually compelling advertisement image based on the following details:
+
+Ad Title: ${title || 'Untitled Ad'}
+Ad Description: ${description}
+
+The image should reflect the mood, tone, and message of the ad. It should be eye-catching, professional, and suitable for digital platforms like Instagram, Facebook, or banner ads.
+
+Include key visual elements that represent the ad's theme. Use color schemes, objects, and compositions that align with the provided description. Do not include text in the image.
+
+${imageFiles.length > 0 ? `Additional visual guidance based on user-uploaded images: User has provided ${imageFiles.length} supporting image(s). Incorporate similar visual styles, themes, or aesthetics if relevant.` : ''}
+
+Do not generate any watermarks, logos, or branding unless specified. Keep the design clean and brand-neutral.`;
     
     const imageResponse = await fetch('https://api.openai.com/v1/images/generations', {
       method: 'POST',
