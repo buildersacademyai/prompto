@@ -1,9 +1,8 @@
 import type { Express, Request } from "express";
 import { createServer, type Server } from "http";
-import { storage as dbStorage } from "./storage";
+import { storage } from "./storage";
 import { setupAuth } from "./auth";
 import { generateAdContent, analyzeContentSentiment, generateHashtags, optimizeContent } from "./openai";
-import { storage } from "./storage";
 // Import hash function to reuse in Google auth
 import { hashPassword } from "./auth";
 import { randomBytes } from "crypto";
@@ -46,7 +45,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       // Check if user exists in our system
       console.log("Looking up user by email:", email);
-      let user = await dbStorage.getUserByEmail(email);
+      let user = await storage.getUserByEmail(email);
       console.log("User lookup result:", user ? "User found" : "User not found");
       
       if (!user) {
@@ -58,7 +57,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         const hashedPassword = await hashPassword(tempPassword);
         
         console.log("Creating new user with username:", username, "and role:", role);
-        user = await dbStorage.createUser({
+        user = await storage.createUser({
           username,
           email,
           password: hashedPassword,
@@ -71,7 +70,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         console.log("Existing user role:", user.role, "Requested role:", role);
         if (user.role !== role) {
           console.log("Updating existing user role from", user.role, "to", role);
-          user = await dbStorage.updateUserRole(user.id, role);
+          user = await storage.updateUserRole(user.id, role);
           console.log("User role updated:", user.id, "new role:", user.role);
         } else {
           console.log("User already has the requested role, no update needed");
@@ -477,7 +476,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       };
       
       console.log('💾 Saving ad to database...');
-      const savedAd = await dbStorage.saveGeneratedAd(adData);
+      const savedAd = await storage.saveGeneratedAd(adData);
       console.log('🎉 Ad saved successfully with ID:', savedAd.id);
       
       // Clean up the uploaded files after processing
@@ -506,7 +505,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const userId = req.user!.id;
       console.log('📋 Fetching saved ads for user:', userId);
       
-      const savedAds = await dbStorage.getGeneratedAds(userId);
+      const savedAds = await storage.getGeneratedAds(userId);
       console.log('📊 Retrieved', savedAds.length, 'saved ads');
       
       res.json(savedAds);
@@ -530,7 +529,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "Invalid ad ID" });
       }
       
-      const result = await dbStorage.deleteGeneratedAd(adId, userId);
+      const result = await storage.deleteGeneratedAd(adId, userId);
       
       if (result) {
         console.log('✅ Ad deleted successfully');
@@ -586,7 +585,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     if (!req.isAuthenticated()) return res.sendStatus(401);
     
     try {
-      const walletInfo = await dbStorage.getUserWallet(req.user.id);
+      const walletInfo = await storage.getUserWallet(req.user.id);
       res.json({ balance: walletInfo?.balance || 0 });
     } catch (error: any) {
       console.error("Error getting wallet info:", error);
@@ -603,7 +602,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "Invalid amount" });
       }
       
-      const result = await dbStorage.fundWallet(req.user.id, amount);
+      const result = await storage.fundWallet(req.user.id, amount);
       res.json(result);
     } catch (error: any) {
       console.error("Error funding wallet:", error);
@@ -616,7 +615,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     
     try {
       const { walletAddress } = req.body;
-      const result = await dbStorage.connectWallet(req.user.id, walletAddress);
+      const result = await storage.connectWallet(req.user.id, walletAddress);
       res.json(result);
     } catch (error: any) {
       res.status(500).json({ message: error.message });
@@ -628,7 +627,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     
     try {
       // Use the specific disconnect wallet method 
-      const result = await dbStorage.disconnectWallet(req.user.id);
+      const result = await storage.disconnectWallet(req.user.id);
       res.json(result);
     } catch (error: any) {
       res.status(500).json({ message: error.message });
@@ -640,7 +639,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     
     try {
       const { amount } = req.body;
-      const result = await dbStorage.fundWallet(req.user.id, amount);
+      const result = await storage.fundWallet(req.user.id, amount);
       res.json(result);
     } catch (error: any) {
       res.status(500).json({ message: error.message });
@@ -652,7 +651,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     
     try {
       const { amount, destination } = req.body;
-      const result = await dbStorage.withdrawFunds(req.user.id, amount, destination);
+      const result = await storage.withdrawFunds(req.user.id, amount, destination);
       res.json(result);
     } catch (error: any) {
       res.status(500).json({ message: error.message });
@@ -663,7 +662,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     if (!req.isAuthenticated()) return res.sendStatus(401);
     
     try {
-      const transactions = await dbStorage.getTransactions(req.user.id);
+      const transactions = await storage.getTransactions(req.user.id);
       res.json(transactions);
     } catch (error: any) {
       res.status(500).json({ message: error.message });
