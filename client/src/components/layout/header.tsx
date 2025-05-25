@@ -132,10 +132,24 @@ export default function Header() {
                       <Link href={userRole === 'creator' ? '/creator/campaigns' : '/influencer/campaigns'}>
                         <div className="flex items-center w-full">
                           <MegaphoneIcon className="mr-2 h-4 w-4" />
-                          <span>Campaigns</span>
+                          <span>My Campaigns</span>
                         </div>
                       </Link>
                     </DropdownMenuItem>
+                    
+                    {userRole === 'influencer' && (
+                      <DropdownMenuItem 
+                        asChild
+                        className="cursor-pointer"
+                      >
+                        <Link href="/influencer/marketplace">
+                          <div className="flex items-center w-full">
+                            <UsersIcon className="mr-2 h-4 w-4" />
+                            <span>Campaign Marketplace</span>
+                          </div>
+                        </Link>
+                      </DropdownMenuItem>
+                    )}
                     {userRole === 'creator' && (
                       <DropdownMenuItem 
                         asChild
@@ -272,9 +286,21 @@ export default function Header() {
                       onClick={() => setIsOpen(false)}
                     >
                       <MegaphoneIcon className="inline-block mr-2 h-4 w-4" />
-                      Campaigns
+                      My Campaigns
                     </span>
                   </Link>
+                  
+                  {userRole === 'influencer' && (
+                    <Link href="/influencer/marketplace">
+                      <span
+                        className="px-3 py-2 text-gray-300 hover:text-white font-medium block cursor-pointer"
+                        onClick={() => setIsOpen(false)}
+                      >
+                        <UsersIcon className="inline-block mr-2 h-4 w-4" />
+                        Campaign Marketplace
+                      </span>
+                    </Link>
+                  )}
                   
                   {userRole === 'creator' && (
                     <Link href="/creator/ai-generator">
