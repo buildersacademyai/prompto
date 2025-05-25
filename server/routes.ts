@@ -530,10 +530,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
     
     try {
-      // Import required modules
-      const { db } = require("./db");
-      const { generatedAds } = require("@shared/schema");
-      const { eq, and } = require("drizzle-orm");
+      // Import required modules with proper ES module syntax
+      const { db } = await import("./db");
+      const { generatedAds } = await import("@shared/schema");
+      const { eq, and } = await import("drizzle-orm");
       
       console.log('🔧 Executing database delete operation...');
       
@@ -552,7 +552,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         console.log('❌ No rows deleted - ad not found or unauthorized');
         res.status(404).json({ message: "Ad not found or unauthorized" });
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('❌ Error in delete operation:', error);
       res.status(500).json({ message: "Internal server error" });
     }
