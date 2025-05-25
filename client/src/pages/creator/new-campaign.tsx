@@ -100,7 +100,7 @@ export default function NewCampaignPage() {
   const onSubmit = async (data: CampaignFormValues) => {
     const campaignData = {
       ...data,
-      image: campaignImage,
+      image: campaignImage || undefined, // Convert null to undefined for proper typing
     };
 
     createCampaignMutation.mutate(campaignData);

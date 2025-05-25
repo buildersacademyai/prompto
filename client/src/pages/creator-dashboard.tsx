@@ -48,9 +48,8 @@ export default function CreatorDashboard() {
   };
 
   // Fetch campaigns
-  const { data: campaigns, isLoading: campaignsLoading } = useQuery<Campaign[]>({
-    queryKey: ["/api/campaigns"],
-    enabled: !mockCampaigns.length, // Only fetch if we don't have mock data
+  const { data: campaigns = [], isLoading: campaignsLoading } = useQuery<Campaign[]>({
+    queryKey: ["/api/creator/campaigns"],
   });
 
   // Fetch wallet info
@@ -256,8 +255,8 @@ export default function CreatorDashboard() {
                       </div>
                     </div>
                   ))
-                ) : displayCampaigns && displayCampaigns.length > 0 ? (
-                  displayCampaigns.map((campaign) => (
+                ) : campaigns && campaigns.length > 0 ? (
+                  campaigns.map((campaign) => (
                     <CampaignCard key={campaign.id} campaign={campaign} />
                   ))
                 ) : (
