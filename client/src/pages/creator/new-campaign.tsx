@@ -68,20 +68,16 @@ export default function NewCampaignPage() {
 
   const createCampaignMutation = useMutation({
     mutationFn: async (data: CampaignFormValues & { image?: string }) => {
-      const formData = new FormData();
-      Object.entries(data).forEach(([key, value]) => {
-        if (key === 'startDate' || key === 'endDate') {
-          formData.append(key, (value as Date).toISOString());
-        } else {
-          formData.append(key, String(value));
-        }
-      });
+      const campaignData = {
+        title: data.title,
+        description: data.description,
+        budget: data.budget,
+        startDate: data.startDate.toISOString(),
+        endDate: data.endDate.toISOString(),
+        image: data.image
+      };
       
-      if (data.image) {
-        formData.append('image', data.image);
-      }
-      
-      const res = await apiRequest("POST", "/api/creator/campaigns", formData);
+      const res = await apiRequest("POST", "/api/creator/campaigns", campaignData);
       return await res.json();
     },
     onSuccess: () => {

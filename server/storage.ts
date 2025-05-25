@@ -42,6 +42,7 @@ export interface IStorage {
   // Campaign operations
   getCampaigns(userId: number): Promise<Campaign[]>;
   getAvailableCampaigns(userId: number): Promise<Campaign[]>;
+  createCampaign(campaignData: any): Promise<Campaign>;
   pauseCampaign(campaignId: number, userId: number): Promise<Campaign>;
   joinCampaign(campaignId: number, userId: number): Promise<any>;
   
@@ -158,13 +159,45 @@ export class DatabaseStorage implements IStorage {
   }
 
   // Campaign operations
+  async createCampaign(campaignData: any): Promise<Campaign> {
+    const [campaign] = await db
+      .insert(campaigns)
+      .values({
+        title: campaignData.title,
+        description: campaignData.description,
+        budget: campaignData.budget,
+        startDate: campaignData.startDate,
+        endDate: campaignData.endDate,
+        imageUrl: campaignData.imageUrl,
+        status: campaignData.status,
+        category: campaignData.category,
+        engagementRate: campaignData.engagementRate,
+        creatorId: campaignData.creatorId
+      })
+      .returning();
+    
+    return {
+      ...campaign,
+      budget: {
+        total: typeof campaign.budget === 'number' ? campaign.budget : 0,
+        spent: 0
+      }
+    };
+  }
+
   async getCampaigns(userId: number): Promise<Campaign[]> {
     const campaignsList = await db
       .select()
       .from(campaigns)
       .where(eq(campaigns.creatorId, userId));
     
-    return campaignsList;
+    return campaignsList.map(campaign => ({
+      ...campaign,
+      budget: {
+        total: typeof campaign.budget === 'number' ? campaign.budget : 0,
+        spent: 0
+      }
+    }));
   }
 
   async getAvailableCampaigns(userId: number): Promise<Campaign[]> {

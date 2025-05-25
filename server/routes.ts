@@ -682,37 +682,56 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Campaign creation endpoint
-  app.post("/api/creator/campaigns", upload.single('image'), async (req, res) => {
+  app.post("/api/creator/campaigns", async (req, res) => {
     if (!req.isAuthenticated()) return res.sendStatus(401);
     
     try {
       console.log('📋 Creating new campaign for user:', req.user!.id);
       console.log('📋 Campaign data:', req.body);
       
-      const { title, description, budget, startDate, endDate } = req.body;
+      const { title, description, budget, startDate, endDate, image } = req.body;
       
       // Basic validation
       if (!title || !description || !budget || !startDate || !endDate) {
         return res.status(400).json({ message: "Missing required fields" });
       }
       
-      // For now, we'll return a success response since the full campaign system isn't implemented
-      // This prevents the error you were experiencing
-      const mockCampaign = {
-        id: Date.now(), // Simple ID for demo
+      // Save to database using storage
+      const campaignData = {
         title,
         description,
         budget: parseFloat(budget),
         startDate: new Date(startDate),
         endDate: new Date(endDate),
+        imageUrl: image || '',
         status: 'active',
+        category: 'general',
+        engagementRate: 0,
         creatorId: req.user!.id
       };
       
-      console.log('✅ Campaign created successfully:', mockCampaign);
-      res.json(mockCampaign);
+      // Use storage to create campaign
+      const campaign = await storage.createCampaign(campaignData);
+      
+      console.log('✅ Campaign created successfully:', campaign);
+      res.json(campaign);
     } catch (error: any) {
       console.error('❌ Error creating campaign:', error);
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  // Campaign listing endpoint  
+  app.get("/api/creator/campaigns", async (req, res) => {
+    if (!req.isAuthenticated()) return res.sendStatus(401);
+    
+    try {
+      console.log('📋 Fetching campaigns for user:', req.user!.id);
+      const campaigns = await storage.getCampaigns(req.user!.id);
+      console.log('📊 Found campaigns:', campaigns.length);
+      res.json(campaigns);
+    } catch (error: any) {
+      console.error('❌ Error fetching campaigns:', error);
       res.status(500).json({ message: error.message });
     }
   });
