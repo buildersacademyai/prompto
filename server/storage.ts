@@ -453,53 +453,7 @@ export class DatabaseStorage implements IStorage {
     return ads;
   }
 
-  async deleteGeneratedAd(adId: number, userId: number): Promise<boolean> {
-    console.log('🗑️ Deleting generated ad:', adId, 'for user:', userId);
-    
-    try {
-      // First, check if the ad exists and belongs to the user
-      const existingAd = await db
-        .select()
-        .from(generatedAds)
-        .where(and(eq(generatedAds.id, adId), eq(generatedAds.userId, userId)));
-      
-      console.log('🔍 Found existing ad:', existingAd.length > 0 ? 'Yes' : 'No');
-      console.log('🔍 Existing ad details:', existingAd);
-      
-      if (existingAd.length === 0) {
-        console.log('❌ Ad not found or unauthorized');
-        return false;
-      }
-      
-      // Delete the ad, ensuring it belongs to the requesting user
-      console.log('🔧 Executing delete query...');
-      const result = await db
-        .delete(generatedAds)
-        .where(and(eq(generatedAds.id, adId), eq(generatedAds.userId, userId)));
-      
-      console.log('🔧 Delete query executed, checking result...');
-      console.log('📊 Delete result:', result);
-      
-      // Verify the deletion by checking if the record still exists
-      const verifyDeletion = await db
-        .select()
-        .from(generatedAds)
-        .where(eq(generatedAds.id, adId));
-      
-      console.log('🔍 Verification check - records found:', verifyDeletion.length);
-      
-      if (verifyDeletion.length === 0) {
-        console.log('✅ Ad successfully deleted from database');
-        return true;
-      } else {
-        console.log('❌ Ad still exists after delete operation');
-        return false;
-      }
-    } catch (error) {
-      console.error('❌ Error in deleteGeneratedAd:', error);
-      return false;
-    }
-  }
+  // Removed deleteGeneratedAd - now handled directly in routes.ts
 }
 
 export const storage = new DatabaseStorage();

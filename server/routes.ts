@@ -522,36 +522,39 @@ export async function registerRoutes(app: Express): Promise<Server> {
     const userId = req.user!.id;
     const adId = parseInt(req.params.id);
     
-    console.log('🗑️ STARTING DELETE - Ad ID:', adId, 'User ID:', userId);
+    console.log('🗑️ DELETE REQUEST RECEIVED - Ad ID:', adId, 'User ID:', userId);
     
     if (isNaN(adId)) {
+      console.log('❌ Invalid ad ID provided');
       return res.status(400).json({ message: "Invalid ad ID" });
     }
     
     try {
+      // Import required modules
       const { db } = require("./db");
       const { generatedAds } = require("@shared/schema");
       const { eq, and } = require("drizzle-orm");
       
-      console.log('🔧 About to execute delete query...');
+      console.log('🔧 Executing database delete operation...');
       
-      const deleteResult = await db
+      // Execute the delete operation
+      const result = await db
         .delete(generatedAds)
         .where(and(eq(generatedAds.id, adId), eq(generatedAds.userId, userId)))
         .returning();
       
-      console.log('📊 Delete operation completed. Rows deleted:', deleteResult.length);
+      console.log('📊 Database delete completed. Rows affected:', result.length);
       
-      if (deleteResult.length > 0) {
-        console.log('✅ SUCCESS: Ad deleted from database');
-        return res.json({ message: "Ad deleted successfully", deleted: true });
+      if (result.length > 0) {
+        console.log('✅ Ad successfully deleted from database');
+        res.json({ message: "Ad deleted successfully" });
       } else {
-        console.log('❌ FAILURE: No rows were deleted');
-        return res.status(404).json({ message: "Ad not found or unauthorized", deleted: false });
+        console.log('❌ No rows deleted - ad not found or unauthorized');
+        res.status(404).json({ message: "Ad not found or unauthorized" });
       }
     } catch (error) {
-      console.error('❌ DATABASE ERROR during delete:', error);
-      return res.status(500).json({ message: "Database error", error: error.message });
+      console.error('❌ Error in delete operation:', error);
+      res.status(500).json({ message: "Internal server error" });
     }
   });
 
