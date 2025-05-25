@@ -221,8 +221,12 @@ export class DatabaseStorage implements IStorage {
     return {
       ...result,
       budget: {
-        total: typeof result.budget === 'number' ? result.budget : 0,
-        spent: 0
+        total: typeof result.budget === 'string' 
+          ? (JSON.parse(result.budget)?.total || 0)
+          : (typeof result.budget === 'number' ? result.budget : 0),
+        spent: typeof result.budget === 'string' 
+          ? (JSON.parse(result.budget)?.spent || 0)
+          : 0
       }
     } as Campaign;
   }
@@ -239,7 +243,17 @@ export class DatabaseStorage implements IStorage {
         )
       );
     
-    return availableCampaigns;
+    return availableCampaigns.map(campaign => ({
+      ...campaign,
+      budget: {
+        total: typeof campaign.budget === 'string' 
+          ? (JSON.parse(campaign.budget)?.total || 0)
+          : (typeof campaign.budget === 'number' ? campaign.budget : 0),
+        spent: typeof campaign.budget === 'string' 
+          ? (JSON.parse(campaign.budget)?.spent || 0)
+          : 0
+      }
+    })) as Campaign[];
   }
 
   async pauseCampaign(campaignId: number, userId: number): Promise<Campaign> {
@@ -304,9 +318,14 @@ export class DatabaseStorage implements IStorage {
     // Transform database results to match Campaign type
     return results.map(campaign => ({
       ...campaign,
-      budget: typeof campaign.budget === 'string' 
-        ? JSON.parse(campaign.budget) 
-        : { total: 0, spent: 0 }
+      budget: {
+        total: typeof campaign.budget === 'string' 
+          ? (JSON.parse(campaign.budget)?.total || 0)
+          : (typeof campaign.budget === 'number' ? campaign.budget : 0),
+        spent: typeof campaign.budget === 'string' 
+          ? (JSON.parse(campaign.budget)?.spent || 0)
+          : 0
+      }
     })) as Campaign[];
   }
 
