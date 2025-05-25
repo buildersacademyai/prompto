@@ -53,6 +53,7 @@ export interface IStorage {
   connectWithInfluencer(influencerId: number, userId: number): Promise<any>;
   
   // Wallet operations
+  getUserWallet(userId: number): Promise<any>;
   connectWallet(userId: number, walletAddress: string): Promise<any>;
   fundWallet(userId: number, amount: number): Promise<any>;
   withdrawFunds(userId: number, amount: number, destination: string): Promise<any>;
@@ -264,7 +265,7 @@ export class DatabaseStorage implements IStorage {
   }
 
   // Wallet operations
-  private async getUserWallet(userId: number): Promise<Wallet | undefined> {
+  async getUserWallet(userId: number): Promise<Wallet | undefined> {
     const [wallet] = await db
       .select()
       .from(wallets)
