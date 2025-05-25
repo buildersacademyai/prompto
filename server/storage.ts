@@ -218,15 +218,27 @@ export class DatabaseStorage implements IStorage {
     console.log(`✅ Found campaign: ${result.title}`);
     
     // Transform database result to match Campaign type
+    let budgetTotal = 0;
+    let budgetSpent = 0;
+    
+    if (typeof result.budget === 'number') {
+      budgetTotal = result.budget;
+    } else if (typeof result.budget === 'string') {
+      try {
+        const parsed = JSON.parse(result.budget);
+        budgetTotal = parsed.total || parsed || 0;
+        budgetSpent = parsed.spent || 0;
+      } catch {
+        // If JSON parsing fails, try to parse as number
+        budgetTotal = parseFloat(result.budget) || 0;
+      }
+    }
+    
     return {
       ...result,
       budget: {
-        total: typeof result.budget === 'string' 
-          ? (JSON.parse(result.budget)?.total || 0)
-          : (typeof result.budget === 'number' ? result.budget : 0),
-        spent: typeof result.budget === 'string' 
-          ? (JSON.parse(result.budget)?.spent || 0)
-          : 0
+        total: budgetTotal,
+        spent: budgetSpent
       }
     } as Campaign;
   }
@@ -243,17 +255,31 @@ export class DatabaseStorage implements IStorage {
         )
       );
     
-    return availableCampaigns.map(campaign => ({
-      ...campaign,
-      budget: {
-        total: typeof campaign.budget === 'string' 
-          ? (JSON.parse(campaign.budget)?.total || 0)
-          : (typeof campaign.budget === 'number' ? campaign.budget : 0),
-        spent: typeof campaign.budget === 'string' 
-          ? (JSON.parse(campaign.budget)?.spent || 0)
-          : 0
+    return availableCampaigns.map(campaign => {
+      let budgetTotal = 0;
+      let budgetSpent = 0;
+      
+      if (typeof campaign.budget === 'number') {
+        budgetTotal = campaign.budget;
+      } else if (typeof campaign.budget === 'string') {
+        try {
+          const parsed = JSON.parse(campaign.budget);
+          budgetTotal = parsed.total || parsed || 0;
+          budgetSpent = parsed.spent || 0;
+        } catch {
+          // If JSON parsing fails, try to parse as number
+          budgetTotal = parseFloat(campaign.budget) || 0;
+        }
       }
-    })) as Campaign[];
+      
+      return {
+        ...campaign,
+        budget: {
+          total: budgetTotal,
+          spent: budgetSpent
+        }
+      };
+    }) as Campaign[];
   }
 
   async pauseCampaign(campaignId: number, userId: number): Promise<Campaign> {
@@ -316,17 +342,31 @@ export class DatabaseStorage implements IStorage {
     console.log(`📊 Found marketplace campaigns: ${results.length}`);
     
     // Transform database results to match Campaign type
-    return results.map(campaign => ({
-      ...campaign,
-      budget: {
-        total: typeof campaign.budget === 'string' 
-          ? (JSON.parse(campaign.budget)?.total || 0)
-          : (typeof campaign.budget === 'number' ? campaign.budget : 0),
-        spent: typeof campaign.budget === 'string' 
-          ? (JSON.parse(campaign.budget)?.spent || 0)
-          : 0
+    return results.map(campaign => {
+      let budgetTotal = 0;
+      let budgetSpent = 0;
+      
+      if (typeof campaign.budget === 'number') {
+        budgetTotal = campaign.budget;
+      } else if (typeof campaign.budget === 'string') {
+        try {
+          const parsed = JSON.parse(campaign.budget);
+          budgetTotal = parsed.total || parsed || 0;
+          budgetSpent = parsed.spent || 0;
+        } catch {
+          // If JSON parsing fails, try to parse as number
+          budgetTotal = parseFloat(campaign.budget) || 0;
+        }
       }
-    })) as Campaign[];
+      
+      return {
+        ...campaign,
+        budget: {
+          total: budgetTotal,
+          spent: budgetSpent
+        }
+      };
+    }) as Campaign[];
   }
 
   // Social account operations
