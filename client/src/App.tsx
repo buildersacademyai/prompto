@@ -27,6 +27,7 @@ import InfluencerAnalyticsPage from "@/pages/influencer/analytics";
 import InfluencerPaymentsPage from "@/pages/influencer/payments";
 import InfluencerMarketplacePage from "@/pages/influencer/marketplace";
 import InfluencerAccountsPage from "@/pages/influencer/accounts";
+import CampaignDetailsPage from "@/pages/influencer/campaign-details";
 
 function Router() {
   return (

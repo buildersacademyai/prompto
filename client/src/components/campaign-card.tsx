@@ -5,7 +5,8 @@ import { Campaign } from "@shared/schema";
 import { formatCurrency, formatPercentage } from "@/lib/utils";
 import { useMutation } from "@tanstack/react-query";
 import { apiRequest, queryClient } from "@/lib/queryClient";
-import { PauseIcon, MoreVerticalIcon, CheckIcon } from "lucide-react";
+import { PauseIcon, MoreVerticalIcon, CheckIcon, EyeIcon } from "lucide-react";
+import { Link } from "wouter";
 import { 
   Tooltip,
   TooltipContent,
@@ -102,9 +103,9 @@ export default function CampaignCard({ campaign, influencerView = false }: Campa
         <h3 className="font-semibold text-lg mb-1">{campaign.title}</h3>
         <p className="text-muted-foreground text-sm mb-3">{campaign.description}</p>
         
-        <div className="grid grid-cols-2 gap-4 mb-4">
+        <div className="mb-4">
           <div>
-            <p className="text-xs text-muted-foreground">Budget Spent</p>
+            <p className="text-xs text-muted-foreground">Budget</p>
             <p className="font-medium">
               {formatCurrency(campaign.budget?.spent || 0)} / {formatCurrency(campaign.budget?.total || 0)}
             </p>
@@ -112,16 +113,6 @@ export default function CampaignCard({ campaign, influencerView = false }: Campa
               <div 
                 className="bg-primary h-1.5 rounded-full" 
                 style={{ width: `${budgetPercentage}%` }}
-              ></div>
-            </div>
-          </div>
-          <div>
-            <p className="text-xs text-muted-foreground">Engagement Rate</p>
-            <p className="font-medium">{formatPercentage(campaign.engagementRate || 0)}</p>
-            <div className="w-full bg-background rounded-full h-1.5 mt-1">
-              <div 
-                className="bg-secondary h-1.5 rounded-full" 
-                style={{ width: `${engagementPercentage}%` }}
               ></div>
             </div>
           </div>
@@ -162,17 +153,14 @@ export default function CampaignCard({ campaign, influencerView = false }: Campa
             )}
           </div>
           {influencerView ? (
-            <Button 
-              className="bg-primary hover:bg-primary/90 text-white text-sm"
-              onClick={() => {
-                toast({
-                  title: "Ad Ready to Share",
-                  description: "This ad content is ready to be shared on your social accounts.",
-                });
-              }}
-            >
-              Share
-            </Button>
+            <Link href={`/influencer/marketplace/${campaign.id}`}>
+              <Button 
+                className="bg-primary hover:bg-primary/90 text-white text-sm"
+              >
+                <EyeIcon className="mr-2 h-4 w-4" />
+                View More
+              </Button>
+            </Link>
           ) : (
             <div className="flex items-center">
               <Button 
