@@ -4,7 +4,7 @@ import AIGenerator from "@/components/ai-generator-new";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Lightbulb, History, Save, Copy, Share, MessageSquarePlus, MoreVerticalIcon, TrashIcon, PencilIcon, ImageIcon, Link2Icon } from "lucide-react";
+import { Lightbulb, History, Save, Copy, Share, MessageSquarePlus, MoreVerticalIcon, TrashIcon, PencilIcon, ImageIcon, Link2Icon, Loader2 } from "lucide-react";
 import { SavedAd } from "@/components/ai-generator-new";
 import { Badge } from "@/components/ui/badge";
 import { Link } from "wouter";
@@ -15,44 +15,35 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useToast } from "@/hooks/use-toast";
-import { mockGeneratedAds, loadSampleData } from "@/data/mock-data";
+import { useQuery } from "@tanstack/react-query";
+import { getQueryFn } from "@/lib/queryClient";
 
 export default function AIGeneratorPage() {
   const { toast } = useToast();
-  const [savedAds, setSavedAds] = useState<SavedAd[]>([]);
   
-  // Load saved ads from localStorage on component mount
-  useEffect(() => {
-    // Initialize with sample data if needed
-    loadSampleData();
-    
-    // Then load from localStorage
-    const storedAds = localStorage.getItem('savedAds');
-    if (storedAds) {
-      try {
-        setSavedAds(JSON.parse(storedAds));
-      } catch (error) {
-        console.error('Failed to parse saved ads from localStorage', error);
-      }
-    }
-  }, []);
+  // Fetch saved ads from database
+  const { data: savedAds = [], isLoading: isLoadingSavedAds, refetch: refetchSavedAds } = useQuery({
+    queryKey: ["/api/ai/generated-ads"],
+    queryFn: getQueryFn({ on401: "returnNull" }),
+  });
   
-  // Save ads to localStorage whenever they change
-  useEffect(() => {
-    localStorage.setItem('savedAds', JSON.stringify(savedAds));
-  }, [savedAds]);
-  
-  // Handle saving a new ad
+  // Handle saving a new ad (this will automatically refetch the saved ads)
   const handleSaveAd = (newAd: SavedAd) => {
-    setSavedAds(prevAds => [newAd, ...prevAds]);
+    // The ad is already saved in the database by the generation endpoint
+    // Just refetch the saved ads to show the updated list
+    refetchSavedAds();
+    toast({
+      title: "Ad saved successfully",
+      description: "Your generated ad has been saved to your collection.",
+    });
   };
   
   // Handle deleting an ad
   const handleDeleteAd = (adId: string) => {
-    setSavedAds(prevAds => prevAds.filter(ad => ad.id !== adId));
+    // TODO: Implement delete endpoint
     toast({
-      title: "Ad deleted",
-      description: "The ad has been removed from your saved ads."
+      title: "Delete not implemented yet",
+      description: "Ad deletion will be available soon."
     });
   };
 
@@ -164,22 +155,24 @@ export default function AIGeneratorPage() {
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  {savedAds.length === 0 ? (
+                  {isLoadingSavedAds ? (
+                    <div className="text-center py-10">
+                      <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4" />
+                      <p className="text-muted-foreground">Loading your saved ads...</p>
+                    </div>
+                  ) : !savedAds || savedAds.length === 0 ? (
                     <div className="text-center py-10">
                       <p className="text-muted-foreground mb-4">You haven't saved any ads yet</p>
-                      <Button variant="outline" onClick={() => document.querySelector('[data-value="generator"]')?.click()}>
-                        Generate New Ad
-                      </Button>
                     </div>
                   ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      {savedAds.map((ad) => (
+                      {(savedAds as any[]).map((ad: any) => (
                         <div key={ad.id} className="bg-background rounded-lg p-5 border border-border">
                           <div className="flex justify-between items-start mb-3">
                             <div>
                               <h3 className="font-medium text-lg">{ad.title}</h3>
                               <div className="text-xs text-muted-foreground mt-1">
-                                Created: {ad.date}
+                                Created: {new Date(ad.createdAt).toLocaleDateString()}
                               </div>
                             </div>
                             <DropdownMenu>
