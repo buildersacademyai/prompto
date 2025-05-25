@@ -553,6 +553,35 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Wallet routes
+  app.get("/api/creator/wallet", async (req, res) => {
+    if (!req.isAuthenticated()) return res.sendStatus(401);
+    
+    try {
+      const walletInfo = await dbStorage.getUserWallet(req.user.id);
+      res.json({ balance: walletInfo?.balance || 0 });
+    } catch (error: any) {
+      console.error("Error getting wallet info:", error);
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  app.post("/api/creator/wallet/fund", async (req, res) => {
+    if (!req.isAuthenticated()) return res.sendStatus(401);
+    
+    try {
+      const { amount } = req.body;
+      if (!amount || amount <= 0) {
+        return res.status(400).json({ message: "Invalid amount" });
+      }
+      
+      const result = await dbStorage.fundWallet(req.user.id, amount);
+      res.json(result);
+    } catch (error: any) {
+      console.error("Error funding wallet:", error);
+      res.status(500).json({ message: error.message });
+    }
+  });
+
   app.post("/api/wallet/connect", async (req, res) => {
     if (!req.isAuthenticated()) return res.sendStatus(401);
     

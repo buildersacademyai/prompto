@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { PlusIcon } from "lucide-react";
 import { Link } from "wouter";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { apiRequest, queryClient } from "@/lib/queryClient";
+import { apiRequest, queryClient, getQueryFn } from "@/lib/queryClient";
 import StatsCard from "@/components/stats-card";
 import CampaignCard from "@/components/campaign-card";
 import Header from "@/components/layout/header";
@@ -56,7 +56,6 @@ export default function CreatorDashboard() {
   // Fetch wallet info
   const { data: walletInfo, isLoading: walletLoading } = useQuery<{ balance: number }>({
     queryKey: ["/api/creator/wallet"],
-    queryFn: getQueryFn({ on401: "throw" }),
   });
 
   // Top up wallet mutation
@@ -134,13 +133,64 @@ export default function CreatorDashboard() {
                       </div>
                     </div>
                     <div className="flex items-baseline">
-                      <span className="text-3xl font-bold text-foreground">0.00 USDC</span>
-                      <span className="text-sm text-muted-foreground ml-2">≈ $0.00 USD</span>
+                      {walletLoading ? (
+                        <div className="h-8 w-32 animate-pulse bg-primary/5 rounded-md" />
+                      ) : (
+                        <>
+                          <span className="text-3xl font-bold text-foreground">
+                            {(walletInfo?.balance || 0).toFixed(2)} USDC
+                          </span>
+                          <span className="text-sm text-muted-foreground ml-2">
+                            ≈ ${(walletInfo?.balance || 0).toFixed(2)} USD
+                          </span>
+                        </>
+                      )}
                     </div>
                   </div>
-                  <Button className="bg-primary hover:bg-primary/90 text-white">
-                    Top Up Wallet
-                  </Button>
+                  <Dialog open={isTopUpDialogOpen} onOpenChange={setIsTopUpDialogOpen}>
+                    <DialogTrigger asChild>
+                      <Button className="bg-primary hover:bg-primary/90 text-white">
+                        Top Up Wallet
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="sm:max-w-[425px]">
+                      <DialogHeader>
+                        <DialogTitle>Top Up Wallet</DialogTitle>
+                        <DialogDescription>
+                          Add USDC to your wallet to fund campaigns. This is dummy currency for testing.
+                        </DialogDescription>
+                      </DialogHeader>
+                      <div className="grid gap-4 py-4">
+                        <div className="grid grid-cols-4 items-center gap-4">
+                          <Label htmlFor="amount" className="text-right">
+                            Amount
+                          </Label>
+                          <Input
+                            id="amount"
+                            type="number"
+                            min="1"
+                            step="1"
+                            placeholder="Enter amount"
+                            value={topUpAmount}
+                            onChange={(e) => setTopUpAmount(e.target.value)}
+                            className="col-span-3"
+                          />
+                        </div>
+                        <div className="text-sm text-muted-foreground">
+                          Current balance: {(walletInfo?.balance || 0).toFixed(2)} USDC
+                        </div>
+                      </div>
+                      <DialogFooter>
+                        <Button 
+                          type="submit" 
+                          onClick={handleTopUp}
+                          disabled={topUpMutation.isPending || !topUpAmount || parseFloat(topUpAmount) <= 0}
+                        >
+                          {topUpMutation.isPending ? "Adding..." : "Add Funds"}
+                        </Button>
+                      </DialogFooter>
+                    </DialogContent>
+                  </Dialog>
                 </div>
               </Card>
             </div>
