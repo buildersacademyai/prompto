@@ -12,7 +12,10 @@ import {
   type Influencer,
   type SocialAccount,
   type Wallet,
-  type Transaction
+  type Transaction,
+  type GeneratedAd,
+  type InsertGeneratedAd,
+  generatedAds
 } from "@shared/schema";
 import session from "express-session";
 import { eq, and, ne } from "drizzle-orm";
@@ -54,6 +57,10 @@ export interface IStorage {
   fundWallet(userId: number, amount: number): Promise<any>;
   withdrawFunds(userId: number, amount: number, destination: string): Promise<any>;
   getTransactions(userId: number): Promise<Transaction[]>;
+  
+  // Generated ads operations
+  saveGeneratedAd(ad: InsertGeneratedAd): Promise<GeneratedAd>;
+  getGeneratedAds(userId: number): Promise<GeneratedAd[]>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -428,6 +435,20 @@ export class DatabaseStorage implements IStorage {
       .where(eq(transactions.userId, userId));
     
     return userTransactions;
+  }
+
+  async saveGeneratedAd(ad: InsertGeneratedAd): Promise<GeneratedAd> {
+    console.log('💾 Saving generated ad to database:', { userId: ad.userId, title: ad.title });
+    const [savedAd] = await db.insert(generatedAds).values(ad).returning();
+    console.log('✅ Generated ad saved successfully with ID:', savedAd.id);
+    return savedAd;
+  }
+
+  async getGeneratedAds(userId: number): Promise<GeneratedAd[]> {
+    console.log('📋 Fetching generated ads for user:', userId);
+    const ads = await db.select().from(generatedAds).where(eq(generatedAds.userId, userId));
+    console.log('📊 Found', ads.length, 'generated ads for user');
+    return ads;
   }
 }
 
