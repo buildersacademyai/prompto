@@ -128,27 +128,30 @@ export async function generateAdContent(
       throw new Error("Invalid response format from OpenAI");
     }
 
-    // Generate simple SVG placeholder image based on description
-    const generatedImageUrl = `data:image/svg+xml;base64,${Buffer.from(`
-      <svg width="1024" height="1024" xmlns="http://www.w3.org/2000/svg">
-        <defs>
-          <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" style="stop-color:#9945FF;stop-opacity:1" />
-            <stop offset="100%" style="stop-color:#14F195;stop-opacity:1" />
-          </linearGradient>
-        </defs>
-        <rect width="100%" height="100%" fill="url(#grad1)"/>
-        <text x="50%" y="40%" dominant-baseline="middle" text-anchor="middle" fill="white" font-size="48" font-family="Arial, sans-serif" font-weight="bold">
-          PROMPTO
-        </text>
-        <text x="50%" y="55%" dominant-baseline="middle" text-anchor="middle" fill="white" font-size="24" font-family="Arial, sans-serif">
-          AI Generated Ad
-        </text>
-        <text x="50%" y="65%" dominant-baseline="middle" text-anchor="middle" fill="white" font-size="16" font-family="Arial, sans-serif">
-          ${description.substring(0, 60)}${description.length > 60 ? '...' : ''}
-        </text>
-      </svg>
-    `).toString('base64')}`;
+    // Generate image using OpenAI Images API
+    const imagePrompt = `Create a professional, high-quality advertising image for: ${description}. Style: modern, clean, professional, eye-catching, suitable for social media marketing.`;
+    
+    const imageResponse = await fetch('https://api.openai.com/v1/images/generations', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: "dall-e-3",
+        prompt: imagePrompt,
+        n: 1,
+        size: "1024x1024",
+        quality: "standard",
+      }),
+    });
+
+    if (!imageResponse.ok) {
+      throw new Error(`Image generation failed: ${imageResponse.statusText}`);
+    }
+
+    const imageData = await imageResponse.json();
+    const generatedImageUrl = imageData.data?.[0]?.url || "";
 
     return {
       text: result.text,
