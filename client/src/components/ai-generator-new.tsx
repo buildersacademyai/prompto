@@ -318,46 +318,72 @@ export default function AIGenerator({ className, onSave }: AIGeneratorProps & { 
             
             {generatedContent ? (
               <div>
-                <div className="space-y-3 whitespace-pre-line">
-                  {generatedContent.text.split('\n').map((paragraph, index) => (
-                    <p key={index}>
-                      {paragraph.split(' ').map((word, wordIndex) => {
-                        if (word.startsWith('#')) {
-                          return (
-                            <Badge key={wordIndex} variant="outline" className="bg-transparent text-accent mr-1">
-                              {word}
-                            </Badge>
-                          );
-                        }
-                        return <span key={wordIndex}>{word} </span>;
-                      })}
-                    </p>
-                  ))}
-                </div>
-                
-                {generatedContent.suggestedMedia && generatedContent.suggestedMedia.length > 0 && (
-                  <div className="mt-6 border-t border-border pt-4">
-                    <h4 className="text-sm font-medium mb-2">Suggested Media</h4>
-                    <div className="flex space-x-3 overflow-x-auto pb-2">
-                      {generatedContent.suggestedMedia.map((media, index) => (
-                        <img 
-                          key={index}
-                          src={media.url} 
-                          alt={media.alt} 
-                          className="w-16 h-16 rounded-lg object-cover"
-                          onError={(e) => {
-                            e.currentTarget.src = "https://placehold.co/400x400/1E1E1E/9945FF?text=Media+Error";
-                          }}
-                        />
-                      ))}
+                {/* Featured Generated Image */}
+                {generatedContent.generatedImageUrl ? (
+                  <div className="mb-6">
+                    <div className="relative">
+                      <img 
+                        src={generatedContent.generatedImageUrl} 
+                        alt={adTitle || "Generated Ad"}
+                        className="w-full h-64 object-cover rounded-lg border border-border"
+                      />
+                      <div className="absolute top-3 right-3">
+                        <div className="bg-primary/90 text-primary-foreground px-2 py-1 rounded-full text-xs font-medium">
+                          AI Generated
+                        </div>
+                      </div>
                     </div>
                   </div>
+                ) : (
+                  <div className="mb-6 h-64 bg-muted/50 rounded-lg border border-dashed border-border flex items-center justify-center">
+                    <p className="text-muted-foreground text-sm">No image generated</p>
+                  </div>
                 )}
+                
+                {/* Generated Text (Secondary) */}
+                <div className="border-t border-border pt-4">
+                  <h4 className="text-sm font-medium mb-2 text-muted-foreground">Generated Text</h4>
+                  <div className="space-y-2 text-sm bg-muted/20 rounded-lg p-3">
+                    {generatedContent.text.split('\n').map((paragraph, index) => (
+                      <p key={index} className="text-muted-foreground">
+                        {paragraph.split(' ').map((word, wordIndex) => {
+                          if (word.startsWith('#')) {
+                            return (
+                              <Badge key={wordIndex} variant="outline" className="bg-transparent text-accent mr-1 text-xs">
+                                {word}
+                              </Badge>
+                            );
+                          }
+                          return <span key={wordIndex}>{word} </span>;
+                        })}
+                      </p>
+                    ))}
+                  </div>
+                </div>
               </div>
             ) : generateMutation.isPending ? (
               <div className="flex flex-col items-center justify-center h-[240px]">
-                <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent mb-4" />
-                <p className="text-muted-foreground text-sm">Generating creative content...</p>
+                <div className="relative">
+                  <svg className="w-16 h-16" viewBox="0 0 36 36">
+                    <path
+                      d="m18 2.0845
+                        a 15.9155 15.9155 0 0 1 0 31.831
+                        a 15.9155 15.9155 0 0 1 0 -31.831"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeDasharray="60, 100"
+                      strokeDashoffset="0"
+                      strokeLinecap="round"
+                      className="animate-spin text-primary"
+                    />
+                  </svg>
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <ImageIcon className="h-6 w-6 text-primary" />
+                  </div>
+                </div>
+                <p className="text-muted-foreground text-sm mt-4">Generating your ad image...</p>
+                <p className="text-muted-foreground text-xs mt-1">This may take 15-20 seconds</p>
               </div>
             ) : (
               <div className="flex flex-col items-center justify-center text-center h-[240px] text-muted-foreground">
