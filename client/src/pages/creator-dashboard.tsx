@@ -7,6 +7,7 @@ import { Link } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import StatsCard from "@/components/stats-card";
 import CampaignCard from "@/components/campaign-card";
+import Header from "@/components/layout/header";
 import { Campaign } from "@shared/schema";
 import { useState } from "react";
 import { creatorAnalyticsData, mockCampaigns } from "@/data/mock-data";
@@ -53,6 +54,7 @@ export default function CreatorDashboard() {
 
   return (
     <div className="min-h-screen bg-background">
+      <Header />
       <div className="container mx-auto p-6">
         <div className="max-w-7xl mx-auto">
           <div className="mb-8">
@@ -62,12 +64,6 @@ export default function CreatorDashboard() {
                 <p className="text-muted-foreground">Launch and manage your ad campaigns</p>
               </div>
               <div className="flex space-x-3">
-                <Button className="bg-primary hover:bg-primary/90 text-white" asChild>
-                  <Link href="/creator/new-campaign">
-                    <PlusIcon className="mr-2 h-4 w-4" />
-                    Create New Campaign
-                  </Link>
-                </Button>
                 <Button variant="outline" className="border-accent text-accent hover:bg-accent/10" asChild>
                   <Link href="/creator/ai-generator">
                     Generate Ad
