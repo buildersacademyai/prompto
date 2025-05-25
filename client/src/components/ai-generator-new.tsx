@@ -67,6 +67,25 @@ export default function AIGenerator({ className, onSave }: AIGeneratorProps & { 
     },
     onSuccess: (data: GeneratedContent) => {
       setGeneratedContent(data);
+      
+      // Call onSave to automatically refresh the saved ads list
+      if (onSave) {
+        const adData: SavedAd = {
+          id: data.id || uuidv4(),
+          title: adTitle || "Untitled Ad",
+          prompt: productDescription,
+          generatedText: data.text,
+          imageUrl: data.generatedImageUrl,
+          date: new Date().toLocaleDateString('en-US', { 
+            year: 'numeric', 
+            month: 'long', 
+            day: 'numeric' 
+          }),
+          hashtags: []
+        };
+        onSave(adData);
+      }
+      
       toast({
         title: "Content generated",
         description: "Your AI-generated ad content is ready!",
