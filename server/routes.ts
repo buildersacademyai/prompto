@@ -516,6 +516,30 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Delete a generated ad
+  app.delete("/api/ai/generated-ads/:id", async (req, res) => {
+    if (!req.isAuthenticated()) return res.sendStatus(401);
+    
+    try {
+      const userId = req.user!.id;
+      const adId = parseInt(req.params.id);
+      
+      console.log('🗑️ Deleting ad:', adId, 'for user:', userId);
+      
+      if (isNaN(adId)) {
+        return res.status(400).json({ message: "Invalid ad ID" });
+      }
+      
+      const result = await dbStorage.deleteGeneratedAd(adId, userId);
+      console.log('✅ Ad deleted successfully');
+      
+      res.json({ message: "Ad deleted successfully" });
+    } catch (error: any) {
+      console.error('❌ Error deleting ad:', error);
+      res.status(500).json({ message: error.message });
+    }
+  });
+
   app.post("/api/ai/analyze-content", async (req, res) => {
     if (!req.isAuthenticated()) return res.sendStatus(401);
     

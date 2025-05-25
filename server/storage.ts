@@ -62,6 +62,7 @@ export interface IStorage {
   // Generated ads operations
   saveGeneratedAd(ad: InsertGeneratedAd): Promise<GeneratedAd>;
   getGeneratedAds(userId: number): Promise<GeneratedAd[]>;
+  deleteGeneratedAd(adId: number, userId: number): Promise<boolean>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -450,6 +451,21 @@ export class DatabaseStorage implements IStorage {
     const ads = await db.select().from(generatedAds).where(eq(generatedAds.userId, userId));
     console.log('📊 Found', ads.length, 'generated ads for user');
     return ads;
+  }
+
+  async deleteGeneratedAd(adId: number, userId: number): Promise<boolean> {
+    console.log('🗑️ Deleting generated ad:', adId, 'for user:', userId);
+    
+    // Delete the ad, ensuring it belongs to the requesting user
+    const result = await db
+      .delete(generatedAds)
+      .where(and(eq(generatedAds.id, adId), eq(generatedAds.userId, userId)))
+      .returning();
+    
+    const deleted = result.length > 0;
+    console.log('✅ Ad deletion result:', deleted ? 'Success' : 'Failed (not found or unauthorized)');
+    
+    return deleted;
   }
 }
 
