@@ -17,9 +17,11 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { useQuery } from "@tanstack/react-query";
 import { getQueryFn } from "@/lib/queryClient";
+import { useAuth } from "@/hooks/use-auth";
 
 export default function AIGeneratorPage() {
   const { toast } = useToast();
+  const { user } = useAuth();
   
   // Fetch saved ads from database
   const { data: savedAds = [], isLoading: isLoadingSavedAds, refetch: refetchSavedAds } = useQuery({
@@ -224,7 +226,7 @@ export default function AIGeneratorPage() {
                               </div>
                               <div className="text-sm mb-4">
                                 <span className="font-medium">Created by:</span>
-                                <p className="text-muted-foreground mt-1">Prompto AI Generator</p>
+                                <p className="text-muted-foreground mt-1">{user?.username || 'Unknown Creator'} via Prompto AI</p>
                               </div>
                               <div className="flex flex-wrap gap-1 mb-3">
                                 {ad.hashtags.map((tag, index) => (
