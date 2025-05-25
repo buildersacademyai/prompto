@@ -3,6 +3,7 @@ import { createServer, type Server } from "http";
 import { storage as dbStorage } from "./storage";
 import { setupAuth } from "./auth";
 import { generateAdContent, analyzeContentSentiment, generateHashtags, optimizeContent } from "./openai";
+import { storage } from "./storage";
 // Import hash function to reuse in Google auth
 import { hashPassword } from "./auth";
 import { randomBytes } from "crypto";
@@ -446,6 +447,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     
     try {
       const { title, description } = req.body;
+      const userId = req.user!.id;
+      
+      console.log('🚀 Starting ad generation for user:', userId, 'with title:', title);
       
       if (!description) {
         return res.status(400).json({ message: "Product description is required" });
@@ -455,8 +459,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const files = req.files as Express.Multer.File[];
       const uploadedFiles = files ? files.map(file => file.path) : [];
       
+      console.log('📁 Uploaded files count:', uploadedFiles.length);
+      
       // Call OpenAI with the title, description and image paths
+      console.log('🤖 Calling OpenAI API for content generation...');
       const content = await generateAdContent(description, uploadedFiles, title);
+      console.log('✅ OpenAI generation successful, image URL:', content.generatedImageUrl ? 'Generated' : 'None');
+      
+      // Save the generated ad to database
+      const adData = {
+        userId: userId,
+        title: title || 'Untitled Ad',
+        prompt: description,
+        generatedText: content.text,
+        imageUrl: content.generatedImageUrl,
+        hashtags: []
+      };
+      
+      console.log('💾 Saving ad to database...');
+      const savedAd = await dbStorage.saveGeneratedAd(adData);
+      console.log('🎉 Ad saved successfully with ID:', savedAd.id);
       
       // Clean up the uploaded files after processing
       uploadedFiles.forEach(filePath => {
@@ -465,8 +487,31 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       });
       
-      res.json(content);
+      res.json({
+        ...content,
+        id: savedAd.id,
+        saved: true
+      });
     } catch (error: any) {
+      console.error('❌ Error in ad generation:', error);
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  // Get saved generated ads
+  app.get("/api/ai/generated-ads", async (req, res) => {
+    if (!req.isAuthenticated()) return res.sendStatus(401);
+    
+    try {
+      const userId = req.user!.id;
+      console.log('📋 Fetching saved ads for user:', userId);
+      
+      const savedAds = await dbStorage.getGeneratedAds(userId);
+      console.log('📊 Retrieved', savedAds.length, 'saved ads');
+      
+      res.json(savedAds);
+    } catch (error: any) {
+      console.error('❌ Error fetching saved ads:', error);
       res.status(500).json({ message: error.message });
     }
   });
