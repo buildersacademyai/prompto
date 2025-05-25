@@ -65,6 +65,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
           role: role, // Use the role provided by client
         });
         console.log("New user created:", user.id, "with role:", user.role);
+      } else {
+        // User exists but may have different role than requested
+        if (user.role !== role) {
+          console.log("Updating existing user role from", user.role, "to", role);
+          user = await dbStorage.updateUserRole(user.id, role);
+          console.log("User role updated:", user.id, "new role:", user.role);
+        }
       }
       
       // Log the user in manually - this establishes the session
