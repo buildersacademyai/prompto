@@ -57,8 +57,8 @@ export default function AIGeneratorPage() {
   // Handle saving a new ad (this will automatically refetch the saved ads)
   const handleSaveAd = (newAd: SavedAd) => {
     // The ad is already saved in the database by the generation endpoint
-    // Just refetch the saved ads to show the updated list
-    refetchSavedAds();
+    // Invalidate and refetch the saved ads to show the updated list immediately
+    queryClient.invalidateQueries({ queryKey: ["/api/ai/generated-ads"] });
     toast({
       title: "Ad saved successfully",
       description: "Your generated ad has been saved to your collection.",
