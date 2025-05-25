@@ -523,20 +523,32 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const userId = req.user!.id;
       const adId = parseInt(req.params.id);
       
-      console.log('🗑️ Deleting ad:', adId, 'for user:', userId);
+      console.log('🗑️ DELETE REQUEST - Ad ID:', adId, 'User ID:', userId);
       
       if (isNaN(adId)) {
         return res.status(400).json({ message: "Invalid ad ID" });
       }
       
-      const result = await storage.deleteGeneratedAd(adId, userId);
+      // Direct database deletion using imported db and schema
+      const { db } = await import("./db");
+      const { generatedAds } = await import("@shared/schema");
+      const { eq, and } = await import("drizzle-orm");
       
-      if (result) {
-        console.log('✅ Ad deleted successfully');
+      console.log('🔧 Executing direct database delete...');
+      
+      const deleteResult = await db
+        .delete(generatedAds)
+        .where(and(eq(generatedAds.id, adId), eq(generatedAds.userId, userId)))
+        .returning();
+      
+      console.log('📊 Delete result:', deleteResult.length, 'rows affected');
+      
+      if (deleteResult.length > 0) {
+        console.log('✅ Ad successfully deleted from database');
         res.json({ message: "Ad deleted successfully" });
       } else {
-        console.log('❌ Failed to delete ad');
-        res.status(404).json({ message: "Ad not found or could not be deleted" });
+        console.log('❌ No rows deleted - ad not found or unauthorized');
+        res.status(404).json({ message: "Ad not found or unauthorized" });
       }
     } catch (error: any) {
       console.error('❌ Error deleting ad:', error);
