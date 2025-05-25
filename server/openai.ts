@@ -37,7 +37,7 @@ export async function generateAdContent(
     const path = require('path');
 
     // Prepare messages array
-    const messages = [
+    const messages: any[] = [
       {
         role: "system",
         content: "You are an expert marketing copywriter specializing in blockchain and cryptocurrency projects. If users upload images, analyze them and incorporate insights into your copy."
@@ -117,7 +117,7 @@ export async function generateAdContent(
     // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
     const response = await openai.chat.completions.create({
       model: "gpt-4o",
-      messages: messages,
+      messages: messages as any,
       response_format: { type: "json_object" }
     });
 
@@ -141,7 +141,7 @@ export async function generateAdContent(
 
     return {
       text: result.text,
-      generatedImageUrl: imageResponse.data[0].url,
+      generatedImageUrl: imageResponse.data?.[0]?.url || "",
       suggestedMedia: result.suggestedMedia.map((media: any) => ({
         url: media.url,
         alt: media.alt
