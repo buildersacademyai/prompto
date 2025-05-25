@@ -473,11 +473,18 @@ export class DatabaseStorage implements IStorage {
       // Delete the ad, ensuring it belongs to the requesting user
       const result = await db
         .delete(generatedAds)
-        .where(and(eq(generatedAds.id, adId), eq(generatedAds.userId, userId)));
+        .where(and(eq(generatedAds.id, adId), eq(generatedAds.userId, userId)))
+        .returning();
       
-      console.log('✅ Ad deletion completed successfully');
-      console.log('📊 Database operation executed');
+      const deletedCount = result.length;
+      console.log('✅ Ad deletion completed, rows affected:', deletedCount);
       
+      if (deletedCount === 0) {
+        console.log('❌ No rows were deleted');
+        return false;
+      }
+      
+      console.log('✅ Ad successfully deleted from database');
       return true;
     } catch (error) {
       console.error('❌ Error in deleteGeneratedAd:', error);

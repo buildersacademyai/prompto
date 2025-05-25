@@ -531,9 +531,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       const result = await dbStorage.deleteGeneratedAd(adId, userId);
-      console.log('✅ Ad deleted successfully');
       
-      res.json({ message: "Ad deleted successfully" });
+      if (result) {
+        console.log('✅ Ad deleted successfully');
+        res.json({ message: "Ad deleted successfully" });
+      } else {
+        console.log('❌ Failed to delete ad');
+        res.status(404).json({ message: "Ad not found or could not be deleted" });
+      }
     } catch (error: any) {
       console.error('❌ Error deleting ad:', error);
       res.status(500).json({ message: error.message });
