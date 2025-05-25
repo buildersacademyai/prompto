@@ -347,18 +347,15 @@ export class DatabaseStorage implements IStorage {
       let budgetTotal = 0;
       let budgetSpent = 0;
       
+      // Handle JSONB column that contains plain numbers
       if (typeof campaign.budget === 'number') {
         budgetTotal = campaign.budget;
-      } else if (typeof campaign.budget === 'string') {
-        try {
-          const parsed = JSON.parse(campaign.budget);
-          budgetTotal = parsed.total || parsed || 0;
-          budgetSpent = parsed.spent || 0;
-        } catch {
-          // If JSON parsing fails, try to parse as number
-          budgetTotal = parseFloat(campaign.budget) || 0;
-        }
+      } else if (campaign.budget !== null && campaign.budget !== undefined) {
+        // For JSONB column, the value might be the number directly
+        budgetTotal = Number(campaign.budget) || 0;
       }
+      
+      console.log(`💰 Final budget for ${campaign.title}: total = ${budgetTotal}, spent = ${budgetSpent}`);
       
       return {
         ...campaign,
