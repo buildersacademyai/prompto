@@ -231,51 +231,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
     if (!req.isAuthenticated()) return res.sendStatus(401);
     
     try {
-      // Mock available campaigns for frontend development
-      const campaigns = [
-        {
-          id: 3,
-          creatorId: 1, // Another user
-          title: "Natural Skincare Promotion",
-          description: "Looking for influencers to promote our organic skincare line",
-          budget: 2500,
-          payPerPost: 250,
-          requirements: "3 Instagram posts showing before/after results",
-          status: "active",
-          startDate: new Date().toISOString(),
-          endDate: new Date(Date.now() + 45 * 24 * 60 * 60 * 1000).toISOString(), // 45 days from now
-          createdAt: new Date().toISOString()
-        },
-        {
-          id: 4,
-          creatorId: 2, // Another user
-          title: "Eco-Friendly Product Launch",
-          description: "Help us spread the word about our sustainable household items",
-          budget: 1800,
-          payPerPost: 180,
-          requirements: "2 posts showcasing product use, mention eco benefits",
-          status: "active",
-          startDate: new Date().toISOString(),
-          endDate: new Date(Date.now() + 20 * 24 * 60 * 60 * 1000).toISOString(), // 20 days from now
-          createdAt: new Date().toISOString()
-        },
-        {
-          id: 5,
-          creatorId: 3, // Another user
-          title: "Mobile Game Promotion",
-          description: "Seeking influencers to play and review our new mobile game",
-          budget: 3000,
-          payPerPost: 300,
-          requirements: "Gameplay video, honest review, link in bio",
-          status: "active",
-          startDate: new Date().toISOString(),
-          endDate: new Date(Date.now() + 10 * 24 * 60 * 60 * 1000).toISOString(), // 10 days from now
-          createdAt: new Date().toISOString()
-        }
-      ];
-      res.json(campaigns);
+      console.log(`📋 Fetching joined campaigns for influencer: ${req.user.id}`);
+      
+      // Get campaigns the user has actually joined
+      const joinedCampaigns = await storage.getJoinedCampaigns(req.user.id);
+      
+      console.log(`✅ Found ${joinedCampaigns.length} joined campaigns for user ${req.user.id}`);
+      res.json(joinedCampaigns);
     } catch (error: any) {
-      console.error("Error getting available campaigns:", error);
+      console.error("Error getting joined campaigns:", error);
       res.status(500).json({ message: error.message });
     }
   });

@@ -44,6 +44,7 @@ export interface IStorage {
   getCampaign(campaignId: number): Promise<Campaign | undefined>;
   getAvailableCampaigns(userId: number): Promise<Campaign[]>;
   getAllMarketplaceCampaigns(): Promise<Campaign[]>;
+  getJoinedCampaigns(userId: number): Promise<Campaign[]>;
   createCampaign(campaignData: any): Promise<Campaign>;
   pauseCampaign(campaignId: number, userId: number): Promise<Campaign>;
   joinCampaign(campaignId: number, userId: number): Promise<any>;
