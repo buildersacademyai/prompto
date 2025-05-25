@@ -138,7 +138,7 @@ export async function generateAdContent(
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: "dall-e-3",
+        model: "gpt-image-1",
         prompt: imagePrompt,
         n: 1,
         size: "1024x1024",
