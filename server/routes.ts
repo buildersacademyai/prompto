@@ -293,6 +293,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Get individual campaign details
+  app.get("/api/campaigns/:id", async (req, res) => {
+    if (!req.isAuthenticated()) return res.sendStatus(401);
+    
+    try {
+      const campaignId = parseInt(req.params.id);
+      const campaign = await storage.getCampaign(campaignId);
+      
+      if (!campaign) {
+        return res.status(404).json({ message: "Campaign not found" });
+      }
+      
+      res.json(campaign);
+    } catch (error: any) {
+      console.error("Error fetching campaign:", error);
+      res.status(500).json({ message: error.message });
+    }
+  });
+
   app.post("/api/campaigns/:id/pause", async (req, res) => {
     if (!req.isAuthenticated()) return res.sendStatus(401);
     

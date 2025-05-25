@@ -41,6 +41,7 @@ export interface IStorage {
   
   // Campaign operations
   getCampaigns(userId: number): Promise<Campaign[]>;
+  getCampaign(campaignId: number): Promise<Campaign | undefined>;
   getAvailableCampaigns(userId: number): Promise<Campaign[]>;
   getAllMarketplaceCampaigns(): Promise<Campaign[]>;
   createCampaign(campaignData: any): Promise<Campaign>;
@@ -199,6 +200,31 @@ export class DatabaseStorage implements IStorage {
         spent: 0
       }
     }));
+  }
+
+  async getCampaign(campaignId: number): Promise<Campaign | undefined> {
+    console.log(`📋 Fetching campaign: ${campaignId}`);
+    
+    const [result] = await db
+      .select()
+      .from(campaigns)
+      .where(eq(campaigns.id, campaignId));
+    
+    if (!result) {
+      console.log(`❌ Campaign not found: ${campaignId}`);
+      return undefined;
+    }
+    
+    console.log(`✅ Found campaign: ${result.title}`);
+    
+    // Transform database result to match Campaign type
+    return {
+      ...result,
+      budget: {
+        total: typeof result.budget === 'number' ? result.budget : 0,
+        spent: 0
+      }
+    } as Campaign;
   }
 
   async getAvailableCampaigns(userId: number): Promise<Campaign[]> {

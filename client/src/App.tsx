@@ -49,6 +49,7 @@ function Router() {
       {/* Influencer routes */}
       <ProtectedRoute path="/influencer" component={InfluencerDashboard} />
       <ProtectedRoute path="/influencer/campaigns" component={InfluencerCampaignsPage} />
+      <ProtectedRoute path="/influencer/marketplace/:id" component={CampaignDetailsPage} />
       <ProtectedRoute path="/influencer/marketplace" component={InfluencerMarketplacePage} />
       <ProtectedRoute path="/influencer/analytics" component={InfluencerAnalyticsPage} />
       <ProtectedRoute path="/influencer/payments" component={InfluencerPaymentsPage} />
