@@ -42,6 +42,7 @@ export interface IStorage {
   // Campaign operations
   getCampaigns(userId: number): Promise<Campaign[]>;
   getAvailableCampaigns(userId: number): Promise<Campaign[]>;
+  getAllMarketplaceCampaigns(): Promise<Campaign[]>;
   createCampaign(campaignData: any): Promise<Campaign>;
   pauseCampaign(campaignId: number, userId: number): Promise<Campaign>;
   joinCampaign(campaignId: number, userId: number): Promise<any>;
@@ -262,6 +263,25 @@ export class DatabaseStorage implements IStorage {
       .returning();
     
     return joined;
+  }
+
+  async getAllMarketplaceCampaigns(): Promise<Campaign[]> {
+    console.log(`🏪 Fetching all marketplace campaigns`);
+    
+    const results = await db
+      .select()
+      .from(campaigns)
+      .where(eq(campaigns.status, 'active'));
+    
+    console.log(`📊 Found marketplace campaigns: ${results.length}`);
+    
+    // Transform database results to match Campaign type
+    return results.map(campaign => ({
+      ...campaign,
+      budget: typeof campaign.budget === 'string' 
+        ? JSON.parse(campaign.budget) 
+        : { total: 0, spent: 0 }
+    })) as Campaign[];
   }
 
   // Social account operations
