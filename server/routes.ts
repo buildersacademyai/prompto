@@ -67,10 +67,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
         console.log("New user created:", user.id, "with role:", user.role);
       } else {
         // User exists but may have different role than requested
+        console.log("Existing user role:", user.role, "Requested role:", role);
         if (user.role !== role) {
           console.log("Updating existing user role from", user.role, "to", role);
           user = await dbStorage.updateUserRole(user.id, role);
           console.log("User role updated:", user.id, "new role:", user.role);
+        } else {
+          console.log("User already has the requested role, no update needed");
         }
       }
       
