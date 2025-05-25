@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { SearchIcon, FilterIcon, TrendingUpIcon, UsersIcon, DollarSignIcon } from "lucide-react";
+import { SearchIcon, FilterIcon, TrendingUpIcon, UsersIcon, DollarSignIcon, MegaphoneIcon } from "lucide-react";
 import { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { Campaign } from "@shared/schema";
@@ -70,7 +70,7 @@ export default function InfluencerMarketplacePage() {
     });
 
   // Get unique categories for filter
-  const categories = [...new Set(campaigns.map(c => c.category))];
+  const categories = Array.from(new Set(campaigns.map(c => c.category)));
 
   return (
     <div className="min-h-screen flex flex-col bg-background">

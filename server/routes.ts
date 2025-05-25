@@ -280,6 +280,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Marketplace endpoint - shows all campaigns from all creators for influencers to discover
+  app.get("/api/marketplace/campaigns", async (req, res) => {
+    if (!req.isAuthenticated()) return res.sendStatus(401);
+    
+    try {
+      const campaigns = await storage.getAllMarketplaceCampaigns();
+      res.json(campaigns);
+    } catch (error: any) {
+      console.error("Error fetching marketplace campaigns:", error);
+      res.status(500).json({ message: error.message });
+    }
+  });
+
   app.post("/api/campaigns/:id/pause", async (req, res) => {
     if (!req.isAuthenticated()) return res.sendStatus(401);
     

@@ -25,7 +25,7 @@ import CreatorNewCampaignPage from "@/pages/creator/new-campaign";
 import InfluencerCampaignsPage from "@/pages/influencer/campaigns";
 import InfluencerAnalyticsPage from "@/pages/influencer/analytics";
 import InfluencerPaymentsPage from "@/pages/influencer/payments";
-
+import InfluencerMarketplacePage from "@/pages/influencer/marketplace";
 import InfluencerAccountsPage from "@/pages/influencer/accounts";
 
 function Router() {
@@ -48,9 +48,9 @@ function Router() {
       {/* Influencer routes */}
       <ProtectedRoute path="/influencer" component={InfluencerDashboard} />
       <ProtectedRoute path="/influencer/campaigns" component={InfluencerCampaignsPage} />
+      <ProtectedRoute path="/influencer/marketplace" component={InfluencerMarketplacePage} />
       <ProtectedRoute path="/influencer/analytics" component={InfluencerAnalyticsPage} />
       <ProtectedRoute path="/influencer/payments" component={InfluencerPaymentsPage} />
-
       <ProtectedRoute path="/influencer/accounts" component={InfluencerAccountsPage} />
       
       {/* 404 page */}
