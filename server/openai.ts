@@ -128,7 +128,7 @@ export async function generateAdContent(
       throw new Error("Invalid response format from OpenAI");
     }
 
-    // Generate image using OpenAI Images API
+    // Generate image using OpenAI Images API according to official docs
     const imagePrompt = `Create a professional, high-quality advertising image for: ${description}. Style: modern, clean, professional, eye-catching, suitable for social media marketing.`;
     
     const imageResponse = await fetch('https://api.openai.com/v1/images/generations', {
@@ -143,11 +143,13 @@ export async function generateAdContent(
         n: 1,
         size: "1024x1024",
         quality: "standard",
+        response_format: "url"
       }),
     });
 
     if (!imageResponse.ok) {
-      throw new Error(`Image generation failed: ${imageResponse.statusText}`);
+      const errorData = await imageResponse.json();
+      throw new Error(`Image generation failed: ${errorData.error?.message || imageResponse.statusText}`);
     }
 
     const imageData = await imageResponse.json();
