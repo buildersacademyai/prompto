@@ -201,7 +201,7 @@ export default function CreatorDashboard() {
                     icon="money"
                   />
                   <StatsCard 
-                    title="Active Campaigns" 
+                    title="Active Ads" 
                     value={displayStats.activeCampaigns} 
                     change={displayStats.campaignsChange}
                     icon="campaign"
@@ -216,10 +216,10 @@ export default function CreatorDashboard() {
               )}
             </div>
             
-            {/* Active Campaigns */}
+            {/* Active Ads */}
             <div className="mb-8">
               <div className="flex justify-between items-center mb-4">
-                <h2 className="font-semibold text-xl">Active Campaigns</h2>
+                <h2 className="font-semibold text-xl">Active Ads</h2>
                 <div className="flex items-center">
                   <span className="text-sm text-muted-foreground mr-3">Sort by:</span>
                   <Select value={campaignSort} onValueChange={setCampaignSort}>
