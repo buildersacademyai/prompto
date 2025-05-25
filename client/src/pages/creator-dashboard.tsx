@@ -55,7 +55,7 @@ export default function CreatorDashboard() {
   return (
     <div className="min-h-screen bg-background">
       <Header />
-      <div className="container mx-auto p-6">
+      <div className="container mx-auto p-6 pt-24">
         <div className="max-w-7xl mx-auto">
           <div className="mb-8">
             <div className="flex justify-between items-center mb-6">
