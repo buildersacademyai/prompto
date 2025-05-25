@@ -184,20 +184,6 @@ export default function AIGeneratorPage() {
                                 </Button>
                               </DropdownMenuTrigger>
                               <DropdownMenuContent align="end">
-                                <DropdownMenuItem onClick={() => {
-                                  navigator.clipboard.writeText(ad.generatedText);
-                                  toast({
-                                    title: "Copied to clipboard",
-                                    description: "Ad text has been copied to your clipboard."
-                                  });
-                                }}>
-                                  <Copy className="mr-2 h-4 w-4" />
-                                  Copy Text
-                                </DropdownMenuItem>
-                                <DropdownMenuItem>
-                                  <ImageIcon className="mr-2 h-4 w-4" />
-                                  Download Image
-                                </DropdownMenuItem>
                                 <DropdownMenuItem onClick={() => handleDeleteAd(ad.id)}>
                                   <TrashIcon className="mr-2 h-4 w-4" />
                                   Delete

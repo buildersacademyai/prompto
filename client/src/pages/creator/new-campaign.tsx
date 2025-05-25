@@ -56,6 +56,7 @@ export default function NewCampaignPage() {
   const [, navigate] = useLocation();
   const [selectedInfluencers, setSelectedInfluencers] = useState<number[]>([]);
   const [campaignImage, setCampaignImage] = useState<string | null>(null);
+  const [selectedAdId, setSelectedAdId] = useState<string | null>(null);
   const [step, setStep] = useState(1);
 
   // Check wallet balance
@@ -66,6 +67,11 @@ export default function NewCampaignPage() {
   // Get recommended influencers
   const { data: influencers = [], isLoading: isLoadingInfluencers } = useQuery<Influencer[]>({
     queryKey: ["/api/creator/influencers/recommended"],
+  });
+
+  // Get saved ads for campaign image selection
+  const { data: savedAds = [] } = useQuery({
+    queryKey: ["/api/ai/generated-ads"],
   });
 
   const form = useForm<CampaignFormValues>({
@@ -139,19 +145,17 @@ export default function NewCampaignPage() {
     }
   };
 
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        setCampaignImage(e.target?.result as string);
-      };
-      reader.readAsDataURL(file);
+  const handleAdSelection = (adId: string) => {
+    setSelectedAdId(adId);
+    const selectedAd = (savedAds as any[]).find((ad: any) => ad.id.toString() === adId);
+    if (selectedAd) {
+      setCampaignImage(selectedAd.imageUrl);
     }
   };
 
   const removeImage = () => {
     setCampaignImage(null);
+    setSelectedAdId(null);
   };
 
   const nextStep = () => {
@@ -343,22 +347,30 @@ export default function NewCampaignPage() {
                               </Button>
                             </div>
                           ) : (
-                            <div className="border-2 border-dashed border-border rounded-md p-6 text-center">
-                              <ImageIcon className="h-8 w-8 mx-auto mb-2 text-muted-foreground" />
-                              <p className="text-sm text-muted-foreground mb-2">Upload a campaign image</p>
-                              <label htmlFor="campaign-image">
-                                <Button type="button" variant="outline" className="gap-2">
-                                  <Upload className="h-4 w-4" />
-                                  Upload Image
-                                </Button>
-                                <input 
-                                  type="file" 
-                                  id="campaign-image" 
-                                  className="sr-only" 
-                                  accept="image/*" 
-                                  onChange={handleImageUpload}
-                                />
-                              </label>
+                            <div className="space-y-3">
+                              {(savedAds as any[]).length > 0 ? (
+                                <Select onValueChange={handleAdSelection} value={selectedAdId || ""}>
+                                  <SelectTrigger>
+                                    <SelectValue placeholder="Select from your generated ads" />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    {(savedAds as any[]).map((ad: any) => (
+                                      <SelectItem key={ad.id} value={ad.id.toString()}>
+                                        <div className="flex items-center gap-2">
+                                          <ImageIcon className="h-4 w-4" />
+                                          {ad.title}
+                                        </div>
+                                      </SelectItem>
+                                    ))}
+                                  </SelectContent>
+                                </Select>
+                              ) : (
+                                <div className="border-2 border-dashed border-border rounded-md p-6 text-center">
+                                  <ImageIcon className="h-8 w-8 mx-auto mb-2 text-muted-foreground" />
+                                  <p className="text-sm text-muted-foreground mb-2">No generated ads available</p>
+                                  <p className="text-xs text-muted-foreground">Create some ads in the AI Generator first</p>
+                                </div>
+                              )}
                             </div>
                           )}
                         </div>
