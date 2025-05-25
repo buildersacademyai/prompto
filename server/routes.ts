@@ -27,11 +27,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/auth/google", async (req, res) => {
     try {
       console.log("Google auth endpoint called with body:", req.body);
-      const { idToken, email, displayName } = req.body;
+      const { idToken, email, displayName, role } = req.body;
 
       if (!idToken || !email) {
         console.error("Missing required parameters for Google auth");
         return res.status(400).json({ error: "Missing required authentication parameters" });
+      }
+
+      if (!role || !['creator', 'influencer'].includes(role)) {
+        console.error("Invalid or missing role parameter");
+        return res.status(400).json({ error: "Valid role (creator or influencer) is required" });
       }
 
       // Normally we would verify the ID token with Firebase Admin
@@ -51,15 +56,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
         // Use imported hashPassword from auth.ts
         const hashedPassword = await hashPassword(tempPassword);
         
-        console.log("Creating new user with username:", username);
+        console.log("Creating new user with username:", username, "and role:", role);
         user = await dbStorage.createUser({
           username,
           email,
           password: hashedPassword,
           profileImage: null,
-          role: "creator", // Default role
+          role: role, // Use the role provided by client
         });
-        console.log("New user created:", user.id);
+        console.log("New user created:", user.id, "with role:", user.role);
       }
       
       // Log the user in manually - this establishes the session

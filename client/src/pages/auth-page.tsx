@@ -54,6 +54,7 @@ export default function AuthPage() {
   const [location, setLocation] = useLocation();
   const [authMethod, setAuthMethod] = useState<"email" | "social">("email");
   const [signingIn, setSigningIn] = useState(false);
+  const [socialRole, setSocialRole] = useState<"creator" | "influencer">("creator");
   const { toast } = useToast();
   
   // Redirect if user is already logged in
@@ -250,6 +251,34 @@ export default function AuthPage() {
               </Tabs>
             ) : (
               <div className="space-y-4">
+                {/* Role Selection for Social Login */}
+                <div className="space-y-3">
+                  <Label className="text-sm font-medium">I am a</Label>
+                  <div className="flex space-x-4">
+                    <Label className={`flex-1 p-3 border rounded-md cursor-pointer text-center ${socialRole === 'creator' ? 'border-primary bg-primary/10' : 'border-border'}`}>
+                      <input
+                        type="radio"
+                        className="sr-only"
+                        value="creator"
+                        checked={socialRole === 'creator'}
+                        onChange={() => setSocialRole('creator')}
+                      />
+                      Creator
+                    </Label>
+                    <Label className={`flex-1 p-3 border rounded-md cursor-pointer text-center ${socialRole === 'influencer' ? 'border-primary bg-primary/10' : 'border-border'}`}>
+                      <input
+                        type="radio"
+                        className="sr-only"
+                        value="influencer"
+                        checked={socialRole === 'influencer'}
+                        onChange={() => setSocialRole('influencer')}
+                      />
+                      Influencer
+                    </Label>
+                  </div>
+                  <p className="text-xs text-muted-foreground">Note: This choice is permanent. You will need to create a separate account to use the other role.</p>
+                </div>
+                
                 <Button 
                   variant="outline" 
                   className="w-full bg-white text-background hover:bg-gray-100 font-medium transition flex items-center justify-center" 
@@ -267,7 +296,7 @@ export default function AuthPage() {
                         const userEmail = result.user.email || '';
                         const userDisplayName = result.user.displayName || '';
                         
-                        console.log("Sending auth data to server:", { email: userEmail, displayName: userDisplayName });
+                        console.log("Sending auth data to server:", { email: userEmail, displayName: userDisplayName, role: socialRole });
                         const response = await fetch('/api/auth/google', {
                           method: 'POST',
                           headers: {
@@ -276,7 +305,8 @@ export default function AuthPage() {
                           body: JSON.stringify({ 
                             idToken,
                             email: userEmail,
-                            displayName: userDisplayName
+                            displayName: userDisplayName,
+                            role: socialRole
                           }),
                         });
                         
