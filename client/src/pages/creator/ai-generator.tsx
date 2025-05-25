@@ -15,8 +15,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useToast } from "@/hooks/use-toast";
-import { useQuery } from "@tanstack/react-query";
-import { getQueryFn } from "@/lib/queryClient";
+import { useQuery, useMutation } from "@tanstack/react-query";
+import { getQueryFn, apiRequest, queryClient } from "@/lib/queryClient";
 import { useAuth } from "@/hooks/use-auth";
 
 export default function AIGeneratorPage() {
@@ -27,6 +27,28 @@ export default function AIGeneratorPage() {
   const { data: savedAds = [], isLoading: isLoadingSavedAds, refetch: refetchSavedAds } = useQuery({
     queryKey: ["/api/ai/generated-ads"],
     queryFn: getQueryFn({ on401: "returnNull" }),
+  });
+
+  // Delete ad mutation
+  const deleteAdMutation = useMutation({
+    mutationFn: async (adId: number) => {
+      const response = await apiRequest("DELETE", `/api/ai/generated-ads/${adId}`);
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/ai/generated-ads"] });
+      toast({
+        title: "Ad deleted successfully",
+        description: "The ad has been removed from your saved ads.",
+      });
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Failed to delete ad",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
   });
   
   // Handle saving a new ad (this will automatically refetch the saved ads)
@@ -41,12 +63,8 @@ export default function AIGeneratorPage() {
   };
   
   // Handle deleting an ad
-  const handleDeleteAd = (adId: string) => {
-    // TODO: Implement delete endpoint
-    toast({
-      title: "Delete not implemented yet",
-      description: "Ad deletion will be available soon."
-    });
+  const handleDeleteAd = (adId: number) => {
+    deleteAdMutation.mutate(adId);
   };
 
   return (
