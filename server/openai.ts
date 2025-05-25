@@ -3,7 +3,7 @@ import fs from 'fs';
 import path from 'path';
 
 // Initialize OpenAI API client
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+const openai = new OpenAI({ apiKey: process.env.PROMPTO_OPENAI_API_KEY });
 
 interface SuggestedMedia {
   url: string;
