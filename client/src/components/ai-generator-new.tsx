@@ -325,7 +325,7 @@ export default function AIGenerator({ className, onSave }: AIGeneratorProps & { 
                       <img 
                         src={generatedContent.generatedImageUrl} 
                         alt={adTitle || "Generated Ad"}
-                        className="w-full h-64 object-cover rounded-lg border border-border"
+                        className="w-full h-auto max-h-[400px] object-contain rounded-lg border border-border"
                       />
                       <div className="absolute top-3 right-3">
                         <div className="bg-primary/90 text-primary-foreground px-2 py-1 rounded-full text-xs font-medium">
