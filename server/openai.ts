@@ -128,20 +128,31 @@ export async function generateAdContent(
       throw new Error("Invalid response format from OpenAI");
     }
 
-    // Generate image using DALL-E
-    const imagePrompt = `Create a professional, high-quality advertising image for: ${description}. The image should be visually appealing, modern, and suitable for social media marketing. Style: clean, professional, eye-catching.`;
-    
-    const imageResponse = await openai.images.generate({
-      model: "dall-e-3",
-      prompt: imagePrompt,
-      n: 1,
-      size: "1024x1024",
-      quality: "standard",
-    });
+    // Generate simple SVG placeholder image based on description
+    const generatedImageUrl = `data:image/svg+xml;base64,${Buffer.from(`
+      <svg width="1024" height="1024" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#9945FF;stop-opacity:1" />
+            <stop offset="100%" style="stop-color:#14F195;stop-opacity:1" />
+          </linearGradient>
+        </defs>
+        <rect width="100%" height="100%" fill="url(#grad1)"/>
+        <text x="50%" y="40%" dominant-baseline="middle" text-anchor="middle" fill="white" font-size="48" font-family="Arial, sans-serif" font-weight="bold">
+          PROMPTO
+        </text>
+        <text x="50%" y="55%" dominant-baseline="middle" text-anchor="middle" fill="white" font-size="24" font-family="Arial, sans-serif">
+          AI Generated Ad
+        </text>
+        <text x="50%" y="65%" dominant-baseline="middle" text-anchor="middle" fill="white" font-size="16" font-family="Arial, sans-serif">
+          ${description.substring(0, 60)}${description.length > 60 ? '...' : ''}
+        </text>
+      </svg>
+    `).toString('base64')}`;
 
     return {
       text: result.text,
-      generatedImageUrl: imageResponse.data?.[0]?.url || "",
+      generatedImageUrl: generatedImageUrl,
       suggestedMedia: result.suggestedMedia.map((media: any) => ({
         url: media.url,
         alt: media.alt
