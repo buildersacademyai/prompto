@@ -88,6 +88,14 @@ export default function Header() {
           </div>
           
           <div className="hidden md:flex items-center space-x-4">
+            {user?.role === 'influencer' && (
+              <Link href="/influencer/marketplace">
+                <Button variant="outline" className="bg-background border-primary text-primary hover:bg-primary/10">
+                  <UsersIcon className="mr-2 h-4 w-4" />
+                  Campaign Marketplace
+                </Button>
+              </Link>
+            )}
             
             <div className="ml-4 flex items-center">
               {user && (
