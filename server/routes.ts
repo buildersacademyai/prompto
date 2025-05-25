@@ -445,7 +445,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     if (!req.isAuthenticated()) return res.sendStatus(401);
     
     try {
-      const { description } = req.body;
+      const { title, description } = req.body;
       
       if (!description) {
         return res.status(400).json({ message: "Product description is required" });

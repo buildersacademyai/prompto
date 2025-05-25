@@ -15,6 +15,7 @@ interface AIGeneratorProps {
 
 interface GeneratedContent {
   text: string;
+  generatedImageUrl: string;
   suggestedMedia: Array<{
     url: string;
     alt: string;
@@ -44,6 +45,7 @@ export default function AIGenerator({ className, onSave }: AIGeneratorProps & { 
     mutationFn: async () => {
       // Create a FormData object to send files
       const formData = new FormData();
+      formData.append("title", adTitle);
       formData.append("description", productDescription);
       
       // Append each file to the FormData

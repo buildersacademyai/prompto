@@ -121,15 +121,27 @@ export async function generateAdContent(
       response_format: { type: "json_object" }
     });
 
-    const result = JSON.parse(response.choices[0].message.content);
+    const result = JSON.parse(response.choices[0].message.content || '{}');
 
     // Check if the response has the expected structure
     if (!result.text || !Array.isArray(result.suggestedMedia)) {
       throw new Error("Invalid response format from OpenAI");
     }
 
+    // Generate image using DALL-E
+    const imagePrompt = `Create a professional, high-quality advertising image for: ${description}. The image should be visually appealing, modern, and suitable for social media marketing. Style: clean, professional, eye-catching.`;
+    
+    const imageResponse = await openai.images.generate({
+      model: "dall-e-3",
+      prompt: imagePrompt,
+      n: 1,
+      size: "1024x1024",
+      quality: "standard",
+    });
+
     return {
       text: result.text,
+      generatedImageUrl: imageResponse.data[0].url,
       suggestedMedia: result.suggestedMedia.map((media: any) => ({
         url: media.url,
         alt: media.alt
