@@ -464,6 +464,7 @@ export class DatabaseStorage implements IStorage {
         .where(and(eq(generatedAds.id, adId), eq(generatedAds.userId, userId)));
       
       console.log('🔍 Found existing ad:', existingAd.length > 0 ? 'Yes' : 'No');
+      console.log('🔍 Existing ad details:', existingAd);
       
       if (existingAd.length === 0) {
         console.log('❌ Ad not found or unauthorized');
@@ -471,21 +472,29 @@ export class DatabaseStorage implements IStorage {
       }
       
       // Delete the ad, ensuring it belongs to the requesting user
+      console.log('🔧 Executing delete query...');
       const result = await db
         .delete(generatedAds)
-        .where(and(eq(generatedAds.id, adId), eq(generatedAds.userId, userId)))
-        .returning();
+        .where(and(eq(generatedAds.id, adId), eq(generatedAds.userId, userId)));
       
-      const deletedCount = result.length;
-      console.log('✅ Ad deletion completed, rows affected:', deletedCount);
+      console.log('🔧 Delete query executed, checking result...');
+      console.log('📊 Delete result:', result);
       
-      if (deletedCount === 0) {
-        console.log('❌ No rows were deleted');
+      // Verify the deletion by checking if the record still exists
+      const verifyDeletion = await db
+        .select()
+        .from(generatedAds)
+        .where(eq(generatedAds.id, adId));
+      
+      console.log('🔍 Verification check - records found:', verifyDeletion.length);
+      
+      if (verifyDeletion.length === 0) {
+        console.log('✅ Ad successfully deleted from database');
+        return true;
+      } else {
+        console.log('❌ Ad still exists after delete operation');
         return false;
       }
-      
-      console.log('✅ Ad successfully deleted from database');
-      return true;
     } catch (error) {
       console.error('❌ Error in deleteGeneratedAd:', error);
       return false;
