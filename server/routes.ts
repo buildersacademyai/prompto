@@ -519,40 +519,39 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.delete("/api/ai/generated-ads/:id", async (req, res) => {
     if (!req.isAuthenticated()) return res.sendStatus(401);
     
+    const userId = req.user!.id;
+    const adId = parseInt(req.params.id);
+    
+    console.log('🗑️ STARTING DELETE - Ad ID:', adId, 'User ID:', userId);
+    
+    if (isNaN(adId)) {
+      return res.status(400).json({ message: "Invalid ad ID" });
+    }
+    
     try {
-      const userId = req.user!.id;
-      const adId = parseInt(req.params.id);
+      const { db } = require("./db");
+      const { generatedAds } = require("@shared/schema");
+      const { eq, and } = require("drizzle-orm");
       
-      console.log('🗑️ DELETE REQUEST - Ad ID:', adId, 'User ID:', userId);
-      
-      if (isNaN(adId)) {
-        return res.status(400).json({ message: "Invalid ad ID" });
-      }
-      
-      // Direct database deletion using imported db and schema
-      const { db } = await import("./db");
-      const { generatedAds } = await import("@shared/schema");
-      const { eq, and } = await import("drizzle-orm");
-      
-      console.log('🔧 Executing direct database delete...');
+      console.log('🔧 About to execute delete query...');
       
       const deleteResult = await db
         .delete(generatedAds)
         .where(and(eq(generatedAds.id, adId), eq(generatedAds.userId, userId)))
         .returning();
       
-      console.log('📊 Delete result:', deleteResult.length, 'rows affected');
+      console.log('📊 Delete operation completed. Rows deleted:', deleteResult.length);
       
       if (deleteResult.length > 0) {
-        console.log('✅ Ad successfully deleted from database');
-        res.json({ message: "Ad deleted successfully" });
+        console.log('✅ SUCCESS: Ad deleted from database');
+        return res.json({ message: "Ad deleted successfully", deleted: true });
       } else {
-        console.log('❌ No rows deleted - ad not found or unauthorized');
-        res.status(404).json({ message: "Ad not found or unauthorized" });
+        console.log('❌ FAILURE: No rows were deleted');
+        return res.status(404).json({ message: "Ad not found or unauthorized", deleted: false });
       }
-    } catch (error: any) {
-      console.error('❌ Error deleting ad:', error);
-      res.status(500).json({ message: error.message });
+    } catch (error) {
+      console.error('❌ DATABASE ERROR during delete:', error);
+      return res.status(500).json({ message: "Database error", error: error.message });
     }
   });
 
